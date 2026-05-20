@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
-const { CLOTHING_TYPES, SIZES, CONDITIONS, CATEGORIES } = require("../constants/listingEnums");
+// Replace clothing enums with workspace-specific configurations if needed
+const { SPACE_TYPES, PRICING_INTERVALS, AMENITY_LABELS } = require("../constants/workspaceEnums.js");
 
-const listingSchema = new mongoose.Schema({
+const spaceSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true
@@ -11,45 +12,26 @@ const listingSchema = new mongoose.Schema({
         required: true
     },
 
-    clothingType: {
+    spaceType: {
         type: String,
         required: true,
-        validate: {
-            validator: function (value) {
-                const validTypes = CLOTHING_TYPES[this.category];
-                return validTypes?.includes(value);
-            },
-            message: "Invalid clothing type for selected category"
+        enum: SPACE_TYPES
+    },
+    capacity: {
+        type: Number,
+        required: true,
+        min: 1
+    },
+    pricing: {
+        rate: { type: Number, required: true }, // The cost amount
+        interval: {
+            type: String,
+            required: true,
+            enum: PRICING_INTERVALS
         }
     },
-
-    brandName: {
-        type: String,
-        required: true
-    },
-
-    size: {
-        type: String,
-        enum: SIZES,
-        required: true
-    },
-
-    condition: {
-        type: String,
-        enum: CONDITIONS,
-        required: true
-    },
-    category: {
-        type: String,
-        required: true,
-        enum: CATEGORIES
-    },
-
-    estimatedValue: {
-        type: Number,
-        min: 1,
-    },
-
+    // ADDED: Structured nesting for advanced amenity filtering
+    amenities: { type: String},
     images: [{
         type: {
             url: {
@@ -95,7 +77,6 @@ const listingSchema = new mongoose.Schema({
                 type: [Number], // [lng, lat]
             },
         },
-
         city: {
             type: String,
             required: true,
@@ -109,12 +90,18 @@ const listingSchema = new mongoose.Schema({
             required: true,
         },
     },
-
 }, { timestamps: true });
-listingSchema.index({ "location.geo": "2dsphere" });
-listingSchema.index({ owner: 1, createdAt: -1 }); // Compound index for efficient user listing retrieval
-listingSchema.index({ title: "text" });
 
-const listingModel = mongoose.model("listing", listingSchema)
+// INDEXES FOR MAXIMUM FILTERING EFFICIENCY
+spaceSchema.index({ "location.geo": "2dsphere" });
+spaceSchema.index({ owner: 1, createdAt: -1 });
+spaceSchema.index({ title: "text" });
 
-module.exports = listingModel;
+// Added compound indexes for high-frequency filtering combinations
+spaceSchema.index({ "pricing.rate": 1, isAvailable: 1 });
+spaceSchema.index({ "amenities.tech.enterpriseWifi": 1 });
+spaceSchema.index({ "amenities.convenience.access247": 1 });
+
+const space = mongoose.model("spaces", spaceSchema);
+
+module.exports = space;

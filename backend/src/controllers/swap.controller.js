@@ -1,9 +1,9 @@
 const { response } = require("express");
 const { validateLocation } = require("../Validators/locationValidator");
-const listingModel = require("../models/listing.model");
+const listingModel = require("../models/space.model");
 const changeHistoryModel = require("../models/swap/changeHistory.model");
 const swapModel = require("../models/swap/swap.model");
-const { getListingByIdService } = require("../services/listing/DBFunctions.service");
+const { getListingByIdService } = require("../services/space/DBFunctions.service");
 const { createSwapService, getTrackingLink } = require("../services/swap/swap.service");
 const { getSwapByIdService, validateStateAndUser, validateSwapState, validateUserRole, ValidateSwap, updateBothListingFromSwapId, checkBothListingAreElligibleToSwap } = require("../services/swap/swap.utiliy");
 const axios = require('axios');

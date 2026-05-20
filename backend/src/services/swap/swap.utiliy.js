@@ -13,7 +13,7 @@
 
 */
 
-const listingModel = require("../../models/listing.model");
+const listingModel = require("../../models/space.model");
 const swapModel = require("../../models/swap/swap.model");
 
 async function getSwapByIdService(swapId) {

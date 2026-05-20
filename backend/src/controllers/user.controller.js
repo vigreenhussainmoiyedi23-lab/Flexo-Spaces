@@ -1,6 +1,6 @@
 const swapModel = require("../models/swap/swap.model");
 const userModel = require("../models/user/user.model");
-const { uploadImage } = require("../services/listing/UploadImage.service");
+const { uploadImage } = require("../services/space/UploadImage.service");
 const { getUserAllListingsService, getUserAllDataService, getNotificationService, getUserAllRatingsService } = require("../services/user/user.service");
 
 

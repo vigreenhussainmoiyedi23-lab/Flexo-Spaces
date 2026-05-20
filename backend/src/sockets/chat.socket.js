@@ -2,7 +2,6 @@ const imagekit = require("../config/imagekit");
 const chatModel = require("../models/chats/chat.model");
 const messageModel = require("../models/chats/message.model");
 const { createMessageFromSocket } = require("../services/chat/socket.services");
-const { deleteImageFromListing } = require("../services/listing/DeleteImage.service");
 
 const chatSockets = (io, socket, socketUserMap) => {
 

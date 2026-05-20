@@ -16,21 +16,25 @@ APIs to build for listing.routes.js:
 
 const express = require("express")
 const router = express.Router()
-const { CreateListingHandler, GetAllListingsHandler, GetListingByIdHandler, GetListingsByUserIdHandler, UpdateListingByIdHandler, AddImagesToListingHandler, RemoveImageFromListingHandler, DeleteListingByIdHandler } = require("../controllers/listing.controller")
+const { CreateWorkSpaceHandler, GetAllListingsHandler, GetListingByIdHandler, UpdateListingByIdHandler, DeleteListingByIdHandler } = require("../controllers/spaces.controller")
 const { isAuthenticated } = require("../middlewares/protectedRoutes.middleware")
 const upload = require("../config/multer")
-const { createListingValidator, updateListingValidator } = require("../Validators/listing.validator")
+const { createListingValidator, updateListingValidator } = require("../Validators/spaces.validator")
 const { validate } = require("../Validators/validate")
 const { CreateListingLimiter } = require("../middlewares/rateLimiter")
 
 
 router.post("/get-all", GetAllListingsHandler)
 router.get("/:id", GetListingByIdHandler)
-// router.get("/:userId/user", isAuthenticated, GetListingsByUserIdHandler)
 
 
-router.post("/",CreateListingLimiter, upload.array("images", 4), createListingValidator, validate, isAuthenticated, CreateListingHandler)
-router.patch("/:id", isAuthenticated,updateListingValidator,validate, UpdateListingByIdHandler)
+router.post("/", CreateListingLimiter,
+    upload.array("images", 4),
+    createListingValidator,
+    validate,
+    isAuthenticated,
+    CreateWorkSpaceHandler)
+router.patch("/:id", isAuthenticated, updateListingValidator, validate, UpdateListingByIdHandler)
 router.delete("/:id", isAuthenticated, DeleteListingByIdHandler)
 
 

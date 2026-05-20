@@ -1,556 +1,361 @@
-Flexo Spaces
+🚀 Flexo Spaces
 
-A Smart Co-Working Space Discovery & Booking Platform
+> Smart Co-Working Space Discovery & Booking Platform
 
-Flexo Spaces is a full-stack MERN application designed to help freelancers, startups, remote teams, and enterprises discover, compare, and book co-working spaces in real time. The platform provides smart filtering, live availability tracking, booking workflows, and workspace management tools for space owners and administrators.
+A real-time full-stack MERN + Next.js application that enables freelancers, startups, and enterprises to discover, compare, and book co-working spaces with live availability, smart filtering, and seamless communication.
 
-Overview
+---
 
-Finding the right workspace is often difficult due to scattered information, unclear pricing, outdated availability, and lack of transparency regarding amenities and workspace capacity.
+## 🌍 Overview
 
-Flexo Spaces solves this problem by creating a centralized platform where users can:
+Flexo Spaces solves the problem of fragmented and outdated workspace discovery systems by providing a centralized, intelligent booking platform.
 
-Discover co-working spaces based on team size and requirements
-Compare pricing, amenities, and workspace types
-View real-time availability
-Send booking requests and inquiries
-Communicate with workspace owners
-Manage bookings digitally
+It allows users to:
+- Discover co-working spaces based on requirements
+- Compare pricing, amenities, and locations
+- View real-time availability
+- Book spaces instantly
+- Communicate with space owners
+- Manage bookings digitally
 
-Target Audience: Freelancers, remote workers, startups, enterprises, co-working operators, and space managers.
+---
 
-Key Value Proposition: Simplify workspace discovery and improve occupancy rates through smart matching and real-time workspace management.
+## 🎯 Problem
 
-Features
-Authentication & User Management
-JWT-based authentication with secure cookie sessions
-Google OAuth 2.0 login integration
-Role-based access control:
-User
-Space Owner
-Admin
-Email verification with OTP
-Password reset functionality
-User profile management
-Protected routes and middleware authorization
-Workspace Listings Management
+Finding the right workspace is difficult due to:
+- Scattered listings across platforms
+- Outdated availability information
+- Lack of transparency in pricing
+- No real-time communication
+- Inefficient booking workflows
 
-Space owners can create and manage detailed co-working space listings.
+---
 
-Workspace Information Includes:
-Workspace name
-Workspace type
-Shared desk
-Private cabin
-Meeting room
-Conference hall
-Area size (sq ft)
-Seating capacity
-Pricing (hourly/daily/monthly)
-Amenities
-Workspace images
-Description
-Rules & policies
-Availability status
-Location with coordinates
-Listing Features
-Create workspace listings
-Update listing information
-Delete listings
-Upload multiple images
-Mark spaces as available/unavailable
-Add pricing plans
-Real-time availability updates
-Smart Search & Matching
+## 💡 Solution
 
-Advanced search system allowing users to discover spaces based on:
+Flexo Spaces centralizes the entire workflow:
+- Unified workspace discovery system
+- Real-time availability tracking
+- Smart filtering & recommendations
+- Direct communication between users and owners
+- End-to-end booking lifecycle management
 
-Number of persons
-Workspace area
-Budget range
-Workspace type
-Amenities
-City/location
-Availability
-Work environment preferences
-Search Features
-Multi-filter search
-Real-time filtering
-Location-based discovery
-Smart recommendation system
-Search suggestions
-Sorting:
-Lowest price
-Highest rating
-Nearest location
-Most popular
-Amenities Management
+---
 
-Each workspace can include customizable amenities such as:
+## 👥 Target Users
 
-High-speed Wi-Fi
-Meeting rooms
-Parking
-Power backup
-Air conditioning
-Cafeteria
-Security
-Printing facilities
-Locker storage
-Event spaces
-Features
-Amenity tagging
-Amenity filtering
-Amenity icons and descriptions
-Shared vs private amenities
-Booking & Inquiry System
+- Freelancers
+- Remote workers
+- Startups
+- Enterprises
+- Co-working operators
+- Space managers
 
-Complete booking workflow for workspace reservations.
+---
 
-Booking Features
-Real-time availability check
-Booking requests
-Booking approval/rejection
-Booking cancellation
-Booking history
-Booking status tracking
-Booking Status Flow
-Pending
-Approved
-Rejected
-Cancelled
-Completed
-Inquiry System
+## ✨ Features
 
-Users can:
+### 🔐 Authentication
+- JWT authentication with secure cookies
+- Google OAuth 2.0 login
+- OTP email verification
+- Password reset system
+- Role-based access control (User / Owner / Admin)
 
-Send inquiries to workspace owners
-Ask questions before booking
-Negotiate requirements
-Discuss workspace expectations
-Real-Time Availability Monitoring
+---
 
-One of the core features of Flexo Spaces.
+### 🏢 Workspace Management
+- Create and manage workspace listings
+- Upload multiple images
+- Define pricing (hourly/daily/monthly)
+- Set seating capacity & area size
+- Manage availability status
+- Add rules and policies
 
-Real-Time Features
-Live workspace occupancy updates
-Availability schedules
-Booking conflict prevention
-Instant booking status updates
-Real-time dashboard refresh
-Implementation
-Socket.IO for live updates
-Availability synchronization
-Dynamic booking calendar
-Real-Time Chat & Communication
+---
 
-Integrated communication system between users and space owners.
+### 🔎 Smart Search System
+- Multi-filter search
+- Location-based discovery
+- Budget filtering
+- Workspace type filtering
+- Amenity-based search
+- Sorting (price, rating, popularity, distance)
 
-Features
-Instant messaging using Socket.IO
-Booking-related chat rooms
-Inquiry conversations
-Image sharing
-Read receipts
-Typing indicators
-Real-time notifications
-Notifications System
+---
 
-Users receive updates regarding bookings and inquiries.
+### 🧩 Amenities System
+- Wi-Fi, AC, Parking, Cafeteria
+- Meeting rooms & conference halls
+- Security & power backup
+- Printing facilities
+- Custom amenity tagging
+- Filter-based selection
 
-Notification Types
-Booking confirmations
-Booking cancellations
-Inquiry responses
-Workspace approval updates
-New messages
-Availability alerts
-Channels
-In-app notifications
-Email notifications
-SMS integration (future-ready)
-Dashboards
-User Dashboard
+---
 
-Users can:
+### 📅 Booking System
+- Real-time availability checks
+- Booking request workflow
+- Approval / rejection system
+- Booking cancellation
+- Booking history tracking
 
-View booking history
-Manage profile
-Track inquiries
-Save favorite workspaces
-Manage notifications
-Space Owner Dashboard
+**Booking Status Flow**
+- Pending
+- Approved
+- Rejected
+- Cancelled
+- Completed
 
-Space owners can:
+---
 
-Manage workspace listings
-Monitor bookings
-Update pricing
-Manage availability schedules
-Respond to inquiries
-Track occupancy
-Analytics Includes
-Booking statistics
-Revenue insights
-Occupancy rates
-Most viewed spaces
-Conversion rates
-Admin Dashboard
+### 💬 Real-Time Communication
+- Socket.IO based chat system
+- Booking-related conversations
+- Inquiry messaging system
+- Typing indicators
+- Image sharing
+- Read receipts
 
-Admins can monitor the entire platform.
+---
 
-Admin Features
-User management
-Workspace moderation
-Booking monitoring
-Platform analytics
-Reports & insights
-Remove fraudulent listings
-Manage disputes
-Tech Stack
-Frontend
-React.js - Frontend library
-Next.js - SSR & routing
-Tailwind CSS - Utility-first styling
-Framer Motion - Animations
-React Query - Data fetching and caching
-Socket.IO Client - Real-time communication
-React Hook Form - Form handling
-Zod - Validation
-Lucide React - Icons
-Backend
-Node.js - JavaScript runtime
-Express.js - Backend framework
-MongoDB - NoSQL database
-Mongoose - ODM
-Socket.IO - Real-time communication
-JWT - Authentication
-Bcrypt.js - Password hashing
-Passport.js - Google OAuth
-Redis - Session caching & token blacklist
-Nodemailer - Email services
-Multer - File upload handling
-Cloudinary/ImageKit - Media storage
-DevOps & Deployment
-Git & GitHub
-Vercel (Frontend)
-Render/Railway (Backend)
-MongoDB Atlas
-Redis Cloud
-dotenv
-Architecture
+### 🔔 Notifications
+- Booking confirmations
+- Status updates
+- Inquiry responses
+- New message alerts
+- Real-time in-app notifications
 
-Flexo Spaces follows a Layered Architecture with feature-based frontend organization.
+---
 
-Backend Architecture
-┌─────────────────────────────────────────┐
-│            Client (Next.js)             │
-└──────────────┬──────────────────────────┘
-               │ HTTP / WebSocket
-┌──────────────▼──────────────────────────┐
-│            Express Routes               │
-│ /api/auth /api/spaces /api/bookings     │
-└──────────────┬──────────────────────────┘
-               │
-┌──────────────▼──────────────────────────┐
-│             Controllers                 │
-│      Handle requests & responses        │
-└──────────────┬──────────────────────────┘
-               │
-┌──────────────▼──────────────────────────┐
-│              Services                   │
-│ Business logic & integrations           │
-└──────────────┬──────────────────────────┘
-               │
-┌──────────────▼──────────────────────────┐
-│          Models (Mongoose)              │
-│ User, Space, Booking, Inquiry           │
-└──────────────┬──────────────────────────┘
-               │
-┌──────────────▼──────────────────────────┐
-│            MongoDB Database             │
-└─────────────────────────────────────────┘
-Frontend Architecture
+### 📊 Dashboards
 
-Flexo Spaces uses:
+#### User Dashboard
+- Booking history
+- Saved spaces
+- Profile management
+- Notifications
 
-Feature-based folder structure
-Context API for global state
-Service layer for API communication
-Custom hooks for reusable logic
-Reusable UI component system
-Communication Flow
-REST APIs for CRUD operations
-WebSockets for real-time updates
-JWT Authentication with cookies
-Redis caching for sessions and performance
-Folder Structure
+#### Space Owner Dashboard
+- Listing management
+- Booking approvals
+- Revenue tracking
+- Occupancy analytics
+
+#### Admin Dashboard
+- User management
+- Workspace moderation
+- Platform analytics
+- Fraud detection
+
+---
+
+## 🧠 Smart Matching System
+
+Workspace recommendations are generated using weighted scoring based on:
+- Team size
+- Budget range
+- Location preference
+- Amenities
+- Availability
+
+---
+
+## ⚡ Real-Time System
+
+Built using Socket.IO:
+
+- Live availability updates
+- Instant booking status sync
+- Real-time occupancy tracking
+- Conflict prevention system
+
+---
+
+## 🏗️ Architecture
+
+### Backend Flow
+Client → Routes → Controllers → Services → Models → MongoDB
+
+---
+
+### Frontend Architecture
+- Feature-based folder structure
+- Custom hooks for logic reuse
+- React Query for data fetching
+- Context API for global state
+- Service layer for API calls
+
+---
+
+## 🧱 Tech Stack
+
+### Frontend
+- Next.js
+- React.js
+- Tailwind CSS
+- Framer Motion
+- React Query
+- Socket.IO Client
+- React Hook Form
+- Zod
+
+### Backend
+- Node.js
+- Express.js
+- MongoDB + Mongoose
+- Socket.IO
+- JWT Authentication
+- Bcrypt.js
+- Passport.js (Google OAuth)
+- Redis (Caching)
+- Nodemailer
+- Multer
+
+### DevOps
+- Vercel (Frontend)
+- Render / Railway (Backend)
+- MongoDB Atlas
+- Redis Cloud
+
+---
+
+## 📁 Project Structure
+
+
 Flexo-Spaces/
 │
 ├── backend/
-│   ├── src/
-│   │   ├── config/
-│   │   ├── constants/
-│   │   ├── controllers/
-│   │   │   ├── auth.controller.js
-│   │   │   ├── space.controller.js
-│   │   │   ├── booking.controller.js
-│   │   │   ├── inquiry.controller.js
-│   │   │   └── admin.controller.js
-│   │   │
-│   │   ├── middlewares/
-│   │   ├── models/
-│   │   │   ├── user.model.js
-│   │   │   ├── space.model.js
-│   │   │   ├── booking.model.js
-│   │   │   ├── inquiry.model.js
-│   │   │   └── notification.model.js
-│   │   │
-│   │   ├── routes/
-│   │   ├── services/
-│   │   ├── sockets/
-│   │   ├── utils/
-│   │   └── validators/
-│   │
-│   ├── server.js
-│   └── .env
+│ └── src/
+│ ├── controllers/
+│ ├── models/
+│ ├── routes/
+│ ├── services/
+│ ├── sockets/
+│ └── middlewares/
 │
 ├── frontend/
-│   ├── src/
-│   │   ├── app/
-│   │   ├── features/
-│   │   │   ├── auth/
-│   │   │   ├── spaces/
-│   │   │   ├── bookings/
-│   │   │   ├── inquiries/
-│   │   │   ├── notifications/
-│   │   │   ├── dashboard/
-│   │   │   └── admin/
-│   │   │
-│   │   ├── components/
-│   │   ├── hooks/
-│   │   ├── services/
-│   │   ├── context/
-│   │   ├── utils/
-│   │   └── styles/
-│   │
-│   └── public/
-│
-└── README.md
-Core Database Models
-User Model
-{
-  name,
-  email,
-  password,
-  role,
-  avatar,
-  createdAt
-}
-Space Model
-{
-  title,
-  description,
-  location,
-  workspaceType,
-  seatingCapacity,
-  areaSize,
-  pricing,
-  amenities,
-  images,
-  availability,
-  ownerId
-}
-Booking Model
-{
-  userId,
-  spaceId,
-  bookingDate,
-  startTime,
-  endTime,
-  status,
-  totalPrice
-}
-Inquiry Model
-{
-  userId,
-  ownerId,
-  spaceId,
-  message,
-  status
-}
-API Overview
-Authentication Routes (/api/auth)
-POST /register
-POST /login
-POST /google
-POST /logout
-POST /forgot-password
-Space Routes (/api/spaces)
-POST /
-GET /
-GET /:id
-PATCH /:id
-DELETE /:id
-POST /search
-Booking Routes (/api/bookings)
-POST /
-GET /my-bookings
-PATCH /:id/approve
-PATCH /:id/reject
-PATCH /:id/cancel
-Inquiry Routes (/api/inquiries)
-POST /
-GET /my-inquiries
-POST /:id/respond
-Admin Routes (/api/admin)
-GET /analytics
-GET /users
-GET /spaces
-GET /bookings
-PATCH /users/:id/block
-Key Features Deep Dive
-Smart Matching System
+│ └── src/
+│ ├── app/
+│ ├── features/
+│ ├── components/
+│ ├── hooks/
+│ ├── services/
+│ └── context/
 
-The smart matching system recommends workspaces based on:
 
-Team size
-Workspace type
-Budget
-Preferred amenities
-Location preferences
-Availability
-Matching Logic
+---
 
-The backend calculates compatibility scores using filters and weighted priorities.
+## 🔌 API Routes
 
-Real-Time Monitoring
+### Auth
 
-Real-time monitoring ensures workspace availability is always accurate.
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/google
+POST /api/auth/logout
 
-Implementation Flow
-User sends booking request
-Booking updates database instantly
-Socket.IO emits availability updates
-Frontend refreshes occupancy status in real time
-Booking Lifecycle
-User discovers workspace
-User sends booking request
-Space owner reviews request
-Booking approved/rejected
-User receives notification
-Workspace reserved successfully
-Security Features
-JWT authentication
-Protected routes
-Role-based authorization
-Rate limiting
-Password hashing
-Secure cookies
-Helmet.js security headers
-Input validation & sanitization
-Environment Variables
-Backend (.env)
-PORT=5000
 
-MONGO_URI=
+### Spaces
 
-JWT_SECRET=
+GET /api/spaces
+POST /api/spaces
+PATCH /api/spaces/:id
+DELETE /api/spaces/:id
 
-GOOGLE_CLIENT_ID=
-GOOGLE_CLIENT_SECRET=
 
-REDIS_HOST=
-REDIS_PORT=
-REDIS_PASSWORD=
+### Bookings
 
-CLOUDINARY_NAME=
-CLOUDINARY_KEY=
-CLOUDINARY_SECRET=
+POST /api/bookings
+PATCH /api/bookings/:id/approve
+PATCH /api/bookings/:id/reject
 
-EMAIL_USER=
-EMAIL_PASS=
 
-NODE_ENV=development
-Frontend (.env.local)
-NEXT_PUBLIC_API_URL=http://localhost:5000/api
-NEXT_PUBLIC_SOCKET_URL=http://localhost:5000
-NEXT_PUBLIC_GOOGLE_CLIENT_ID=
-Installation & Setup
-Backend Setup
+### Inquiries
+
+POST /api/inquiries
+GET /api/inquiries/my
+
+
+### Admin
+
+GET /api/admin/analytics
+GET /api/admin/users
+GET /api/admin/spaces
+
+
+---
+
+## 🔒 Security
+
+- JWT authentication (HTTP-only cookies)
+- Role-based access control
+- Password hashing with bcrypt
+- Rate limiting
+- Helmet security headers
+- Input validation & sanitization
+
+---
+
+## 🚀 Future Enhancements
+
+### High Priority
+- Payment gateway integration
+- Calendar booking system
+- Workspace reviews & ratings
+- Push notifications
+
+### Medium Priority
+- AI workspace recommendations
+- Dynamic pricing engine
+- Occupancy heatmaps
+
+### Long Term
+- Mobile application
+- IoT occupancy sensors
+- QR-based check-ins
+- AI chatbot support
+
+---
+
+## 📈 Impact
+
+- Improve workspace discovery efficiency
+- Increase booking conversion rates
+- Improve occupancy rates
+- Reduce manual communication
+- Enable data-driven decisions
+
+---
+
+## ⚙️ Setup
+
+### Backend
+
 cd backend
 npm install
 npm run dev
-Frontend Setup
+
+
+### Frontend
+
 cd frontend
 npm install
 npm run dev
-Future Enhancements
-High Priority
-Payment gateway integration
-Calendar booking system
-Workspace reviews & ratings
-Push notifications
-Advanced analytics
-Medium Priority
-AI workspace recommendations
-Dynamic pricing
-Workspace heatmaps
-Video meeting integration
-Nice to Have
-Mobile application
-QR-based check-in system
-Smart IoT occupancy sensors
-AI chatbot support
-Expected Impact
 
-Flexo Spaces aims to:
 
-Improve workspace discovery efficiency
-Increase booking conversion rates
-Improve occupancy management
-Reduce manual communication
-Provide better decision-making insights
-Deployment Recommendations
-Recommended Hosting
-Frontend
-Vercel
-Backend
-Railway
-Render
-Database
-MongoDB Atlas
-Redis
-Redis Cloud
-Screenshots
+---
 
-Add screenshots inside /screenshots
+## 👨‍💻 Developer
 
-Landing Page
+**Hussain Moiyedi**
 
-Hero section with workspace discovery CTA
+- GitHub: https://github.com/
+- Email: vigreenhussainmoiyedi23@gmail.com
 
-Workspace Listing
+---
 
-Grid-based listings with filters
+## 📜 License
 
-Workspace Details
-
-Workspace images, pricing, amenities, and booking options
-
-Dashboard
-
-Analytics, bookings, and management tools
-
-License
-
-MIT License
-
-Contact
-
-Developer: Hussain Moiyedi
-Project: Flexo Spaces
-Tech Stack: MERN + Next.js Frontend
-Email: vigreenhussainmoiyedi23@gmail.com
-
-Built for smarter workspace discovery and real-time co-working management.
+MIT

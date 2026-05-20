@@ -1,110 +1,61 @@
-@import url("https://fonts.googleapis.com/css2?family=Carattere&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&family=Source+Code+Pro:wght@200..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&family=Oleo+Script+Swash+Caps&family=Shanti&display=swap");
 @import "tailwindcss";
-/* @theme {
-  --color-pri: #274135;
-  --color-pri2: #0f1a14;
-  --color-sec: #32674e;
-  --color-sec2: #00D492;
-  --color-tri: #faf8f5;
-  --color-quad: #333333;
-  --color-pent: #4d846a;
-  --color-headingColor: #0b2c3d;
-  --color-paragraphColor: #2e3f59;
-} */
+
 @theme {
-  /* 🌿 Brand Colors (Primary Identity) */
-  --color-brand-900: #0f1a14;
-  --color-brand-800: #1b2e25;
-  --color-brand-700: #274135;
-  --color-brand-600: #2d5443;
-  --color-brand-500: #32674e;
-  --color-brand-400: #3f7560;
-  --color-brand-300: #4d846a;
-  --color-brand-200: #79a891;
-  --color-brand-100: #a6cbbc;
+  /* 🌾 Brand Colors (Updated from new Mondrian-style reference) */
+  --color-brand-100: #f4e9d2; /* Cream / Bottom-right */
+  --color-brand-200: #e0b14e; /* Mustard Yellow / Top-right */
+  --color-brand-300: #1b7a6c; /* Teal-Green / Top-left */
+  --color-brand-500: #e0b14e; /* Primary brand accent (Yellow) */
 
-  /* 💚 Accent (CTA / Highlights) */
-  --color-accent-500: #00d492;
-  --color-accent-400: #33e0aa;
-  --color-accent-300: #66ebc3;
+  /* 💚 Accent (Replaced with your vivid teal for strong CTAs & highlights) */
+  --color-accent-500: #1b7a6c; /* Deep teal from top-left */
+  --color-accent-400: #2a9a85;
+  --color-accent-300: #4eb9a6;
 
-  /* 🧼 Neutral (Backgrounds / Surfaces) */
-  --color-bg-main: #fffdd0;
-  --color-bg-subtle: #f2f0ec;
-  --color-surface: #ffffff;
+  /* 🧼 Neutral Canvas / Backgrounds */
+  --color-bg-main: #f4e9d2; /* Warm cream from bottom-right */
+  --color-bg-subtle: #e8dcc4; /* Slightly deeper cream */
+  --color-surface: #ffffff; /* Pure white from middle-left */
 
-  /* ⚫ Text Colors */
-  --color-text-primary: #0b2c3d;
-  --color-text-secondary: #2e3f59;
-  --color-text-muted: #6b7280;
+  /* ⚫ Typography */
+  --color-text-primary: #2a3a5a; /* Navy / Bottom-left for headers */
+  --color-text-secondary: #3f4f70;
+  --color-text-muted: #736f6a; /* Kept earthy gray for balance */
 
-  /* 🧱 UI Elements */
-  --color-border: #e5e7eb;
-  --color-divider: #d1d5db;
+  /* 🧱 Borders & Dividers */
+  --color-border: #d9cfc7;
+  --color-divider: #c9b59c;
 
-  /* ⚡ States */
-  --color-success: #16a34a;
-  --color-warning: #f59e0b;
-  --color-error: #dc2626;
+  /* ⚡ UI States */
+  --color-success: #1b7a6c; /* Teal instead of green */
+  --color-warning: #e0b14e; /* Mustard yellow */
+  --color-error: #9b2c4e; /* Maroon from middle-right */
 
   /* 🌫 Overlay / Shadows */
-  --color-overlay: rgba(0, 0, 0, 0.5);
+  --color-overlay: rgba(42, 58, 90, 0.35); /* Based on navy */
 }
-.previewOfColors {
-  /* 🌿 Brand Colors (Primary Identity) */
-  --color-brand-900: #0f1a14;
-  --color-brand-700: #274135;
-  --color-brand-500: #32674e;
-  --color-brand-300: #4d846a;
 
-  /* 💚 Accent (CTA / Highlights) */
-  --color-accent-500: #fdfab7;
-  --color-accent-400: #33e0aa;
-  --color-accent-300: #66ebc3;
-
-  /* 🧼 Neutral (Cards / Surfaces) */
-  --color-bg-main: #faf8f5;
-  --color-bg-subtle: #f2f0ec;
-  --color-surface: #ffffff;
-
-  /* ⚫ Text Colors */
-  --color-text-primary: #0b2c3d;
-  --color-text-secondary: #2e3f59;
-  --color-text-muted: #6b7280;
-
-  /* 🧱 UI Elements */
-  --color-border: #e5e7eb;
-  --color-divider: #d1d5db;
-
-  /* ⚡ States */
-  --color-success: #16a34a;
-  --color-warning: #f59e0b;
-  --color-error: #dc2626;
-
-  /* 🌫 Overlay / Shadows */
-  --color-overlay: rgba(0, 0, 0, 0.5);
-}
+/* Global Light Theme Overrides */
 body,
 html,
 #root {
   width: 100%;
   overflow-x: hidden;
-  scrollbar-color: var(--color-bg-main) var(--color-brand-900);
+  scrollbar-color: var(--color-brand-300) var(--color-bg-main);
   scrollbar-width: thin;
-  background-color: #0f1a14;
-}
-.playfair {
-  font-family: "Playfair", serif;
+  background-color: var(--color-bg-main);
+  color: var(--color-text-secondary);
 }
 
-.montserrat {
-  font-family: "Montserrat", sans-serif;
+/* Typography Helpers */
+.oleo-script-swash-caps {
+  font-family: "Oleo Script Swash Caps", system-ui;
+}
+.shanti {
+  font-family: "Shanti", sans-serif;
 }
 
-.source-code-pro {
-  font-family: "Source Code Pro", monospace;
-}
-.carattere-regular {
-  font-family: "Carattere", cursive;
-  font-style: normal;
+.exo-2 {
+  font-family: "Exo 2", sans-serif;
 }

@@ -1,5 +1,5 @@
 const imagekit = require("../../config/imagekit");
-const listingModel = require("../../models/listing.model");
+const listingModel = require("../../models/space.model");
 
 async function deleteImageFromListing(imageId, listingId) {
     try {

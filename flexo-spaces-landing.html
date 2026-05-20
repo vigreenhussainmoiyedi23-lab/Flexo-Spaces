@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Flexo Spaces — Find Your Perfect Workspace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --teal: #0E7A5A;
+    --teal-dark: #085041;
+    --teal-light: #E1F5EE;
+    --gold: #CFA830;
+    --gold-dark: #9A7A1A;
+    --gold-light: #FBF3D5;
+    --navy: #2E3F5C;
+    --navy-dark: #1C2A3F;
+    --navy-light: #EEF1F6;
+    --cream: #E8E2CC;
+    --cream-dark: #D5CCAA;
+    --crimson: #8B1832;
+    --off-white: #FAFAF7;
+    --text-dark: #1a1a1a;
+    --text-mid: #444;
+    --text-muted: #777;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text-dark);
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: var(--navy-dark);
+    padding: 0 5%;
+    height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 2px solid var(--gold);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--cream);
+    letter-spacing: 0.04em;
+  }
+  .nav-logo span { color: var(--gold); }
+  .nav-links { display: flex; align-items: center; gap: 2.5rem; }
+  .nav-links a {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: rgba(232,226,204,0.75);
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-cta {
+    display: flex; gap: 0.75rem; align-items: center;
+  }
+  .btn-outline-sm {
+    padding: 0.45rem 1.2rem;
+    border: 1.5px solid var(--gold);
+    border-radius: 2px;
+    color: var(--gold);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-decoration: none;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-outline-sm:hover { background: var(--gold); color: var(--navy-dark); }
+  .btn-fill-sm {
+    padding: 0.45rem 1.2rem;
+    border: 1.5px solid var(--teal);
+    border-radius: 2px;
+    background: var(--teal);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-fill-sm:hover { background: var(--teal-dark); border-color: var(--teal-dark); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    background: var(--navy-dark);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg-pattern {
+    position: absolute; inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 79px, rgba(207,168,48,0.06) 79px, rgba(207,168,48,0.06) 80px),
+      repeating-linear-gradient(90deg, transparent, transparent 79px, rgba(207,168,48,0.06) 79px, rgba(207,168,48,0.06) 80px);
+    pointer-events: none;
+  }
+  .hero-left {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 6rem 5% 6rem 8%;
+    position: relative; z-index: 2;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    background: rgba(207,168,48,0.12);
+    border: 1px solid rgba(207,168,48,0.3);
+    border-radius: 2px;
+    padding: 0.3rem 0.9rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 2rem;
+    width: fit-content;
+  }
+  .hero-eyebrow::before {
+    content: '';
+    width: 18px; height: 2px;
+    background: var(--gold);
+    display: inline-block;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 5vw, 4.5rem);
+    line-height: 1.05;
+    color: var(--cream);
+    margin-bottom: 1.5rem;
+    font-weight: 900;
+  }
+  .hero-title .accent { color: var(--gold); font-style: italic; }
+  .hero-title .accent-teal { color: #3ABFA0; }
+  .hero-desc {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: rgba(232,226,204,0.65);
+    max-width: 440px;
+    margin-bottom: 2.5rem;
+  }
+  .hero-actions { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+  .btn-primary {
+    padding: 0.9rem 2.2rem;
+    background: var(--teal);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    border: none; cursor: pointer;
+    border-radius: 2px;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-primary:hover { background: var(--teal-dark); transform: translateY(-1px); }
+  .btn-ghost {
+    padding: 0.9rem 2rem;
+    color: var(--cream);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1.5px solid rgba(232,226,204,0.25);
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--cream); background: rgba(232,226,204,0.06); }
+
+  .hero-stats {
+    display: flex; gap: 2.5rem; margin-top: 3.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(207,168,48,0.15);
+  }
+  .stat-item { }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 0.75rem;
+    color: rgba(232,226,204,0.5);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: 0.3rem;
+  }
+
+  .hero-right {
+    position: relative; overflow: hidden;
+  }
+  .hero-img-stack {
+    position: absolute; inset: 0;
+    display: flex; align-items: stretch;
+  }
+  .hero-img-main {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: saturate(0.7) brightness(0.6);
+  }
+  .hero-img-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, var(--navy-dark) 0%, transparent 30%);
+  }
+  .hero-img-card {
+    position: absolute;
+    bottom: 3rem; left: 50%;
+    transform: translateX(-50%);
+    background: rgba(30,42,60,0.92);
+    border: 1px solid rgba(207,168,48,0.3);
+    border-radius: 4px;
+    padding: 1.2rem 1.6rem;
+    min-width: 260px;
+    backdrop-filter: blur(8px);
+  }
+  .hero-img-card-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.6rem;
+  }
+  .hero-img-card-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    color: var(--cream);
+    font-weight: 700;
+  }
+  .hero-img-card-sub {
+    font-size: 0.78rem;
+    color: rgba(232,226,204,0.5);
+    margin-top: 0.2rem;
+  }
+  .availability-dots {
+    display: flex; gap: 6px; margin-top: 1rem;
+  }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+  .dot.green { background: #3ABFA0; }
+  .dot.gold { background: var(--gold); }
+  .dot.red { background: var(--crimson); }
+  .dot-label {
+    font-size: 0.7rem;
+    color: rgba(232,226,204,0.45);
+    margin-left: 4px;
+    align-self: center;
+  }
+
+  /* SEARCH BAR */
+  .search-section {
+    background: var(--navy);
+    padding: 0 8%;
+    position: relative;
+    z-index: 10;
+  }
+  .search-bar {
+    background: var(--off-white);
+    border-radius: 4px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr auto;
+    border: 2px solid var(--cream-dark);
+    overflow: hidden;
+    transform: translateY(-28px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  }
+  .search-field {
+    padding: 1.1rem 1.4rem;
+    border-right: 1px solid var(--cream-dark);
+    cursor: pointer;
+  }
+  .search-field:last-of-type { border-right: none; }
+  .sf-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 0.25rem;
+  }
+  .sf-value {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-dark);
+  }
+  .sf-placeholder { color: var(--text-muted); font-weight: 400; }
+  .search-btn {
+    background: var(--teal);
+    color: #fff;
+    border: none;
+    padding: 0 2.5rem;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .search-btn:hover { background: var(--teal-dark); }
+
+  /* SECTION COMMON */
+  section { padding: 6rem 8%; }
+  .section-eyebrow {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 0.75rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .section-eyebrow::before {
+    content: '';
+    width: 20px; height: 2px;
+    background: var(--teal);
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 3.5vw, 2.8rem);
+    font-weight: 900;
+    line-height: 1.15;
+    color: var(--navy-dark);
+    margin-bottom: 1rem;
+  }
+  .section-sub {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text-muted);
+    max-width: 520px;
+  }
+
+  /* HOW IT WORKS */
+  .how-section {
+    background: var(--off-white);
+  }
+  .steps-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-top: 3.5rem;
+    position: relative;
+  }
+  .steps-grid::before {
+    content: '';
+    position: absolute;
+    top: 28px; left: calc(12.5% + 20px); right: calc(12.5% + 20px);
+    height: 2px;
+    background: repeating-linear-gradient(90deg, var(--teal-light) 0, var(--teal-light) 8px, transparent 8px, transparent 16px);
+  }
+  .step-item {
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center;
+    padding: 0 1.5rem;
+    position: relative;
+  }
+  .step-num {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--navy-dark);
+    color: var(--gold);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.5rem;
+    position: relative; z-index: 1;
+    border: 3px solid var(--cream);
+    box-shadow: 0 0 0 2px var(--navy);
+  }
+  .step-item:nth-child(2) .step-num { background: var(--teal); color: #fff; }
+  .step-item:nth-child(3) .step-num { background: var(--gold); color: var(--navy-dark); }
+  .step-item:nth-child(4) .step-num { background: var(--crimson); color: #fff; }
+  .step-label {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--navy-dark);
+    margin-bottom: 0.5rem;
+  }
+  .step-desc {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* SPACES GRID */
+  .spaces-section {
+    background: var(--cream);
+  }
+  .spaces-header {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 3rem;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  .filter-chips {
+    display: flex; gap: 0.5rem; flex-wrap: wrap;
+  }
+  .chip {
+    padding: 0.4rem 1rem;
+    border-radius: 2px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1.5px solid var(--cream-dark);
+    background: var(--off-white);
+    color: var(--text-mid);
+  }
+  .chip.active, .chip:hover {
+    background: var(--navy);
+    border-color: var(--navy);
+    color: var(--cream);
+  }
+  .spaces-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+  .space-card {
+    background: var(--off-white);
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--cream-dark);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+  }
+  .space-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(46,63,92,0.15);
+  }
+  .space-card.featured {
+    grid-column: span 2;
+  }
+  .space-img {
+    width: 100%; height: 200px;
+    object-fit: cover;
+    background: var(--cream-dark);
+    position: relative;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .space-card.featured .space-img { height: 280px; }
+  .space-img-placeholder {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .space-img-placeholder::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: repeating-linear-gradient(
+      45deg,
+      transparent 0, transparent 20px,
+      rgba(255,255,255,0.02) 20px, rgba(255,255,255,0.02) 40px
+    );
+  }
+  .sip-icon {
+    font-size: 3rem;
+    opacity: 0.2;
+    color: var(--cream);
+  }
+  .space-badge {
+    position: absolute; top: 12px; left: 12px;
+    padding: 0.25rem 0.7rem;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-radius: 2px;
+  }
+  .badge-teal { background: var(--teal); color: #fff; }
+  .badge-gold { background: var(--gold); color: var(--navy-dark); }
+  .badge-navy { background: var(--navy); color: var(--cream); }
+  .space-body { padding: 1.25rem 1.4rem 1.4rem; }
+  .space-meta {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  .space-type {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal);
+  }
+  .space-rating {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--gold-dark);
+  }
+  .space-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--navy-dark);
+    margin-bottom: 0.4rem;
+  }
+  .space-loc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .space-amenities {
+    display: flex; gap: 0.4rem; flex-wrap: wrap;
+    margin-bottom: 1.1rem;
+  }
+  .amenity-tag {
+    padding: 0.2rem 0.6rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    background: var(--cream);
+    color: var(--navy);
+    border-radius: 2px;
+    letter-spacing: 0.03em;
+  }
+  .space-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid var(--cream);
+  }
+  .space-price { }
+  .price-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--teal);
+  }
+  .price-unit {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-left: 4px;
+  }
+  .space-capacity {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    display: flex; align-items: center; gap: 4px;
+  }
+  .btn-book {
+    padding: 0.55rem 1.3rem;
+    background: transparent;
+    color: var(--teal);
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border: 1.5px solid var(--teal);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+  .btn-book:hover { background: var(--teal); color: #fff; }
+
+  /* AMENITIES */
+  .amenities-section {
+    background: var(--navy-dark);
+    position: relative; overflow: hidden;
+  }
+  .amenities-section::before {
+    content: '';
+    position: absolute;
+    right: -120px; top: -120px;
+    width: 480px; height: 480px;
+    border-radius: 50%;
+    border: 2px solid rgba(207,168,48,0.08);
+  }
+  .amenities-section::after {
+    content: '';
+    position: absolute;
+    right: -40px; top: -40px;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    border: 2px solid rgba(207,168,48,0.12);
+  }
+  .amenities-section .section-title { color: var(--cream); }
+  .amenities-section .section-sub { color: rgba(232,226,204,0.5); }
+  .amenities-section .section-eyebrow { color: var(--gold); }
+  .amenities-section .section-eyebrow::before { background: var(--gold); }
+  .amenities-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1rem;
+    margin-top: 3rem;
+  }
+  .amenity-item {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(207,168,48,0.12);
+    border-radius: 4px;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    transition: all 0.2s;
+    cursor: default;
+  }
+  .amenity-item:hover {
+    background: rgba(207,168,48,0.08);
+    border-color: rgba(207,168,48,0.3);
+    transform: translateY(-2px);
+  }
+  .amenity-icon {
+    font-size: 1.8rem;
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+  .amenity-name {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: rgba(232,226,204,0.75);
+    letter-spacing: 0.04em;
+  }
+
+  /* WHY US */
+  .why-section {
+    background: var(--cream);
+  }
+  .why-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+    margin-top: 1rem;
+  }
+  .why-features {
+    display: flex; flex-direction: column; gap: 2rem;
+    margin-top: 2.5rem;
+  }
+  .why-item {
+    display: flex; gap: 1.2rem; align-items: flex-start;
+  }
+  .why-icon-wrap {
+    width: 44px; height: 44px; flex-shrink: 0;
+    background: var(--teal-light);
+    border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+  }
+  .why-item:nth-child(2) .why-icon-wrap { background: rgba(207,168,48,0.15); }
+  .why-item:nth-child(3) .why-icon-wrap { background: rgba(46,63,92,0.08); }
+  .why-item:nth-child(4) .why-icon-wrap { background: rgba(139,24,50,0.08); }
+  .why-item-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--navy-dark);
+    margin-bottom: 0.3rem;
+  }
+  .why-item-desc {
+    font-size: 0.83rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+  }
+  .why-visual {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .why-card {
+    border-radius: 4px;
+    padding: 1.5rem;
+    display: flex; flex-direction: column;
+  }
+  .why-card:nth-child(1) { background: var(--navy); }
+  .why-card:nth-child(2) { background: var(--teal); margin-top: 1.5rem; }
+  .why-card:nth-child(3) { background: var(--gold); margin-top: -1.5rem; }
+  .why-card:nth-child(4) { background: var(--crimson); }
+  .why-card-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: rgba(255,255,255,0.9);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .why-card:nth-child(3) .why-card-num { color: var(--navy-dark); }
+  .why-card-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255,255,255,0.6);
+  }
+  .why-card:nth-child(3) .why-card-label { color: rgba(46,63,92,0.6); }
+
+  /* TESTIMONIALS */
+  .testimonials-section {
+    background: var(--off-white);
+  }
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+  .testimonial-card {
+    background: var(--cream);
+    border-radius: 4px;
+    padding: 2rem;
+    border-left: 3px solid var(--teal);
+    position: relative;
+  }
+  .testimonial-card:nth-child(2) { border-color: var(--gold); }
+  .testimonial-card:nth-child(3) { border-color: var(--crimson); }
+  .testimonial-quote {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    line-height: 1;
+    color: var(--teal);
+    margin-bottom: 0.5rem;
+  }
+  .testimonial-card:nth-child(2) .testimonial-quote { color: var(--gold); }
+  .testimonial-card:nth-child(3) .testimonial-quote { color: var(--crimson); }
+  .testimonial-text {
+    font-size: 0.88rem;
+    line-height: 1.75;
+    color: var(--text-mid);
+    margin-bottom: 1.5rem;
+    font-style: italic;
+  }
+  .testimonial-author {
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .author-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+    font-size: 0.8rem;
+  }
+  .av-teal { background: var(--teal); color: #fff; }
+  .av-gold { background: var(--gold); color: var(--navy-dark); }
+  .av-navy { background: var(--navy); color: var(--cream); }
+  .author-name { font-weight: 700; font-size: 0.85rem; color: var(--navy-dark); }
+  .author-role { font-size: 0.73rem; color: var(--text-muted); }
+
+  /* CTA BANNER */
+  .cta-section {
+    background: var(--teal);
+    padding: 5rem 8%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .cta-left { }
+  .cta-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+  }
+  .cta-title em { font-style: italic; color: var(--gold); }
+  .cta-sub { font-size: 0.95rem; color: rgba(255,255,255,0.7); }
+  .btn-cta-white {
+    padding: 1rem 2.5rem;
+    background: #fff;
+    color: var(--teal);
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border: none; cursor: pointer;
+    border-radius: 2px;
+    text-decoration: none;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .btn-cta-white:hover { background: var(--cream); }
+  .btn-cta-outline {
+    padding: 1rem 2.2rem;
+    background: transparent;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border: 2px solid rgba(255,255,255,0.4);
+    cursor: pointer;
+    border-radius: 2px;
+    text-decoration: none;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .btn-cta-outline:hover { border-color: #fff; background: rgba(255,255,255,0.08); }
+  .cta-btns { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+
+  /* FOOTER */
+  footer {
+    background: var(--navy-dark);
+    padding: 4rem 8% 2rem;
+  }
+  .footer-top {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 3rem;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid rgba(232,226,204,0.1);
+    margin-bottom: 2rem;
+  }
+  .footer-brand .nav-logo {
+    font-size: 1.6rem;
+    display: block;
+    margin-bottom: 1rem;
+  }
+  .footer-brand p {
+    font-size: 0.82rem;
+    line-height: 1.7;
+    color: rgba(232,226,204,0.45);
+    max-width: 280px;
+  }
+  .footer-col-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.2rem;
+  }
+  .footer-links { display: flex; flex-direction: column; gap: 0.6rem; }
+  .footer-links a {
+    font-size: 0.82rem;
+    color: rgba(232,226,204,0.5);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .footer-links a:hover { color: var(--cream); }
+  .footer-bottom {
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-copy {
+    font-size: 0.75rem;
+    color: rgba(232,226,204,0.3);
+  }
+  .footer-badges { display: flex; gap: 0.75rem; }
+  .footer-badge {
+    padding: 0.3rem 0.8rem;
+    border: 1px solid rgba(232,226,204,0.15);
+    border-radius: 2px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: rgba(232,226,204,0.35);
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero-eyebrow { animation: fadeUp 0.6s ease both; }
+  .hero-title { animation: fadeUp 0.6s 0.1s ease both; }
+  .hero-desc { animation: fadeUp 0.6s 0.2s ease both; }
+  .hero-actions { animation: fadeUp 0.6s 0.3s ease both; }
+  .hero-stats { animation: fadeUp 0.6s 0.4s ease both; }
+
+  /* RESPONSIVE */
+  @media (max-width: 1024px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    .search-bar { grid-template-columns: 1fr 1fr; }
+    .search-btn { grid-column: span 2; padding: 1rem; }
+    .spaces-grid { grid-template-columns: 1fr 1fr; }
+    .space-card.featured { grid-column: span 1; }
+    .amenities-grid { grid-template-columns: repeat(3, 1fr); }
+    .why-grid { grid-template-columns: 1fr; }
+    .footer-top { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) {
+    section { padding: 4rem 6%; }
+    .search-bar { grid-template-columns: 1fr; }
+    .search-btn { grid-column: auto; }
+    .spaces-grid, .testimonials-grid { grid-template-columns: 1fr; }
+    .steps-grid { grid-template-columns: 1fr 1fr; }
+    .steps-grid::before { display: none; }
+    .amenities-grid { grid-template-columns: repeat(2, 1fr); }
+    .why-visual { grid-template-columns: 1fr 1fr; }
+    .footer-top { grid-template-columns: 1fr; }
+    nav .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Flexo<span>Spaces</span></div>
+  <div class="nav-links">
+    <a href="#">Bookings</a>
+    <a href="#">Workspaces</a>
+    <a href="#">Pricing</a>
+    <a href="#">About</a>
+  </div>
+  <div class="nav-cta">
+    <a href="#" class="btn-outline-sm">Login</a>
+    <a href="#" class="btn-fill-sm">Register</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-pattern"></div>
+  <div class="hero-left">
+    <div class="hero-eyebrow">Smart Co-Working Discovery</div>
+    <h1 class="hero-title">
+      Find Your<br>
+      <span class="accent">Perfect</span><br>
+      <span class="accent-teal">Workspace</span>
+    </h1>
+    <p class="hero-desc">
+      Discover co-working spaces tailored to your team size, budget, and workflow. Smart matching. Real-time availability. Zero hassle.
+    </p>
+    <div class="hero-actions">
+      <a href="#" class="btn-primary">Browse Workspaces</a>
+      <a href="#" class="btn-ghost">List Your Space →</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num">150+</div>
+        <div class="stat-label">Spaces Listed</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">1,000+</div>
+        <div class="stat-label">Active Users</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">98%</div>
+        <div class="stat-label">Satisfaction</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-img-stack">
+      <div class="hero-img-main" style="background: linear-gradient(135deg, #1C2A3F 0%, #0E3D30 100%); width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
+        <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:0.08">
+          <rect x="20" y="60" width="160" height="110" rx="4" stroke="#E8E2CC" stroke-width="3"/>
+          <rect x="40" y="80" width="50" height="35" rx="2" fill="#E8E2CC"/>
+          <rect x="110" y="80" width="50" height="35" rx="2" fill="#E8E2CC"/>
+          <rect x="40" y="130" width="50" height="25" rx="2" fill="#E8E2CC"/>
+          <rect x="110" y="130" width="50" height="25" rx="2" fill="#E8E2CC"/>
+          <rect x="70" y="30" width="60" height="40" rx="2" stroke="#E8E2CC" stroke-width="3"/>
+          <line x1="100" y1="60" x2="100" y2="70" stroke="#E8E2CC" stroke-width="3"/>
+        </svg>
+      </div>
+      <div class="hero-img-overlay"></div>
+    </div>
+    <div class="hero-img-card">
+      <div class="hero-img-card-label">Today's Availability</div>
+      <div class="hero-img-card-val">47 Spaces Open</div>
+      <div class="hero-img-card-sub">Across 12 locations in your city</div>
+      <div class="availability-dots">
+        <div class="dot green"></div>
+        <span class="dot-label" style="font-size:0.68rem; color:rgba(232,226,204,0.45); margin-right:8px;">Available</span>
+        <div class="dot gold"></div>
+        <span class="dot-label" style="font-size:0.68rem; color:rgba(232,226,204,0.45); margin-right:8px;">Few Left</span>
+        <div class="dot red"></div>
+        <span class="dot-label" style="font-size:0.68rem; color:rgba(232,226,204,0.45);">Booked</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SEARCH -->
+<div class="search-section">
+  <div class="search-bar">
+    <div class="search-field">
+      <div class="sf-label">Location</div>
+      <div class="sf-value sf-placeholder">City or Area</div>
+    </div>
+    <div class="search-field">
+      <div class="sf-label">Team Size</div>
+      <div class="sf-value sf-placeholder">No. of Persons</div>
+    </div>
+    <div class="search-field">
+      <div class="sf-label">Workspace Type</div>
+      <div class="sf-value sf-placeholder">Cabin / Desk / Room</div>
+    </div>
+    <div class="search-field">
+      <div class="sf-label">Budget</div>
+      <div class="sf-value sf-placeholder">Max / Month</div>
+    </div>
+    <button class="search-btn">Find Spaces</button>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <div class="section-eyebrow">How It Works</div>
+  <h2 class="section-title">Workspace Booking<br>in 4 Simple Steps</h2>
+  <div class="steps-grid">
+    <div class="step-item">
+      <div class="step-num">1</div>
+      <div class="step-label">Search & Filter</div>
+      <div class="step-desc">Enter your team size, location, and budget to surface matched spaces instantly.</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <div class="step-label">Compare Spaces</div>
+      <div class="step-desc">View amenities, floor plans, reviews, and real-time availability side by side.</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">3</div>
+      <div class="step-label">Send Request</div>
+      <div class="step-desc">Book instantly or submit an inquiry. Space owners are notified immediately.</div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">4</div>
+      <div class="step-label">Move Right In</div>
+      <div class="step-desc">Receive confirmation and workspace access details. Your team is ready to work.</div>
+    </div>
+  </div>
+</section>
+
+<!-- TRENDING SPACES -->
+<section class="spaces-section">
+  <div class="spaces-header">
+    <div>
+      <div class="section-eyebrow">Trending Workspaces</div>
+      <h2 class="section-title">Popular Spaces<br>Near You</h2>
+    </div>
+    <div class="filter-chips">
+      <div class="chip active">All</div>
+      <div class="chip">Private Cabin</div>
+      <div class="chip">Shared Desk</div>
+      <div class="chip">Meeting Room</div>
+      <div class="chip">Hot Desk</div>
+    </div>
+  </div>
+  <div class="spaces-grid">
+
+    <div class="space-card featured">
+      <div class="space-img">
+        <div class="space-img-placeholder" style="background: linear-gradient(135deg, #0E3D30 0%, #085041 100%);">
+          <span class="sip-icon">🏢</span>
+        </div>
+        <span class="space-badge badge-gold">⭐ Top Rated</span>
+      </div>
+      <div class="space-body">
+        <div class="space-meta">
+          <span class="space-type">Private Cabin Suite</span>
+          <span class="space-rating">★ 4.9 &nbsp;(128 reviews)</span>
+        </div>
+        <div class="space-name">The Meridian Executive Hub</div>
+        <div class="space-loc">📍 Connaught Place, New Delhi</div>
+        <div class="space-amenities">
+          <span class="amenity-tag">High-Speed Wi-Fi</span>
+          <span class="amenity-tag">Dedicated Desk</span>
+          <span class="amenity-tag">24/7 Access</span>
+          <span class="amenity-tag">Conference Room</span>
+          <span class="amenity-tag">Cafeteria</span>
+          <span class="amenity-tag">Parking</span>
+        </div>
+        <div class="space-footer">
+          <div class="space-price">
+            <span class="price-val">₹12,000</span>
+            <span class="price-unit">/ month</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:1rem;">
+            <span class="space-capacity">👥 Up to 8 persons · 450 sq ft</span>
+            <a href="#" class="btn-book">Book Now</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-card">
+      <div class="space-img">
+        <div class="space-img-placeholder" style="background: linear-gradient(135deg, #1C2A3F 0%, #2E3F5C 100%);">
+          <span class="sip-icon">💼</span>
+        </div>
+        <span class="space-badge badge-teal">Available</span>
+      </div>
+      <div class="space-body">
+        <div class="space-meta">
+          <span class="space-type">Shared Desk</span>
+          <span class="space-rating">★ 4.7</span>
+        </div>
+        <div class="space-name">Nexus Co-Work Lounge</div>
+        <div class="space-loc">📍 Koramangala, Bangalore</div>
+        <div class="space-amenities">
+          <span class="amenity-tag">Wi-Fi</span>
+          <span class="amenity-tag">Power Backup</span>
+          <span class="amenity-tag">Printer</span>
+        </div>
+        <div class="space-footer">
+          <div class="space-price">
+            <span class="price-val">₹4,500</span>
+            <span class="price-unit">/ month</span>
+          </div>
+          <a href="#" class="btn-book">Book Now</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-card">
+      <div class="space-img">
+        <div class="space-img-placeholder" style="background: linear-gradient(135deg, #6B2020 0%, #8B1832 100%);">
+          <span class="sip-icon">🎯</span>
+        </div>
+        <span class="space-badge badge-navy">Few Left</span>
+      </div>
+      <div class="space-body">
+        <div class="space-meta">
+          <span class="space-type">Meeting Room</span>
+          <span class="space-rating">★ 4.8</span>
+        </div>
+        <div class="space-name">Catalyst Conference Centre</div>
+        <div class="space-loc">📍 BKC, Mumbai</div>
+        <div class="space-amenities">
+          <span class="amenity-tag">Projector</span>
+          <span class="amenity-tag">Video Call Setup</span>
+          <span class="amenity-tag">Whiteboard</span>
+        </div>
+        <div class="space-footer">
+          <div class="space-price">
+            <span class="price-val">₹800</span>
+            <span class="price-unit">/ hour</span>
+          </div>
+          <a href="#" class="btn-book">Book Now</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-card">
+      <div class="space-img">
+        <div class="space-img-placeholder" style="background: linear-gradient(135deg, #7A6010 0%, #CFA830 100%);">
+          <span class="sip-icon">🌿</span>
+        </div>
+        <span class="space-badge badge-teal">Available</span>
+      </div>
+      <div class="space-body">
+        <div class="space-meta">
+          <span class="space-type">Hot Desk</span>
+          <span class="space-rating">★ 4.6</span>
+        </div>
+        <div class="space-name">Greenleaf Flex Studio</div>
+        <div class="space-loc">📍 HSR Layout, Bangalore</div>
+        <div class="space-amenities">
+          <span class="amenity-tag">Wi-Fi</span>
+          <span class="amenity-tag">Lounge Area</span>
+          <span class="amenity-tag">Coffee Bar</span>
+        </div>
+        <div class="space-footer">
+          <div class="space-price">
+            <span class="price-val">₹250</span>
+            <span class="price-unit">/ day</span>
+          </div>
+          <a href="#" class="btn-book">Book Now</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- AMENITIES -->
+<section class="amenities-section">
+  <div class="section-eyebrow">What's Included</div>
+  <h2 class="section-title">Every Space Comes<br>Fully Equipped</h2>
+  <p class="section-sub">Transparent amenity listings so you know exactly what you're getting before you book.</p>
+  <div class="amenities-grid">
+    <div class="amenity-item">
+      <span class="amenity-icon">📶</span>
+      <div class="amenity-name">High-Speed Wi-Fi</div>
+    </div>
+    <div class="amenity-item">
+      <span class="amenity-icon">🖥️</span>
+      <div class="amenity-name">Meeting Rooms</div>
+    </div>
+    <div class="amenity-item">
+      <span class="amenity-icon">🅿️</span>
+      <div class="amenity-name">Parking Space</div>
+    </div>
+    <div class="amenity-item">
+      <span class="amenity-icon">⚡</span>
+      <div class="amenity-name">Power Backup</div>
+    </div>
+    <div class="amenity-item">
+      <span class="amenity-icon">☕</span>
+      <div class="amenity-name">Cafeteria</div>
+    </div>
+    <div class="amenity-item">
+      <span class="amenity-icon">🔒</span>
+      <div class="amenity-name">24/7 Security</div>
+    </div>
+    <div class="amenity-item">
+      <span class="amenity-icon">🖨️</span>
+      <div class="amenity-name">Print & Scan</div>
+    </div>
+    <div class="amenity-item">
+      <span class="amenity-icon">📦</span>
+      <div class="amenity-name">Storage Lockers</div>
+    </div>
+    <div class="amenity-item">
+      <span class="amenity-icon">🌬️</span>
+      <div class="amenity-name">Climate Control</div>
+    </div>
+    <div class="amenity-item">
+      <span class="amenity-icon">🎧</span>
+      <div class="amenity-name">Phone Booths</div>
+    </div>
+    <div class="amenity-item">
+      <span class="amenity-icon">🚿</span>
+      <div class="amenity-name">Shower Rooms</div>
+    </div>
+    <div class="amenity-item">
+      <span class="amenity-icon">🏋️</span>
+      <div class="amenity-name">Wellness Zone</div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section class="why-section">
+  <div class="why-grid">
+    <div>
+      <div class="section-eyebrow">Why Flexo Spaces</div>
+      <h2 class="section-title">Built for the<br>Modern Workforce</h2>
+      <p class="section-sub">Whether you're a solo freelancer or a growing startup, Flexo Spaces adapts to your needs.</p>
+      <div class="why-features">
+        <div class="why-item">
+          <div class="why-icon-wrap">🎯</div>
+          <div>
+            <div class="why-item-title">Smart Matching Engine</div>
+            <div class="why-item-desc">Our algorithm matches you to spaces based on team size, budget, area needs, and work style — not just location.</div>
+          </div>
+        </div>
+        <div class="why-item">
+          <div class="why-icon-wrap">⚡</div>
+          <div>
+            <div class="why-item-title">Real-Time Availability</div>
+            <div class="why-item-desc">Live seat and room availability across all listed spaces. No more back-and-forth emails just to check a date.</div>
+          </div>
+        </div>
+        <div class="why-item">
+          <div class="why-icon-wrap">🛡️</div>
+          <div>
+            <div class="why-item-title">Verified Listings</div>
+            <div class="why-item-desc">Every space is reviewed and verified by our team before going live. Accurate photos, honest amenity lists.</div>
+          </div>
+        </div>
+        <div class="why-item">
+          <div class="why-icon-wrap">📊</div>
+          <div>
+            <div class="why-item-title">Owner Dashboard</div>
+            <div class="why-item-desc">Space owners get a powerful dashboard to manage listings, track bookings, and optimise occupancy rates.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="why-visual">
+      <div class="why-card">
+        <div class="why-card-num">150+</div>
+        <div class="why-card-label">Spaces Nationwide</div>
+      </div>
+      <div class="why-card">
+        <div class="why-card-num">1K+</div>
+        <div class="why-card-label">Daily Active Users</div>
+      </div>
+      <div class="why-card">
+        <div class="why-card-num">94%</div>
+        <div class="why-card-label">Match Accuracy</div>
+      </div>
+      <div class="why-card">
+        <div class="why-card-num">99.5%</div>
+        <div class="why-card-label">Platform Uptime</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section">
+  <div class="section-eyebrow">User Stories</div>
+  <h2 class="section-title">Trusted by Professionals<br>Across India</h2>
+  <div class="testimonials-grid">
+    <div class="testimonial-card">
+      <div class="testimonial-quote">"</div>
+      <p class="testimonial-text">Found a perfect private cabin for my 6-person team in under 10 minutes. The smart filter is genuinely impressive — it understood exactly what we needed.</p>
+      <div class="testimonial-author">
+        <div class="author-avatar av-teal">RK</div>
+        <div>
+          <div class="author-name">Ravi Kumar</div>
+          <div class="author-role">Founder, TechFlow Startup · Bangalore</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-quote">"</div>
+      <p class="testimonial-text">As a freelance designer, I move around a lot. Flexo Spaces lets me book a hot desk for a day or a week. The listing quality is so much better than other platforms.</p>
+      <div class="testimonial-author">
+        <div class="author-avatar av-gold">PS</div>
+        <div>
+          <div class="author-name">Priya Sharma</div>
+          <div class="author-role">Independent UX Designer · Mumbai</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-quote">"</div>
+      <p class="testimonial-text">Listed our space on Flexo and our occupancy went from 60% to 92% in two months. The owner dashboard gives us all the analytics we need to optimise pricing.</p>
+      <div class="testimonial-author">
+        <div class="author-avatar av-navy">AM</div>
+        <div>
+          <div class="author-name">Arjun Mehta</div>
+          <div class="author-role">Co-Working Space Owner · Delhi</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="cta-left">
+    <h2 class="cta-title">Ready to Find Your<br><em>Ideal Workspace?</em></h2>
+    <p class="cta-sub">Join 1,000+ professionals already working smarter with Flexo Spaces.</p>
+  </div>
+  <div class="cta-btns">
+    <a href="#" class="btn-cta-white">Browse Spaces</a>
+    <a href="#" class="btn-cta-outline">List Your Space</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <span class="nav-logo">Flexo<span>Spaces</span></span>
+      <p>A centralized platform for discovering, comparing, and booking co-working spaces. Built for the modern professional.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Platform</div>
+      <div class="footer-links">
+        <a href="#">Browse Workspaces</a>
+        <a href="#">How It Works</a>
+        <a href="#">Smart Matching</a>
+        <a href="#">Pricing</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">For Owners</div>
+      <div class="footer-links">
+        <a href="#">List Your Space</a>
+        <a href="#">Owner Dashboard</a>
+        <a href="#">Analytics</a>
+        <a href="#">Support</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <div class="footer-links">
+        <a href="#">About Us</a>
+        <a href="#">Blog</a>
+        <a href="#">Careers</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 Flexo Spaces. All rights reserved.</div>
+    <div class="footer-badges">
+      <span class="footer-badge">Privacy Policy</span>
+      <span class="footer-badge">Terms of Use</span>
+      <span class="footer-badge">99.5% Uptime</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

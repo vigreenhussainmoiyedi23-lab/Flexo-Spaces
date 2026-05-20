@@ -9,7 +9,7 @@ import StickyCTA from "../components/StickyCTA";
 
 const LandingPage = () => {
   return (
-    <div className="w-full bg-brand-900 text-white font-sans">
+    <div className="w-full bg-brand-100 text-brand-900 font-sans">
       <Hero />
       <CategoriesSlider />
       <TrendingSwapsPreview />

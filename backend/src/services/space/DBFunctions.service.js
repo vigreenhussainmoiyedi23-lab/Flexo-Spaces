@@ -1,5 +1,5 @@
-const { CATEGORIES, SIZES, CONDITIONS } = require("../../constants/listingEnums");
-const listingModel = require("../../models/listing.model");
+
+const listingModel = require("../../models/space.model");
 const swapModel = require("../../models/swap/swap.model");
 
 
@@ -17,21 +17,7 @@ async function isListingLocked(listingId) {
 }
 
 
-/*
- * @description Fetchs all enum values for categories, sizes and conditions
- * @returns { categories: string[], sizes: string[], conditions: string[] }
- */
-async function enumValuesGetter() {
-    try {
-        const categories = CATEGORIES;
-        const sizes = SIZES;
-        const conditions = CONDITIONS;
-        return { categories, sizes, conditions };
-    } catch (error) {
-        console.log("Error fetching enum values:", error);
-        throw error;
-    }
-}
+
 /*
  * @param {object} ListingData - contains all the required data for creating a listing
  * @returns {object} - the newly created listing
@@ -189,6 +175,5 @@ module.exports = {
     updateListingService,
     deleteListingService,
     getListingByIdService,
-    getAllListingsService,
-    enumValuesGetter
+    getAllListingsService
 };

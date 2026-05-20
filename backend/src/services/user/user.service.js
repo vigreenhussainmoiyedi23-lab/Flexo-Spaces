@@ -1,4 +1,4 @@
-const listingModel = require("../../models/listing.model");
+const listingModel = require("../../models/space.model");
 const notificationModel = require("../../models/user/notification.model");
 const userModel = require("../../models/user/user.model");
 const ratingModel = require("../../models/user/rating.model");

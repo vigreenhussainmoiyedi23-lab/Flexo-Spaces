@@ -1,6 +1,4 @@
-const { CLOTHING_TYPES, SIZES, CONDITIONS, CATEGORIES } = require("../constants/listingEnums");
 const { body } = require("express-validator");
-const { validate } = require("./validate");
 
 
 const createDisputeValidator = [

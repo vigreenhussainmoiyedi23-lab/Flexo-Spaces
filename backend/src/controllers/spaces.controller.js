@@ -17,9 +17,9 @@ APIs to build for listing.routes.js:
 const imagekit = require("../config/imagekit");
 const { validateLocation } = require("../Validators/locationValidator");
 const { EstimateValue } = require("../services/ai/ValueEstimate.service");
-const { getAllListingsService, getListingByIdService, getUserAllListingsService, createListingService, updateListingService, deleteListingService } = require("../services/listing/DBFunctions.service");
-const { deleteAllImageFromListing } = require("../services/listing/DeleteImage.service");
-const { uploadImage } = require("../services/listing/UploadImage.service");
+const { getAllListingsService, getListingByIdService, getUserAllListingsService, createListingService, updateListingService, deleteListingService } = require("../services/space/DBFunctions.service");
+const { deleteAllImageFromListing } = require("../services/space/DeleteImage.service");
+const { uploadImage } = require("../services/space/UploadImage.service");
 
 
 async function GetAllListingsHandler(req, res) {
@@ -57,7 +57,7 @@ async function UpdateListingByIdHandler(req, res) {
     }
 }
 
-async function CreateListingHandler(req, res) {
+async function CreateWorkSpaceHandler(req, res) {
     try {
         if (!req.files || req.files.length === 0) {
             return res.status(400).json({
@@ -65,8 +65,8 @@ async function CreateListingHandler(req, res) {
                 success: false
             });
         }
-        const { category, clothingType, brandName, size, condition, title, description } = req.body;
-        const estimatedValue = await EstimateValue({ brandName, size, clothingType, condition });
+        const { pricing, spaceType, capacity, amenities, title, description } = req.body;
+
         let { city, state, country, lat, lng } = await validateLocation(JSON.parse(req.body.location))
         const location = {
             geo: {
@@ -76,22 +76,29 @@ async function CreateListingHandler(req, res) {
             state,
             country
         }
- 
-        const value = estimatedValue
-        if (!value) return res.status(500).json({ message: "Error estimating value", success: false })
+
         const owner = req.userId
         const promises = req.files.map(file =>
             uploadImage(file.buffer, Date.now() + "_" + Math.floor(Math.random() * 1000), "/SwapStyle/listingImages")
         );
-        console.log("checkpoint middle")
+
+
         const responses = await Promise.all(promises)
         const images = responses.map(response => { return { url: response.url, fileId: response.fileId, thumbnail: response.thumbnailUrl } })
-        const listing = await createListingService({ location: location, clothingType, brandName, size, condition, estimatedValue: value, images, owner, title, description, category })
-        console.log("checkpoint middle")
-        res.status(201).json({ listing, message: "Listing created successfully", success: true })
-
+        const listing = await createListingService({
+            location: location,
+            spaceType,
+            pricing,
+            capacity,
+            images,
+            owner,
+            title,
+            description,
+            amenities
+        })
+        res.status(201).json({ listing, message: "WorkSpace created successfully", success: true })
     } catch (error) {
-        return res.status(500).json({ message: "Error creating listing", error, success: false })
+        return res.status(500).json({ message: "Error creating WorkSpace", error, success: false })
     }
 }
 async function AddImagesToListingHandler(req, res) {
@@ -124,7 +131,7 @@ async function DeleteListingByIdHandler(req, res) {
 
 
 module.exports = {
-    CreateListingHandler,
+    CreateWorkSpaceHandler,
     GetAllListingsHandler,
     GetListingByIdHandler,
     UpdateListingByIdHandler,

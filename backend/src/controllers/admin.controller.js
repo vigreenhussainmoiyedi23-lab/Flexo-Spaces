@@ -1,7 +1,7 @@
 const redis = require("../config/cache")
 const userModel = require("../models/user/user.model")
 const swapModel = require("../models/swap/swap.model.js")
-const listingModel = require("../models/listing.model")
+const listingModel = require("../models/space.model.js")
 const disputeModel = require("../models/swap/dispute.model")
 const { GeneratePlatformInsight } = require("../services/ai/PlatformSummary.service.js")
 
