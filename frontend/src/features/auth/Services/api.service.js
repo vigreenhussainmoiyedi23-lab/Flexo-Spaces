@@ -21,22 +21,27 @@ export const verifyOtp = async (otp) => {
     }
 };
 
-export const register = async ({ username, email, password }) => {
+export const register = async ({ username, email, password, role }) => {
     try {
+        if ((role !== "user" && role !== "workspace_owner") || role === "admin") {
+            throw new Error("Invalid role");
+        }
         const response = await apiClient.post("/auth/register", {
             username,
             email,
             password,
+            role
         });
         return response.data;
     } catch (error) {
         throw error;
     }
 };
-export const Google = async ({ credential }) => {
+export const Google = async ({ credential,role }) => {
     try {
         const response = await apiClient.post("/auth/google", {
-            credential
+            credential,
+            role
         });
         return response.data;
     } catch (error) {

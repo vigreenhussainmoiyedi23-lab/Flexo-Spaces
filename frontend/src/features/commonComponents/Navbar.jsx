@@ -5,12 +5,12 @@ import { Bell, Plus } from "lucide-react";
 import useNotification from "../notifications/hook/useNotification";
 
 const Navbar = ({ user }) => {
-  const { unreadCount,fetchNotifications } = useNotification();
+  const { unreadCount, fetchNotifications } = useNotification();
   useEffect(() => {
     fetchNotifications({ page: 1, limit: 20, append: false });
   }, []);
   return (
-    <nav className="bg-[#0a140f] w-full fixed text-white border-b border-white/10 py-5  top-0 z-50">
+    <nav className="bg-text-primary w-full fixed text-white border-b border-white/10 py-5  top-0 z-50">
       {/* Navbar */}
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         <div className="flex items-center gap-3 ">
@@ -20,16 +20,16 @@ const Navbar = ({ user }) => {
         {user && (
           <div className="hidden lg:flex items-center gap-8 text-sm">
             <Link
-              to="/listings"
+              to="/spaces"
               className="hover:text-emerald-400 transition-colors"
             >
-              Listings
+              Spaces
             </Link>
             <Link
-              to="/swaps"
+              to="/bookings"
               className="hover:text-emerald-400 transition-colors"
             >
-              Swaps
+              Bookings
             </Link>
             <Link
               to="/chats"
@@ -41,17 +41,17 @@ const Navbar = ({ user }) => {
         )}
 
         {!user && (
-          <div className="flex items-center sm:gap-4 sm:scale-100 scale-70 gap-2">
+          <div className="flex items-center  sm:gap-4 sm:scale-100 scale-70 gap-2">
             <Link
               to="/login"
-              className="px-6 py-2 text-sm font-medium hover:bg-white/10 rounded-xl transition-all"
+              className="px-6 py-2 text-sm active:scale-95 bg-brand-500 font-medium hover:scale-99 rounded-xl transition-all"
             >
               Login
             </Link>
 
             <Link
-              to="/register"
-              className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-sm font-semibold rounded-xl transition-all"
+              to="/register/user"
+              className="px-6 py-2 bg-emerald-600 active:scale-95  hover:bg-emerald-700 text-sm font-semibold rounded-xl transition-all"
             >
               Join Free
             </Link>
@@ -59,13 +59,15 @@ const Navbar = ({ user }) => {
         )}
         {user && (
           <div className="flex items-center sm:gap-6 sm:scale-100 scale-70 gap-2">
-            <Link
-              to="/createListing"
-              className=" text-sm py-1 gap-3 font-medium hidden  lg:flex items-center border border-bg-main text-bg-main px-3 rounded-xl transition-all "
-            >
-              <Plus className="w-8 h-8 " />
-              <span className="font-bold text-base">List Item</span>
-            </Link>
+            {user.role == "workspace_owner" && (
+              <Link
+                to="/createSpace"
+                className=" text-sm py-1 gap-3 font-medium hidden  lg:flex items-center border border-bg-main text-bg-main px-3 rounded-xl transition-all "
+              >
+                <Plus className="w-8 h-8 " />
+                <span className="font-bold text-base">List Spaces</span>
+              </Link>
+            )}
             <Link
               to="/notifications"
               className=" text-sm font-medium relative hover:bg-white/10 rounded-xl transition-all flex flex-col items-center justify-end gap-1"

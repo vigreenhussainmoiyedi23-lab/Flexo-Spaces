@@ -53,7 +53,7 @@ export const LoginForm = () => {
       <p className="error text-red-500">{error ? `⚠️ ${error}` : ""}</p>
       <p className="text-sm text-center">
         Don't have an account?{" "}
-        <Link to={"/register"} className="text-green-700">
+        <Link to={"/register/user"} className="text-green-700">
           Register
         </Link>
       </p>

@@ -10,8 +10,42 @@
 
   /* 💚 Accent (Replaced with your vivid teal for strong CTAs & highlights) */
   --color-accent-500: #1b7a6c; /* Deep teal from top-left */
-  --color-accent-400: #2a9a85;
-  --color-accent-300: #4eb9a6;
+  --color-accent-400: #0d7a5f;
+  --color-accent-300: #8b1e3f;
+
+  /* 🧼 Neutral Canvas / Backgrounds */
+  --color-bg-main: #f4e9d2; /* Warm cream from bottom-right */
+  --color-bg-subtle: #e8dcc4; /* Slightly deeper cream */
+  --color-surface: #ffffff; /* Pure white from middle-left */
+
+  /* ⚫ Typography */
+  --color-text-primary: #2a3a5a; /* Navy / Bottom-left for headers */
+  --color-text-secondary: #3f4f70;
+  --color-text-muted: #736f6a; /* Kept earthy gray for balance */
+
+  /* 🧱 Borders & Dividers */
+  --color-border: #d9cfc7;
+  --color-divider: #c9b59c;
+
+  /* ⚡ UI States */
+  --color-success: #1b7a6c; /* Teal instead of green */
+  --color-warning: #e0b14e; /* Mustard yellow */
+  --color-error: #9b2c4e; /* Maroon from middle-right */
+
+  /* 🌫 Overlay / Shadows */
+  --color-overlay: rgba(42, 58, 90, 0.35); /* Based on navy */
+}
+.previewOfColorsThemeAndMakingItLongSoThatICantNameAnything {
+  /* 🌾 Brand Colors (Updated from new Mondrian-style reference) */
+  --color-brand-100: #f4e9d2; /* Cream / Bottom-right */
+  --color-brand-200: #1b7a6c; /* Teal-Green / Top-left */
+  --color-brand-300: #e0b14e; /* Mustard Yellow / Top-right */
+  --color-brand-500: #e0b14e; /* Primary brand accent (Yellow) */
+
+  /* 💚 Accent (Replaced with your vivid teal for strong CTAs & highlights) */
+  --color-accent-500: #1b7a6c; /* Deep teal from top-left */
+  --color-accent-400: #0d7a5f;
+  --color-accent-300: #8b1e3f;
 
   /* 🧼 Neutral Canvas / Backgrounds */
   --color-bg-main: #f4e9d2; /* Warm cream from bottom-right */
@@ -49,7 +83,7 @@ html,
 }
 
 /* Typography Helpers */
-.oleo-script-swash-caps {
+.oleo-script {
   font-family: "Oleo Script Swash Caps", system-ui;
 }
 .shanti {

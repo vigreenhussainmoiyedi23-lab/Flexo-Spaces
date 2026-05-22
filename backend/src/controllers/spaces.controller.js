@@ -17,7 +17,7 @@ APIs to build for listing.routes.js:
 const imagekit = require("../config/imagekit");
 const { validateLocation } = require("../Validators/locationValidator");
 const { EstimateValue } = require("../services/ai/ValueEstimate.service");
-const { getAllListingsService, getListingByIdService, getUserAllListingsService, createListingService, updateListingService, deleteListingService } = require("../services/space/DBFunctions.service");
+const { getAllListingsService, getListingByIdService, getUserAllListingsService, createListingService, updateListingService, deleteListingService, createSpaceService } = require("../services/space/DBFunctions.service");
 const { deleteAllImageFromListing } = require("../services/space/DeleteImage.service");
 const { uploadImage } = require("../services/space/UploadImage.service");
 
@@ -82,10 +82,10 @@ async function CreateWorkSpaceHandler(req, res) {
             uploadImage(file.buffer, Date.now() + "_" + Math.floor(Math.random() * 1000), "/SwapStyle/listingImages")
         );
 
-
         const responses = await Promise.all(promises)
         const images = responses.map(response => { return { url: response.url, fileId: response.fileId, thumbnail: response.thumbnailUrl } })
-        const listing = await createListingService({
+        console.log(req.body,images)
+        const listing = await createSpaceService({
             location: location,
             spaceType,
             pricing,
@@ -101,11 +101,6 @@ async function CreateWorkSpaceHandler(req, res) {
         return res.status(500).json({ message: "Error creating WorkSpace", error, success: false })
     }
 }
-async function AddImagesToListingHandler(req, res) {
-
-}
-
-async function RemoveImageFromListingHandler(req, res) { }
 async function DeleteListingByIdHandler(req, res) {
 
 
@@ -135,7 +130,5 @@ module.exports = {
     GetAllListingsHandler,
     GetListingByIdHandler,
     UpdateListingByIdHandler,
-    AddImagesToListingHandler,
-    RemoveImageFromListingHandler,
     DeleteListingByIdHandler
 }

@@ -37,16 +37,15 @@ export const useListing = () => {
             setLoading(false);
         }
     };
-    const createListing = async (listingData) => {
+    const createSpace = async (listingData) => {
         setLoading(true);
-        const id = showLoadingToast("Creating listing...")
+        const id = showLoadingToast("Creating Space...")
         try {
-            const data = await service.createListing(listingData);
+            const data = await service.createSpace(listingData);
             await fetchListings(filters);
             const update = updateToast(id, data.message, "success");
             navigate("/listings")
         } catch (error) {
-            console.error('Error creating listing:', error);
             const update = updateToast(id, error.data.message, "error")
         } finally {
             setLoading(false);
@@ -126,7 +125,7 @@ export const useListing = () => {
     return {
         // Handlers
         fetchListings,
-        createListing,
+        createSpace,
         updateListing,
         getListingById,
         deleteListing,

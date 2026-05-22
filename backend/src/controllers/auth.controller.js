@@ -35,8 +35,11 @@ verify otp comments
 
 //Google 
 const googleLoginHandler = async (req, res) => {
-    const { credential } = req.body; // ID token from frontend
+    const { credential, role } = req.body; // ID token from frontend
     if (!credential) return res.status(400).json({ error: 'No credential provided' });
+    if (role && role !== "user" && role !== "workspace_owner") {
+        return res.status(400).json({ error: 'Invalid role' });
+    }
 
     try {
         const ticket = await client.verifyIdToken({
@@ -54,7 +57,8 @@ const googleLoginHandler = async (req, res) => {
             username: payload.name,
             profilePicture: payload.picture,
             isEmailVerified: true,
-            isGoogleAuthenticated: true
+            isGoogleAuthenticated: true,
+            role: role || "user"
         };
 
         // TODO: Find or create user in your database using googleId or email
@@ -70,7 +74,7 @@ const googleLoginHandler = async (req, res) => {
 
         // Issue your own JWT
         const token = signToken(user._id);
-        setCookie(res, "token", token );
+        setCookie(res, "token", token);
         const userWithoutConfidentialData = user.toObject();
         delete userWithoutConfidentialData.googleId
         res.json({

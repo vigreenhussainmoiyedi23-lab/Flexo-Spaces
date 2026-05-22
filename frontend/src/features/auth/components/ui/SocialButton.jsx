@@ -9,7 +9,7 @@ function LoginPage() {
 
     try {
       const data = await GoogleLoginHandler({ credential });
-      navigate("/listings");
+      navigate("/spaces");
     } catch (err) {
       console.error("Login failed", err?.message);
     }

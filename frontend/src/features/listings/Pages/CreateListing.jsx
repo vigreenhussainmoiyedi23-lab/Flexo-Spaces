@@ -15,7 +15,75 @@ const CLOTHING_TYPES = {
 const CATEGORIES = Object.keys(CLOTHING_TYPES);
 const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "XXL+"];
 const CONDITIONS = ["new", "like_new", "good", "fair", "poor"];
+const SPACE_TYPES = [
+  "Hot Desk", // Flexible shared seating
+  "Dedicated Desk", // Assigned personal desk in a shared room
+  "Private Office", // Private, lockable room for individuals or teams
+  "Meeting Room", // Hourly conference/board rooms
+  "Virtual Office", // Business address and mail handling only
+  "Event Space", // Large open halls for workshops or networking
+];
 
+// ⏱️ Allowed billing intervals for commercial bookings
+const PRICING_INTERVALS = ["hourly", "daily", "weekly", "monthly"];
+
+// 🛠️ Master list of valid amenity keys grouped by category
+// Useful for dynamic backend validation and frontend loops
+const AMENITY_SCHEMA_MAP = {
+  tech: [
+    "enterpriseWifi",
+    "videoConferencing",
+    "podcastStudio",
+    "smartBoard",
+    "printerAccess",
+  ],
+  wellness: [
+    "gym",
+    "ergonomicFurniture",
+    "outdoorSpace",
+    "meditationRoom",
+    "nursingRoom",
+  ],
+  hospitality: [
+    "baristaCoffee",
+    "stockedKitchen",
+    "cateringService",
+    "kombuchaOnTap",
+  ],
+  convenience: [
+    "access247",
+    "petFriendly",
+    "evCharging",
+    "showers",
+    "secureParking",
+  ],
+};
+
+// 🏷️ Human-readable labels for your Frontend UI UI rendering
+const AMENITY_LABELS = {
+  enterpriseWifi: "Enterprise Wi-Fi",
+  videoConferencing: "4K Video Conferencing",
+  podcastStudio: "Soundproof Podcast Studio",
+  smartBoard: "Smart Board / Projector",
+  printerAccess: "Printing & Scanning Station",
+
+  gym: "On-site Gym & Fitness Center",
+  ergonomicFurniture: "Ergonomic Standing Desks",
+  outdoorSpace: "Rooftop / Terrace Garden",
+  meditationRoom: "Quiet Meditation Room",
+  nursingRoom: "Mother's Nursing Room",
+
+  baristaCoffee: "Barista-Crafted Coffee",
+  stockedKitchen: "Fully Stocked Pantry",
+  cateringService: "On-site Catering",
+  kombuchaOnTap: "Kombucha & Cold Brew on Tap",
+
+  access247: "24/7 Keycard Access",
+  petFriendly: "Pet Friendly Workspace",
+  evCharging: "EV Charging Stations",
+  showers: "End-of-Trip Showers & Lockers",
+  secureParking: "Secure Covered Parking",
+};
 const CreateListing = () => {
   const [location, setLocation] = useState({
     city: "",
@@ -27,22 +95,17 @@ const CreateListing = () => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    category: "",
-    clothingType: "",
-    brandName: "",
-    size: "",
-    condition: "",
+    spaceType: "",
+    capacity: 1,
+    pricing: {
+      rate: 0,
+      interval: "",
+    },
+    amenities: [],
   });
-  const { createListing } = useListing();
+  const { createSpace } = useListing();
   const [selectedImages, setSelectedImages] = useState([]);
   const [availableTypes, setAvailableTypes] = useState([]);
-  // Dynamic Clothing Types
-  useEffect(() => {
-    if (formData.category) {
-      setAvailableTypes(CLOTHING_TYPES[formData.category] || []);
-      setFormData((prev) => ({ ...prev, clothingType: "" }));
-    }
-  }, [formData.category]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -66,28 +129,34 @@ const CreateListing = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    formData.pricing.rate = Number(formData.pricing.rate);
     let ListingData = new FormData();
     ListingData.append("title", formData.title);
     ListingData.append("description", formData.description);
-    ListingData.append("category", formData.category);
-    ListingData.append("clothingType", formData.clothingType);
-    ListingData.append("brandName", formData.brandName);
-    ListingData.append("size", formData.size);
-    ListingData.append("condition", formData.condition);
-    ListingData.append("location", JSON.stringify(location));
-    selectedImages.map((img) => ListingData.append("images", img.file));
-    setFormData({
-      title: "",
-      description: "",
-      category: "",
-      clothingType: "",
-      brandName: "",
-      size: "",
-      condition: "",
+    ListingData.append("spaceType", formData.spaceType);
+    ListingData.append("capacity", formData.capacity);
+    ListingData.append("pricing[rate]", formData.pricing.rate);
+    ListingData.append("pricing[interval]", formData.pricing.interval);
+    formData.amenities.forEach((item) => {
+      ListingData.append("amenities[]", item);
     });
-    setSelectedImages([]);
+    ListingData.append("location", JSON.stringify(location));
+
+    selectedImages.map((img) => ListingData.append("images", img.file));
     try {
-      await createListing(ListingData);
+      await createSpace(ListingData);
+      setFormData({
+        title: "",
+        description: "",
+        spaceType: "",
+        capacity: 1,
+        pricing: {
+          rate: 0,
+          interval: "",
+        },
+        amenities: [],
+      });
+      setSelectedImages([]);
     } catch (error) {
       console.error("Error creating listing:", error);
     }
@@ -97,12 +166,12 @@ const CreateListing = () => {
     <div className="min-h-screen pt-[10vh] bg-brand-900 px-4 sm:px-6 lg:px-8 py-6 font-['Montserrat']">
       <div className="max-w-4xl mx-auto bg-white mt-3 rounded-4xl  shadow-sm border border-[#e5e7eb] overflow-hidden">
         {/* Header */}
-        <header className="bg-bg-main px-4 sm:px-6 lg:px-8 py-5 sm:py-6 text-brand-900">
-          <h1 className="font-['Playfair'] text-2xl sm:text-3xl lg:text-4xl font-bold mb-1">
-            Create New Listing
+        <header className="bg-text-primary px-4 sm:px-6 lg:px-8 py-5 sm:py-6 text-bg-main">
+          <h1 className="exo-2 text-2xl sm:text-3xl lg:text-4xl font-bold mb-1">
+            Create New WorkSpace
           </h1>
-          <p className="text-xs sm:text-sm text-brand-900">
-            List your item for the community
+          <p className="text-xs sm:text-sm text-bg-main">
+            List your Space for the community
           </p>
         </header>
 
@@ -113,7 +182,7 @@ const CreateListing = () => {
           {/* Image Upload */}
           <section>
             <label className="block font-semibold sm:font-bold mb-3 sm:mb-4 text-sm sm:text-base text-[#2e3f59]">
-              Product Images
+              WorkSpace Images
             </label>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
@@ -193,19 +262,43 @@ const CreateListing = () => {
                 onChange={handleInputChange}
               />
             </div>
-
+            {/* Description */}
+            <div className=" md:col-span-2">
+              <label className="block text-xs sm:text-sm font-semibold mb-2">
+                Description
+              </label>
+              <textarea
+                name="description"
+                rows="4"
+                className="w-full p-2.5 sm:p-3 text-sm sm:text-base rounded-lg border border-[#e5e7eb]"
+                placeholder="Tell us about the fabric, fit, and history..."
+                onChange={handleInputChange}
+              />
+            </div>
             <div>
               <label className="block text-xs sm:text-sm font-semibold mb-2">
-                Category
+                Capacity
+              </label>
+              <input
+                name="capacity"
+                type="number"
+                min={1}
+                className="w-full p-2.5 sm:p-3 text-sm sm:text-base rounded-lg border border-[#e5e7eb]"
+                onChange={handleInputChange}
+              />
+            </div>
+            <div>
+              <label className="block text-xs sm:text-sm font-semibold mb-2">
+                Space Type
               </label>
               <select
-                name="category"
+                name="spaceType"
                 className="w-full p-2.5 sm:p-3 text-sm sm:text-base rounded-lg border border-[#e5e7eb] bg-white outline-none"
                 onChange={handleInputChange}
-                value={formData.category}
+                value={formData.spaceType}
               >
-                <option value="">Select Category</option>
-                {CATEGORIES.map((cat) => (
+                <option value="">Select space Type</option>
+                {SPACE_TYPES.map((cat) => (
                   <option key={cat} value={cat}>
                     {cat}
                   </option>
@@ -215,85 +308,92 @@ const CreateListing = () => {
 
             <div>
               <label className="block text-xs sm:text-sm font-semibold mb-2">
-                Clothing Type
+                Pricing Interval
               </label>
               <select
-                name="clothingType"
-                disabled={!formData.category}
-                className="w-full p-2.5 sm:p-3 text-sm sm:text-base rounded-lg border border-[#e5e7eb] bg-white outline-none disabled:bg-gray-100"
-                onChange={handleInputChange}
-                value={formData.clothingType}
-              >
-                <option value="">Select Type</option>
-                {availableTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs sm:text-sm font-semibold mb-2">
-                Size
-              </label>
-              <select
-                name="size"
+                name="pricing"
                 className="w-full p-2.5 sm:p-3 text-sm sm:text-base rounded-lg border border-[#e5e7eb]"
-                onChange={handleInputChange}
+                onChange={(e) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    pricing: {
+                      ...prev.pricing,
+                      interval: e.target.value,
+                    },
+                  }));
+                }}
               >
-                <option value="">Choose Size</option>
-                {SIZES.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs sm:text-sm font-semibold mb-2">
-                Condition
-              </label>
-              <select
-                name="condition"
-                className="w-full p-2.5 sm:p-3 text-sm sm:text-base rounded-lg border border-[#e5e7eb]"
-                onChange={handleInputChange}
-              >
-                <option value="">Item Condition</option>
-                {CONDITIONS.map((c) => (
+                <option value="">Choose Pricing Interval</option>
+                {PRICING_INTERVALS.map((c) => (
                   <option key={c} value={c}>
                     {c.replace("_", " ")}
                   </option>
                 ))}
               </select>
+              <input
+                type="number"
+                onChange={(e) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    pricing: {
+                      ...prev.pricing,
+                      rate: e.target.value,
+                    },
+                  }));
+                }}
+              />
             </div>
 
             <div>
               <label className="block text-xs sm:text-sm font-semibold mb-2">
-                Brand Name
+                Pricing Rate (INR)
               </label>
               <input
-                name="brandName"
-                type="text"
+                name="pricing rate"
+                type="number"
+                min={1}
                 className="w-full p-2.5 sm:p-3 text-sm sm:text-base rounded-lg border border-[#e5e7eb]"
-                onChange={handleInputChange}
+                onChange={(e) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    pricing: {
+                      ...prev.pricing,
+                      rate: e.target.value,
+                    },
+                  }));
+                }}
               />
             </div>
           </div>
-          {/* Description */}
-          <div>
-            <label className="block text-xs sm:text-sm font-semibold mb-2">
-              Description
-            </label>
-            <textarea
-              name="description"
-              rows="4"
-              className="w-full p-2.5 sm:p-3 text-sm sm:text-base rounded-lg border border-[#e5e7eb]"
-              placeholder="Tell us about the fabric, fit, and history..."
-              onChange={handleInputChange}
-            />
+
+          <div className="flex flex-col gap-1 max-h-48 overflow-y-auto border border-text-primary rounded-lg p-2">
+            <h3 className="text-2xl text-center underline underline-offset-5">
+              Amenities
+            </h3>
+            {Object.entries(AMENITY_LABELS).map(([key, label]) => (
+              <label
+                key={key}
+                className="flex items-center gap-2 text-sm cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  value={key}
+                  checked={formData.amenities.includes(key)}
+                  onChange={(e) => {
+                    const { value, checked } = e.target;
+                    setFormData((prev) => ({
+                      ...prev,
+                      amenities: checked
+                        ? [...prev.amenities, value]
+                        : prev.amenities.filter((a) => a !== value),
+                    }));
+                  }}
+                />
+                {label}
+              </label>
+            ))}
           </div>
+
           {/* Button */}
           <button
             type="submit"

@@ -31,7 +31,7 @@ const spaceSchema = new mongoose.Schema({
         }
     },
     // ADDED: Structured nesting for advanced amenity filtering
-    amenities: { type: String},
+    amenities: [{ type: String}],
     images: [{
         type: {
             url: {
@@ -102,6 +102,6 @@ spaceSchema.index({ "pricing.rate": 1, isAvailable: 1 });
 spaceSchema.index({ "amenities.tech.enterpriseWifi": 1 });
 spaceSchema.index({ "amenities.convenience.access247": 1 });
 
-const space = mongoose.model("spaces", spaceSchema);
+const spaceModel = mongoose.model("spaces", spaceSchema);
 
-module.exports = space;
+module.exports = spaceModel;

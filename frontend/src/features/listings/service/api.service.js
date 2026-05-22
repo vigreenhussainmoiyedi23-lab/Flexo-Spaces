@@ -1,5 +1,5 @@
 import axios from "axios";
-const API_URL = import.meta.env.VITE_API_URL + "/listings" || 'http://localhost:5000/api/listings';
+const API_URL = import.meta.env.VITE_API_URL + "/spaces" || 'http://localhost:5000/api/listings';
 
 const apiClient = axios.create({
     baseURL: API_URL,
@@ -26,9 +26,8 @@ const getListings = async (filters) => {
         throw error;
     }
 };
-const createListing = async (listingData) => {
+const createSpace = async (listingData) => {
     try {
-        console.log("posting /api/listings")
         const response = await apiClient.post('/', listingData, {
             headers: {
                 "Content-Type": "multipart/form-data",
@@ -63,7 +62,7 @@ const deleteListing = async (listingId) => {
 export default {
     getListingById,
     getListings,
-    createListing,
+    createSpace,
     updateListing,
     deleteListing
 };

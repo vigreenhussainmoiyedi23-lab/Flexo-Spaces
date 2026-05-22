@@ -9,8 +9,9 @@ import Password from "../ui/Password";
 import { useContext } from "react";
 import { AuthContext } from "../../auth.context";
 import useAuth from "../../hooks/useAuth";
+import Logo from "../../../commonComponents/Logo";
 
-export const RegisterForm = () => {
+export const RegisterForm = ({ role }) => {
   const [form, setForm] = useState({ username: "", email: "", password: "" });
   const { loading } = useContext(AuthContext);
   const { registerHandler } = useAuth();
@@ -27,10 +28,10 @@ export const RegisterForm = () => {
   };
   return (
     <div className="bg-gray-50 z-10 p-8 rounded-2xl shadow-lg w-full max-w-md flex flex-col gap-4">
-      <h2 className="text-3xl font-serif text-center">Join SwapStyle</h2>
-      <p className="text-center text-gray-500">
-        Swap clothes. Save money. Save the planet.
-      </p>
+      <h2 className="text-3xl font-serif text-center">
+        Join <span className="oleo-script">Flexo Spaces</span>
+      </h2>
+      <p className="text-center text-gray-500">Our Space Your Vision</p>
 
       <SocialButton />
       <Divider />
@@ -56,7 +57,13 @@ export const RegisterForm = () => {
       ) : (
         <Button submitHandler={SubmitHandler}>Create Free Account</Button>
       )}
-
+      <Link
+        className="flex items-center justify-center gap-2"
+        to={`/register/${role === "user" ? "workspace_owner" : "user"}`}
+      >
+        Are You A {role === "user" ? "Workspace Owner?" : "User Browsing Worspaces ?"}
+        <p className="text-green-700"> Register Here</p>
+      </Link>
       <p className="text-sm text-center">
         Already have an account?{" "}
         <Link to={"/login"} className="text-green-700">

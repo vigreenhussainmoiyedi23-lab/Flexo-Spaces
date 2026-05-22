@@ -1,4 +1,5 @@
 
+const spaceModel = require("../../models/space.model");
 const listingModel = require("../../models/space.model");
 const swapModel = require("../../models/swap/swap.model");
 
@@ -23,12 +24,12 @@ async function isListingLocked(listingId) {
  * @returns {object} - the newly created listing
  * @description Creates a new listing in db and throws the error to controller if any happens
  */
-async function createListingService(ListingData) {
+async function createSpaceService(SpaceData) {
     try {
-        const newListing = await listingModel.create(ListingData);
-        return newListing;
+        const newSpace = await spaceModel.create(SpaceData);
+        return newSpace;
     } catch (error) {
-        console.log("Error creating listing:", error);
+        console.log("Error creating space:", error);
         throw error;
     }
 }
@@ -171,7 +172,7 @@ async function getAllListingsService(filters, isAdmin = false) {
 
 
 module.exports = {
-    createListingService,
+    createSpaceService,
     updateListingService,
     deleteListingService,
     getListingByIdService,

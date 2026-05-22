@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import showToast from "../../../utils/Toastify.util";
 
 const useAuth = () => {
-    const { user, loading, setUser, setLoading } = useContext(AuthContext);
+    const { user, loading, setUser, setLoading ,role} = useContext(AuthContext);
     useEffect(() => {
         const fetchCurrentUser = async () => {
             try {
@@ -25,13 +25,12 @@ const useAuth = () => {
     const GoogleLoginHandler = async ({ credential }) => {
         setLoading(true);
         try {
-            const response = await Google({ credential });
+            const response = await Google({ credential,role });
             setUser(response.user);
             showToast("Logged in successfully with Google!", "success");
             showToast("Create A Listing To Start Swapping!", "info");
             return response.user;
         } catch (error) {
-            console.log(error);
             throw error;
         } finally {
             setLoading(false);

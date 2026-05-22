@@ -34,7 +34,7 @@ const Approutes = () => {
           }
         />
         <Route
-          path="/listings"
+          path="/spaces"
           element={
             <NormalLayout>
               <Listings />
@@ -42,7 +42,7 @@ const Approutes = () => {
           }
         />
         <Route
-          path="/listings/update/:id"
+          path="/spaces/update/:id"
           element={
             <ProtectedLayout>
               <UpdateListing />
@@ -50,7 +50,7 @@ const Approutes = () => {
           }
         />
         <Route
-          path="/listings/more/:id"
+          path="/spaces/more/:id"
           element={
             <NormalLayout>
               <ListingMore />
@@ -66,7 +66,7 @@ const Approutes = () => {
           }
         />
         <Route
-          path="/createListing"
+          path="/createSpace"
           element={
             <ProtectedLayout>
               <CreateListing />
@@ -98,7 +98,7 @@ const Approutes = () => {
           }
         />
         <Route
-          path="/swaps"
+          path="/bookings"
           element={
             <ProtectedLayout>
               <Swaps />
@@ -156,7 +156,7 @@ const Approutes = () => {
 
         <Route path="/login" element={<LoginPage />} />
         <Route path="/verify-otp" element={<VerifyOtp />} />
-        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/register/:role" element={<RegisterPage />} />
       </Routes>
     </BrowserRouter>
   );

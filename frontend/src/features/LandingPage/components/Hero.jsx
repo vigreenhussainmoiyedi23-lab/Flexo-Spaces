@@ -2,40 +2,77 @@ import { ArrowRight, MessageCircle, Plus, Search } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination, Autoplay } from "swiper/modules";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import BlurImage from "../../commonComponents/BlurImages";
 /* ================= CTA ================= */
 function CTA() {
   return (
     <div className="flex flex-col items-center source-code-pro justify-center xl:justify-start sm:flex-row gap-3 sm:gap-4 mt-6 ">
       <Link
-        to={"/register"}
-        className="w-full text-brand-900 source-code-pro font-bold text-xl sm:w-2/3 px-6 sm:px-8 py-3 sm:py-4 bg-accent-500 hover:bg-accent-400 active:bg-accent-300 rounded-xl flex items-center justify-center gap-2 transition-colors"
+        to={"/register/user"}
+        className="w-full text-brand-100 shanti font-bold text-xl sm:w-2/3 px-6 sm:px-8 py-3 sm:py-4 bg-accent-400 hover:bg-accent-400 active:bg-accent-300 rounded-xl flex items-center justify-center gap-2 transition-colors"
       >
-        Start Swapping <ArrowRight size={18} />
+        Find Spaces <ArrowRight size={18} />
       </Link>
-
-      <a
-        href="#how"
-        className="w-full whitespace-nowrap sm:w-1/3 px-6 py-3 sm:py-4 border border-white/10 rounded-xl text-brand-100 hover:bg-white/5 transition-colors"
+      <Link
+        to={"/register/workspace_owner"}
+        className="w-full text-brand-100 shanti font-bold text-xl sm:w-2/3 px-6 sm:px-8 py-3 sm:py-4 bg-accent-300 hover:bg-accent-400 active:bg-accent-300 rounded-xl flex items-center justify-center gap-2 transition-colors"
       >
-        See How It Works
-      </a>
+        List Your Spaces <ArrowRight size={18} />
+      </Link>
     </div>
   );
 }
 
-
-
-
-
 /* ================= VISUAL ================= */
 function HeroVisual({ parallaxX, parallaxY }) {
+  const ImagesUrl = [
+    {
+      url: "/WORKSPACES/office1.jpg",
+      compressedUrl: "/WORKSPACES/compressed/office1.jpg",
+    },
+    {
+      url: "/WORKSPACES/office2.jpg",
+      compressedUrl: "/WORKSPACES/compressed/office2.jpg",
+    },
+    {
+      url: "/WORKSPACES/office3.jpg",
+      compressedUrl: "/WORKSPACES/compressed/office3.jpg",
+    },
+    {
+      url: "/WORKSPACES/office4.jpg",
+      compressedUrl: "/WORKSPACES/compressed/office4.jpg",
+    },
+  ];
   return (
     <motion.div
       style={{ x: parallaxX, y: parallaxY }}
-      className="relative hidden md:flex flex-col h-full items-center justify-center"
+      className="relative hidden  md:flex flex-col h-full items-center justify-center"
     >
-
+      <Swiper
+        modules={[Pagination, Autoplay]}
+        pagination={{ clickable: true }}
+        className="w-full h-full"
+        slidesPerView={1}
+        loop={true}
+        autoplay={{
+          delay: 3000,
+          disableOnInteraction: false,
+        }}
+      >
+        {ImagesUrl.map((image) => (
+          <SwiperSlide className="w-full h-full">
+            <BlurImage
+              alt={"officeImage"}
+              highQualitySrc={image.url}
+              lowQualitySrc={image.compressedUrl}
+            />
+          </SwiperSlide>
+        ))}
+      </Swiper>
     </motion.div>
   );
 }
@@ -44,26 +81,25 @@ function HeroVisual({ parallaxX, parallaxY }) {
 function HeroText() {
   return (
     <div className="text-center xl:text-left z-1">
-
-      <h1 className="text-4xl -tracking-normal  playfair sm:text-5xl md:text-6xl xl:text-6xl font-bold leading-tight">
-        Swap Smarter.
+      <h1 className="text-4xl text-text-primary  tracking-normal playfair sm:text-5xl md:text-6xl xl:text-6xl font-bold leading-tight">
+        Spaces That
         <br />
-        Trade What <span className="text-accent-500">You Have</span>
+        Power <span className="text-gray-800 underline">Modern Work</span>
         <br />
-        for What You Need.
+        and Big Ideas.
       </h1>
 
-      <p className="text-xs montserrat sm:text-sm md:text-lg text-brand-200 mt-4 sm:mt-6 max-w-md sm:max-w-lg mx-auto xl:mx-0">
-        List items, find matches, negotiate in real-time, and swap securely —
-        all in one place.
+      <p className="text-xs exo-2 sm:text-sm md:text-lg text-text-muted mt-4 sm:mt-6 max-w-md sm:max-w-lg mx-auto xl:mx-0">
+        Discover, list, and manage modern workspaces with real-time
+        availability, smart search, and seamless booking — all in one place.
       </p>
 
       <CTA />
 
-      <div className="flex flex-wrap montserrat justify-center xl:justify-start gap-3 sm:gap-6 mt-6 text-xs sm:text-sm text-brand-200">
+      <div className="flex flex-wrap exo-2 justify-center xl:justify-start gap-3 sm:gap-6 mt-6 text-xs sm:text-sm text-brand-200">
         <span>✔ Real-time negotiation</span>
         <span>✔ Built-in chat</span>
-        <span>✔ Secure swaps</span>
+        <span>✔ Secure Bookings</span>
       </div>
     </div>
   );

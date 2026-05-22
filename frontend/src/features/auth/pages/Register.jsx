@@ -1,13 +1,25 @@
 // ================= RegisterPage.jsx =================
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { RegisterForm } from "../components/forms/RegisterForm";
 import Panel from "../components/ui/Panel";
+import { useNavigate, useParams } from "react-router-dom";
+import { AuthContext } from "../auth.context";
 
 export const RegisterPage = () => {
+  const { setRole } = useContext(AuthContext);
+  const { role } = useParams();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (role !== "user" && role !== "workspace_owner") {
+      setRole("user");
+      navigate("/register/user");
+    }
+    setRole(role);
+  }, [role, navigate]);
   const panelParams = {
-    heading: "Join the sustainable fashion revolution",
+    heading: "Find your perfect workspace with Flexo Spaces",
     paragraph:
-      "Create your free account and start swapping today. Reduce waste, save money, and discover unique fashion.",
+      "Join Flexo Spaces to discover, book, and manage modern co-working spaces designed for freelancers, startups, and remote teams.",
   };
   return (
     <div className="min-h-screen flex">
@@ -26,7 +38,7 @@ export const RegisterPage = () => {
           }}
           className="absolute z-0 w-full h-full"
         ></div>
-        <RegisterForm />
+        <RegisterForm role={role} />
       </div>
     </div>
   );
