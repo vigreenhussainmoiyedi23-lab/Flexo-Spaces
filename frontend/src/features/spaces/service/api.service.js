@@ -17,7 +17,7 @@ async function getListingById(listingId) {
         throw error;
     }
 }
-const getListings = async (filters) => {
+const getSpaces = async (filters) => {
     try {
         const response = await apiClient.post('/get-all', filters);
         return response.data;
@@ -61,7 +61,7 @@ const deleteListing = async (listingId) => {
 
 export default {
     getListingById,
-    getListings,
+    getSpaces,
     createSpace,
     updateListing,
     deleteListing

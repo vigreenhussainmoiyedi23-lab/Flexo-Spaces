@@ -1,20 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useListing } from "../hooks/useListing";
+import {  useSpace } from "../hooks/useSpace";
 import { useNavigate } from "react-router-dom";
 import LocationSelector from "../../commonComponents/LocationSelector";
 
-// Constants
-const CLOTHING_TYPES = {
-  Tops: ["T-Shirt", "Shirt", "Polo Shirt", "Hoodie"],
-  Bottoms: ["Jeans", "Trousers", "Shorts"],
-  Dresses: ["Mini Dress", "Maxi Dress"],
-  Outerwear: ["Jacket", "Coat", "Blazer"],
-  Ethnic: ["Saree", "Kurta", "Lehenga"],
-};
 
-const CATEGORIES = Object.keys(CLOTHING_TYPES);
-const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "XXL+"];
-const CONDITIONS = ["new", "like_new", "good", "fair", "poor"];
+
 const SPACE_TYPES = [
   "Hot Desk", // Flexible shared seating
   "Dedicated Desk", // Assigned personal desk in a shared room
@@ -27,37 +17,6 @@ const SPACE_TYPES = [
 // ⏱️ Allowed billing intervals for commercial bookings
 const PRICING_INTERVALS = ["hourly", "daily", "weekly", "monthly"];
 
-// 🛠️ Master list of valid amenity keys grouped by category
-// Useful for dynamic backend validation and frontend loops
-const AMENITY_SCHEMA_MAP = {
-  tech: [
-    "enterpriseWifi",
-    "videoConferencing",
-    "podcastStudio",
-    "smartBoard",
-    "printerAccess",
-  ],
-  wellness: [
-    "gym",
-    "ergonomicFurniture",
-    "outdoorSpace",
-    "meditationRoom",
-    "nursingRoom",
-  ],
-  hospitality: [
-    "baristaCoffee",
-    "stockedKitchen",
-    "cateringService",
-    "kombuchaOnTap",
-  ],
-  convenience: [
-    "access247",
-    "petFriendly",
-    "evCharging",
-    "showers",
-    "secureParking",
-  ],
-};
 
 // 🏷️ Human-readable labels for your Frontend UI UI rendering
 const AMENITY_LABELS = {
@@ -103,7 +62,7 @@ const CreateListing = () => {
     },
     amenities: [],
   });
-  const { createSpace } = useListing();
+  const { createSpace } = useSpace();
   const [selectedImages, setSelectedImages] = useState([]);
   const [availableTypes, setAvailableTypes] = useState([]);
 

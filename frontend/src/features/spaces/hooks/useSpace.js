@@ -1,18 +1,17 @@
 import { useContext } from "react";
-import { ListingContext } from "../listing.context";
+import { SpaceContext } from "../space.context";
 import service from "../service/api.service";
 import showToast, { showLoadingToast, updateToast } from "../../../utils/Toastify.util";
-import { createSwapRequest } from "../../swap/service/swap.api";
 import { useNavigate } from "react-router-dom";
 import { emitNotification } from "../../../utils/emitNotifications";
 
-export const useListing = () => {
-    // Access listing context values and functions
+export const useSpace = () => {
+    // Access space context values and functions
     const {
-        allListings,
-        setAllListings,
-        userAllListings,
-        setUserAllListings,
+        allSpaces,
+        setAllSpaces,
+        userAllSpaces,
+        setUserAllSpaces,
         page,
         setPage,
         totalPages,
@@ -21,28 +20,28 @@ export const useListing = () => {
         setLoading,
         filters,
         setFilters,
-    } = useContext(ListingContext);
+    } = useContext(SpaceContext);
     const navigate = useNavigate();
 
-    const fetchListings = async (filters) => {
+    const fetchSpaces = async (filters) => {
         setLoading(true);
         try {
-            const data = await service.getListings(filters);
+            const data = await service.getSpaces(filters);
 
-            setAllListings(data.listings);
+            setAllSpaces(data.spaces);
             setTotalPages(data.totalPages);
         } catch (error) {
-            console.error('Error fetching listings:', error);
+            console.error('Error fetching spaces:', error);
         } finally {
             setLoading(false);
         }
     };
-    const createSpace = async (listingData) => {
+    const createSpace = async (spaceData) => {
         setLoading(true);
         const id = showLoadingToast("Creating Space...")
         try {
-            const data = await service.createSpace(listingData);
-            await fetchListings(filters);
+            const data = await service.createSpace(spaceData);
+            await fetchSpaces(filters);
             const update = updateToast(id, data.message, "success");
             navigate("/listings")
         } catch (error) {
@@ -51,67 +50,67 @@ export const useListing = () => {
             setLoading(false);
         }
     };
-    const updateListing = async (listingId, listingData) => {
+    const updateSpace = async (spaceId, spaceData) => {
         setLoading(true);
-        const id = showLoadingToast("Updating listing...")
+        const id = showLoadingToast("Updating space...")
 
         try {
-            const data = await service.updateListing(listingId, listingData);
-            await fetchListings(filters);
+            const data = await service.updateSpace(spaceId, spaceData);
+            await fetchSpaces(filters);
             const update = updateToast(id, data.message, "success");
         } catch (error) {
-            console.error('Error updating listing:', error);
+            console.error('Error updating space:', error);
             const update = updateToast(id, error.data.message, "error")
 
         } finally {
             setLoading(false);
         }
     };
-    const getListingById = async (listingId) => {
+    const getSpaceById = async (spaceId) => {
         setLoading(true);
         try {
-            const data = await service.getListingById(listingId);
+            const data = await service.getSpaceById(spaceId);
             return data;
         } catch (error) {
-            console.error('Error fetching listing by ID:', error);
+            console.error('Error fetching space by ID:', error);
         } finally {
             setLoading(false);
         }
     };
-    const deleteListing = async (listingId) => {
+    const deleteSpace = async (spaceId) => {
         setLoading(true);
-        const id = showLoadingToast("Deleting listing...")
+        const id = showLoadingToast("Deleting space...")
         try {
-            const data = await service.deleteListing(listingId);
-            await fetchListings(filters);
+            const data = await service.deleteSpace(spaceId);
+            await fetchSpaces(filters);
             const update = updateToast(id, data.message, "success");
 
         } catch (error) {
-            console.error('Error deleting listing:', error);
+            console.error('Error deleting space:', error);
             const update = updateToast(id, error.data.message, "error")
 
         } finally {
             setLoading(false);
         }
     };
-    const createSwap = async ({ offeredListingId, requestedListingId }) => {
+    const createBooking = async (spaceId) => {
         setLoading(true);
-        const id = showLoadingToast("Creating Swap...")
+        const id = showLoadingToast("Creating Booking...")
         try {
-            const data = await createSwapRequest({ offeredListingId: offeredListingId, requestedListingId: requestedListingId });
-            showToast("Swap created successfully!", "success");
-            const swap = data?.swap;
+            const data = await createBookingRequest({ spaceId: spaceId });
+            showToast("Booking created successfully!", "success");
+            const booking = data?.booking;
 
-            if (swap) {
+            if (booking?.owner) {
                 emitNotification({
-                    recipient: swap.owner,
+                    recipient: booking.owner,
                     type: "SWAP_REQUEST",
                     title: "Swap Request 🎉",
                     message: "You have a new swap request",
                     link: `/swaps`,
-                    meta: { swapId: swap._id }
+                    meta: { bookingId: booking._id }
                 });
-                console.log("emitted a notification to", swap.owner);
+                console.log("emitted a notification to", booking.owner);
             }
             const update = updateToast(id, data.message, "success")
         } catch (error) {
@@ -121,20 +120,24 @@ export const useListing = () => {
             setLoading(false);
         }
     };
-
+    const updateFilters = (name, value) => {
+        setFilters(prev => ({ ...prev, [name]: value }));
+    }
     return {
         // Handlers
-        fetchListings,
+        fetchSpaces,
         createSpace,
-        updateListing,
-        getListingById,
-        deleteListing,
-        createSwap,
+        updateSpace,
+        getSpaceById,
+        deleteSpace,
+        createBooking,
+        updateFilters,
 
         //States
-        allListings,
+        allSpaces,
         loading,
-        totalPages
+        totalPages,
+        filters, 
     };
 };
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useListing } from "../hooks/useListing";
+import { useSpace } from "../hooks/useSpace";
 import { useParams } from "react-router-dom";
 
 // Constants
@@ -17,7 +17,7 @@ const CONDITIONS = ["new", "like_new", "good", "fair", "poor"];
 
 const UpdateListing = () => {
   const { id } = useParams();
-  const { getListingById, updateListing, loading } = useListing();
+  const { getListingById, updateListing, loading } = useSpace();
   const [listingById, setlistingById] = useState({});
   const [formData, setFormData] = useState({
     title: "",

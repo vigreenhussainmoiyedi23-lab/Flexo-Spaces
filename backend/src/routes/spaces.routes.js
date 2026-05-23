@@ -16,7 +16,13 @@ APIs to build for listing.routes.js:
 
 const express = require("express")
 const router = express.Router()
-const { CreateWorkSpaceHandler, GetAllListingsHandler, GetListingByIdHandler, UpdateListingByIdHandler, DeleteListingByIdHandler } = require("../controllers/spaces.controller")
+const {
+    CreateWorkSpaceHandler,
+    GetAllSpacesHandler,
+    GetListingByIdHandler,
+    UpdateListingByIdHandler,
+    DeleteListingByIdHandler
+} = require("../controllers/spaces.controller")
 const { isAuthenticated } = require("../middlewares/protectedRoutes.middleware")
 const upload = require("../config/multer")
 const { createListingValidator, updateListingValidator } = require("../Validators/spaces.validator")
@@ -24,7 +30,7 @@ const { validate } = require("../Validators/validate")
 const { CreateListingLimiter } = require("../middlewares/rateLimiter")
 
 
-router.post("/get-all", GetAllListingsHandler)
+router.post("/get-all", GetAllSpacesHandler)
 router.get("/:id", GetListingByIdHandler)
 
 

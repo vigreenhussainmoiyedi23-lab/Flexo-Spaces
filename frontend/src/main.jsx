@@ -5,7 +5,7 @@ import App from "./App.jsx";
 import { AuthProvider } from "./features/auth/auth.context.jsx";
 
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import { ListingContextProvider } from "./features/listings/listing.context.jsx";
+import { SpaceContextProvider } from "./features/spaces/space.context.jsx";
 import { ProfileContextProvider } from "./features/Profile/profile.context.jsx";
 import SwapContextProvider from "./features/swap/swap.context.jsx";
 import ChatContextProvider from "./features/chats/chat.context.jsx";
@@ -15,7 +15,7 @@ import NotificationProvider from "./features/notifications/notification.context.
 createRoot(document.getElementById("root")).render(
   <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
     <AuthProvider>
-      <ListingContextProvider>
+      <SpaceContextProvider>
         <ProfileContextProvider>
           <SwapContextProvider>
             <ChatContextProvider>
@@ -29,7 +29,7 @@ createRoot(document.getElementById("root")).render(
             </ChatContextProvider>
           </SwapContextProvider>
         </ProfileContextProvider>
-      </ListingContextProvider>
+      </SpaceContextProvider>
     </AuthProvider>
   </GoogleOAuthProvider>,
 );

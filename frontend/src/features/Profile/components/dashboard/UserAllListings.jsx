@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import React from "react";
-import ListingGrid from "../../../listings/components/ui/ListingGrid";
+import ListingGrid from "../../../spaces/components/ui/ListingGrid";
 const UserAllListings = ({ listings, isOwner, user }) => {
   if ((!listings || listings.length === 0) && !isOwner) return null;
   return (

@@ -4,15 +4,18 @@ import { LoginForm } from "../components/forms/LoginForm";
 import Panel from "../components/ui/Panel";
 
 export const LoginPage = () => {
-
   const panelParams = {
-    heading: "Refresh your wardrobe without spending a dime",
-    paragraph: "Join the sustainable fashion movement. Swap clothes you no longer wear and discover pieces you'll love.",
+    heading: "Welcome back to smarter workspaces",
+    paragraph:
+      "Log in to discover flexible co-working spaces, book productive environments, and manage your workspace experience with ease.",
   };
   return (
     <div className="min-h-screen flex">
       <div className="hidden lg:flex w-1/2 lg:w-2/5 text-white  flex-col justify-center ">
-        <Panel heading={panelParams.heading} paragragh={panelParams.paragraph}/>
+        <Panel
+          heading={panelParams.heading}
+          paragragh={panelParams.paragraph}
+        />
       </div>
 
       <div className="flex-1 relative px-2  bg-brand-900 flex items-center justify-center bg-tri">

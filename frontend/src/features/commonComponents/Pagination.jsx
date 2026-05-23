@@ -1,13 +1,15 @@
 import React from "react";
+import { useSpace } from "../spaces/hooks/useSpace";
 
-const Pagination = ({ page, setPage, totalPages }) => {
+const Pagination = ({ page, totalPages }) => {
+  const { updateFilters } = useSpace();
   if (!totalPages || totalPages <= 1) return null;
   const handlePrev = () => {
-    if (page > 1) setPage(page - 1);
+    if (page > 1) updateFilters("page", page - 1);
   };
 
   const handleNext = () => {
-    if (page < totalPages) setPage(page + 1);
+    if (page < totalPages) updateFilters("page", page + 1);
   };
 
   // 👇 Smart page range (max 5 buttons)
@@ -48,7 +50,7 @@ const Pagination = ({ page, setPage, totalPages }) => {
       {page > 3 && (
         <>
           <button
-            onClick={() => setPage(1)}
+            onClick={() => updateFilters("page", 1)}
             className="px-3 py-1 rounded bg-white/10"
           >
             1
@@ -61,7 +63,7 @@ const Pagination = ({ page, setPage, totalPages }) => {
       {getPages().map((p) => (
         <button
           key={p}
-          onClick={() => setPage(p)}
+          onClick={() => updateFilters("page", p)}
           className={`px-3 py-1 rounded ${
             p === page ? "bg-brand-500 text-white" : "bg-white/10"
           }`}
@@ -75,7 +77,7 @@ const Pagination = ({ page, setPage, totalPages }) => {
         <>
           <span className="px-1 text-white/50">...</span>
           <button
-            onClick={() => setPage(totalPages)}
+            onClick={() => updateFilters("page", totalPages)}
             className="px-3 py-1 rounded bg-white/10"
           >
             {totalPages}

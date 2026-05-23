@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useListing } from "../hooks/useListing";
 import MyListingsOverlay from "../components/ListingMore/MyListingsOverlay";
 import { AuthContext } from "../../auth/auth.context";
 import { useContext } from "react";
@@ -8,24 +7,27 @@ import { useProfile } from "../../Profile/Hooks/useProfile";
 import { Edit2, Trash } from "lucide-react";
 import showToast from "../../../utils/Toastify.util";
 import Loader from "../../commonComponents/Loading";
+import { useSpace } from "../hooks/useSpace";
 
 const ListingMore = () => {
   const { id } = useParams();
+
   const navigate = useNavigate();
-  const { getListingById, updateListing, deleteListing, createSwap } =
-    useListing();
-  const [listing, setlisting] = useState({});
+
+  const { getListingById, deleteListing } =
+    useSpace();
+    
+  const [space, setSpace] = useState({});
   useEffect(() => {
     async function fetchListing() {
       const data = await getListingById(id);
-      setlisting(data.listing);
+      setSpace(data.listing);
     }
     fetchListing();
   }, [id]);
   if (!listing) return <Loader />;
 
   const [isActive, setIsActive] = useState(false);
-  const [myListings, setMyListings] = useState(null);
   const { fetchUserAllListings } = useProfile();
   const { user } = useContext(AuthContext);
   useEffect(() => {
@@ -36,18 +38,7 @@ const ListingMore = () => {
     };
     fetch();
   }, [user]);
-  async function createSwapHandler(offerefListingId) {
-    try {
-      await createSwap({
-        offeredListingId: offerefListingId,
-        requestedListingId: id,
-      });
-      navigate("/swaps");
-    } catch (error) {
-      showToast(error?.response?.data?.message || error.message, "error");
-      console.log(error);
-    }
-  }
+
 
   return (
     <div className="min-h-screen relative mt-[10vh] bg-[var(--color-brand-900)] text-white p-6">
@@ -55,13 +46,13 @@ const ListingMore = () => {
         {/* LEFT: IMAGES */}
         <div>
           <img
-            src={listing.images?.[0]?.url}
-            alt={listing.title}
+            src={space.images?.[0]?.url}
+            alt={space.title}
             className="w-fit h-100 object-contain rounded-2xl border border-[var(--color-brand-700)]"
           />
 
           <div className="flex gap-3 mt-4 overflow-x-auto">
-            {listing.images?.map((img, i) => (
+            {space.images?.map((img, i) => (
               <img
                 key={i}
                 src={img.url}
@@ -71,27 +62,20 @@ const ListingMore = () => {
             ))}
           </div>
         </div>
-        {myListings && (
-          <MyListingsOverlay
-            listing={myListings}
-            isActive={isActive}
-            setIsActive={setIsActive}
-            createSwapHandler={createSwapHandler}
-          />
-        )}
+
         {/* RIGHT: DETAILS */}
         <div className="bg-[var(--color-brand-700)] p-6 rounded-2xl shadow-lg">
-          <h1 className="text-3xl font-bold mb-3">{listing.title}</h1>
+          <h1 className="text-3xl font-bold mb-3">{space.title}</h1>
 
-          <p className="text-gray-300 mb-4">{listing.description}</p>
+          <p className="text-gray-300 mb-4">{space.description}</p>
 
           {/* TAGS */}
           <div className="flex flex-wrap gap-2 mb-4">
             {[
-              listing.category,
-              listing.clothingType,
-              listing.size,
-              listing.condition,
+              space.category,
+              space.clothingType,
+              space.size,
+              space.condition,
             ].map((item, i) => (
               <span
                 key={i}
@@ -105,28 +89,28 @@ const ListingMore = () => {
           {/* DETAILS */}
           <div className="space-y-2 text-sm">
             <p>
-              <strong>Brand:</strong> {listing.brandName}
+              <strong>Brand:</strong> {space.brandName}
             </p>
             <p>
-              <strong>Estimated Value:</strong> ₹{listing.estimatedValue}
+              <strong>Estimated Value:</strong> ₹{space.estimatedValue}
             </p>
             <p>
-              <strong>Location:</strong> {listing.Location?.city},{" "}
-              {listing.Location?.State}
+              <strong>Location:</strong> {space.Location?.city},{" "}
+              {space.Location?.State}
             </p>
           </div>
 
           {/* OWNER INFO */}
           <div className="mt-6 flex items-center gap-4 border-t border-[var(--color-brand-500)] pt-4">
             <img
-              src={listing.owner?.profilePicture}
+              src={space.owner?.profilePicture}
               alt="owner"
               className="w-12 h-12 rounded-full"
             />
             <div>
-              <p className="font-semibold">{listing.owner?.username}</p>
+              <p className="font-semibold">{space.owner?.username}</p>
               <p className="text-xs text-gray-300">
-                ⭐ {listing.owner?.rating} | Swaps: {listing.owner?.totalSwaps}
+                ⭐ {space.owner?.rating} | Swaps: {space.owner?.totalSwaps}
               </p>
             </div>
           </div>

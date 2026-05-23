@@ -16,19 +16,18 @@ APIs to build for listing.routes.js:
 
 const imagekit = require("../config/imagekit");
 const { validateLocation } = require("../Validators/locationValidator");
-const { EstimateValue } = require("../services/ai/ValueEstimate.service");
-const { getAllListingsService, getListingByIdService, getUserAllListingsService, createListingService, updateListingService, deleteListingService, createSpaceService } = require("../services/space/DBFunctions.service");
+const { getAllSpacesService, getListingByIdService, updateListingService, deleteListingService, createSpaceService } = require("../services/space/DBFunctions.service");
 const { deleteAllImageFromListing } = require("../services/space/DeleteImage.service");
 const { uploadImage } = require("../services/space/UploadImage.service");
 
 
-async function GetAllListingsHandler(req, res) {
+async function GetAllSpacesHandler(req, res) {
     try {
         const filters = req.body;
-        const { listings, totalPages } = await getAllListingsService(filters);
-        res.status(200).json({ listings, totalPages, message: "Listings fetched successfully", success: true });
+        const { spaces, totalPages } = await getAllSpacesService(filters);
+        res.status(200).json({ spaces, totalPages, message: "spaces fetched successfully", success: true });
     } catch (error) {
-        res.status(500).json({ message: "Error fetching listings", success: false })
+        res.status(500).json({ message: "Error fetching spaces", success: false })
     }
 }
 
@@ -127,7 +126,7 @@ async function DeleteListingByIdHandler(req, res) {
 
 module.exports = {
     CreateWorkSpaceHandler,
-    GetAllListingsHandler,
+    GetAllSpacesHandler,
     GetListingByIdHandler,
     UpdateListingByIdHandler,
     DeleteListingByIdHandler

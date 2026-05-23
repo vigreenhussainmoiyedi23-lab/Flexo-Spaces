@@ -97,9 +97,9 @@ async function getListingByIdService(listingId) {
  * @description Fetches all listings from the database and returns them in a paginated format (default 10 per page) to avoid performance issues.
  * @throws Throws the error to controller if any happens
  */
-async function getAllListingsService(filters, isAdmin = false) {
+async function getAllSpacesService(filters, isAdmin = false) {
     try {
-        const { category, types, sizes, conditions, sortBy, page, search, lat, lng } = filters
+        const { capacity, spaceType, pricing, amenities, sortBy, page, search, lat, lng } = filters
         let query = {};
         if (!isAdmin) {
             query = {
@@ -109,9 +109,9 @@ async function getAllListingsService(filters, isAdmin = false) {
             }
         }
         let skip = 0;
-        // Category filter
-        if (category && category !== "All") {
-            query.category = category;
+        // Capacity filter
+        if (capacity && capacity !== "") {
+            query.capacity = { $gte: capacity };
         }
         if (lat && lng) {
             query["location.geo"] = {
@@ -124,18 +124,27 @@ async function getAllListingsService(filters, isAdmin = false) {
             };
         }
         // Types filter (match any)
-        if (types && types.length > 0) {
-            query.clothingType = { $in: types };
+        if (amenities && amenities.length > 0) {
+            query.amenities = { $in: amenities };
         }
 
-        // Sizes filter
-        if (sizes && sizes.length > 0) {
-            query.size = { $in: sizes };
+        // spaceType filter
+        if (spaceType && spaceType !== "") {
+            query.spaceType = spaceType;
         }
 
-        // Conditions filter
-        if (conditions && conditions.length > 0) {
-            query.condition = { $in: conditions };
+        // Price filter
+        if (pricing && pricing.rate) {
+            query = {
+                ...query,
+                "pricing.rate": { $lte: pricing.rate }
+            };
+        }
+        if (pricing && pricing.interval) {
+            query = {
+                ...query,
+                "pricing.interval": pricing.interval
+            };
         }
         if (page && page > 1) {
             const limit = 10;
@@ -149,9 +158,9 @@ async function getAllListingsService(filters, isAdmin = false) {
             sortOption.createdAt = 1;
         }
         else if (sortBy === "price-high") {
-            sortOption.estimatedValue = -1;
+            sortOption.pricing.rate = -1;
         } else if (sortBy === "price-low") {
-            sortOption.estimatedValue = 1;
+            sortOption.pricing.rate = 1;
         }
         if (search && search != "") {
             query.title = {
@@ -159,10 +168,9 @@ async function getAllListingsService(filters, isAdmin = false) {
                 $options: "i"
             }
         }
-        const listings = await listingModel.find(query).sort(sortOption).skip(skip).limit(10).populate({ path: "owner", select: "username profilePicture rating" }).lean();
-        const totalPages = Math.ceil((await listingModel.countDocuments(query)) / 10);
-        // const listings = await listingModel.find()
-        return { listings, totalPages };
+        const spaces = await spaceModel.find(query).sort(sortOption).skip(skip).limit(10).populate({ path: "owner", select: "username profilePicture rating" }).lean();
+        const totalPages = Math.ceil((await spaceModel.countDocuments(query)) / 10);
+        return { spaces, totalPages };
     } catch (error) {
         console.log("Error fetching listing:", error);
         throw error;
@@ -176,5 +184,5 @@ module.exports = {
     updateListingService,
     deleteListingService,
     getListingByIdService,
-    getAllListingsService
+    getAllSpacesService
 };
