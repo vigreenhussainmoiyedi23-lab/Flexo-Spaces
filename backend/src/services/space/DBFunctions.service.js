@@ -4,18 +4,6 @@ const listingModel = require("../../models/space.model");
 const swapModel = require("../../models/swap/swap.model");
 
 
-async function isListingLocked(listingId) {
-    const isBeingSwapped = await swapModel.exists({
-        $or: [
-            { requesterListing: listingId },
-            { ownerListing: listingId }
-        ],
-        status: {
-            $in: ["accepted", "shipped"]
-        }
-    }).lean();
-    return !!isBeingSwapped;
-}
 
 
 
@@ -34,43 +22,38 @@ async function createSpaceService(SpaceData) {
     }
 }
 /*
- * @param {string} listingId - the id of the listing to be updated
- * @param {object} updateData - the data to be updated in the listing
- * @param {string} userId - the id of the user who is updating the listing
- * @returns {object} - the updated listing
- * @description Updates a listing in db if the user is the owner of the listing and throws the error to controller if any happens
+ * @param {string} spaceId - the id of the space to be updated
+ * @param {object} updateData - the data to be updated in the space
+ * @param {string} userId - the id of the user who is updating the space
+ * @returns {object} - the updated space
+ * @description Updates a space in db if the user is the owner of the space and throws the error to controller if any happens
  */
-async function updateListingService(listingId, updateData, userId) {
+async function updateListingService(spaceId, updateData, userId) {
     try {
-
-        const isBeingSwapped = await isListingLocked(listingId);
-        if (isBeingSwapped) throw new Error("Cannot update listing that is currently being swapped");
-        const updatedListing = await listingModel.findOneAndUpdate(
-            { _id: listingId, owner: userId },
+        const updatedSpace = await spaceModel.findOneAndUpdate(
+            { _id: spaceId, owner: userId },
             updateData,
             {
                 returnDocument: "after"
             }
         ).lean();
-        if (!updatedListing) throw new Error("Listing not found or unauthorized", 403);
-        return updatedListing;
+        if (!updatedSpace) throw new Error("Space not found or unauthorized", 403);
+        return updatedSpace;
     } catch (error) {
-        console.error("Error updating listing:", error);
+        console.error("Error updating space:", error);
         throw error;
     }
 }
 
 /*
-* @returns {object} - the deleted listing
-* @description Deletes a listing from db if the user is the owner of the listing and throws the error to controller if any happens
+* @returns {object} - the deleted space
+* @description Deletes a space from db if the user is the owner of the space and throws the error to controller if any happens
 */
-async function deleteListingService(listingId, userId) {
+async function deleteSpaceService(spaceId, userId) {
     try {
-        const isBeingSwapped = await isListingLocked(listingId);
-        if (isBeingSwapped) throw new Error("Cannot delete listing that is currently being swapped");
-        const deletedListing = await listingModel.findOneAndDelete({ _id: listingId, owner: userId }).lean();
-        if (!deletedListing) throw new Error("Listing not found or unauthorized");
-        return deletedListing;
+        const deletedSpace = await spaceModel.findOneAndDelete({ _id: spaceId, owner: userId }).lean();
+        if (!deletedSpace) throw new Error("Space not found or unauthorized");
+        return deletedSpace;
     } catch (error) {
         throw error;
     }
@@ -78,23 +61,23 @@ async function deleteListingService(listingId, userId) {
 
 
 /*
- * @param {string} listingId - the id of the listing to be fetched
- * @returns {object} - the listing
- * @description Fetches a specific listing from the database
+ * @param {string} spaceId - the id of the space to be fetched
+ * @returns {object} - the space
+ * @description Fetches a specific space from the database
  */
-async function getListingByIdService(listingId) {
+async function GetSpaceByIdService(spaceId) {
     try {
-        const listing = await listingModel.findById(listingId).populate("owner").lean();
-        return listing;
+        const space = await spaceModel.findById(spaceId).populate("owner").lean();
+        return space;
     } catch (error) {
-        console.log("Error fetching listing:", error);
+        console.log("Error fetching space:", error);
         throw error;
     }
 }
 
 /*
- * @returns {object[]} - an array of all listings in the database
- * @description Fetches all listings from the database and returns them in a paginated format (default 10 per page) to avoid performance issues.
+ * @returns {object[]} - an array of all spaces in the database
+ * @description Fetches all spaces from the database and returns them in a paginated format (default 10 per page) to avoid performance issues.
  * @throws Throws the error to controller if any happens
  */
 async function getAllSpacesService(filters, isAdmin = false) {
@@ -182,7 +165,7 @@ async function getAllSpacesService(filters, isAdmin = false) {
 module.exports = {
     createSpaceService,
     updateListingService,
-    deleteListingService,
-    getListingByIdService,
+    deleteSpaceService,
+    GetSpaceByIdService,
     getAllSpacesService
 };

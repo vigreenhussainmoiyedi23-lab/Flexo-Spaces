@@ -27,7 +27,7 @@ async function deleteImageFromListing(imageId, listingId) {
         throw new Error("Error deleting image");
     }
 }
-async function deleteAllImageFromListing(Deletedlisting, listingId) {
+async function deleteAllImageFromSpace(Deletedlisting, listingId) {
     try {
         // Find the listing by ID
         const listing = Deletedlisting || await listingModel.findById(listingId);
@@ -57,4 +57,4 @@ async function deleteAllImageFromListing(Deletedlisting, listingId) {
     }
 }
 
-module.exports = { deleteImageFromListing, deleteAllImageFromListing };
+module.exports = { deleteImageFromListing, deleteAllImageFromSpace };

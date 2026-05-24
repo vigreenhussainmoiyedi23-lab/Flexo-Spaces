@@ -67,7 +67,7 @@ const updateListingValidator = [
     body("pricing.rate")
         .notEmpty()
         .withMessage("pricing.rate cannot be empty")
-        .isFloat({ min: 0 }).withMessage("pricing.rate must contain only numbers"),
+        .isNumeric().withMessage("pricing.rate must contain only numbers"),
     body("pricing.interval")
         .notEmpty()
         .withMessage("pricing.interval cannot be empty")
@@ -78,7 +78,7 @@ const updateListingValidator = [
         .withMessage("amenities cannot be empty")
         .isArray().withMessage("amenities must be an array")
         .custom((value) => {
-            const validAmenities = AMENITY_LABELS;
+            const validAmenities = Object.keys(AMENITY_LABELS);
             const isValid = value.every((item) => validAmenities.includes(item));
             if (!isValid) {
                 throw new Error("amenities must be one of the following: " + validAmenities.join(", "));

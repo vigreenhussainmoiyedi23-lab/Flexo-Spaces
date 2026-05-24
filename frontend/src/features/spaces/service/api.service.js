@@ -8,12 +8,12 @@ const apiClient = axios.create({
     },
     withCredentials: true, // Include cookies for authentication
 });
-async function getListingById(listingId) {
+async function getSpaceById(spaceId) {
     try {
-        const response = await apiClient.get(`/${listingId}`);
+        const response = await apiClient.get(`/${spaceId}`);
         return response.data;
     } catch (error) {
-        console.error('Error fetching listing by ID:', error);
+        console.error('Error fetching space by ID:', error);
         throw error;
     }
 }
@@ -40,29 +40,29 @@ const createSpace = async (listingData) => {
     }
 };
 
-const updateListing = async (listingId, listingData) => {
+const updateSpace = async (spaceId, spaceData) => {
     try {
-        const response = await apiClient.patch(`/${listingId}`, listingData);
+        const response = await apiClient.patch(`/${spaceId}`, spaceData);
         return response.data;
     } catch (error) {
-        console.error('Error updating listing:', error);
+        console.error('Error updating space:', error);
         throw error;
     }
 };
-const deleteListing = async (listingId) => {
+const deleteSpace = async (spaceId) => {
     try {
-        const response = await apiClient.delete(`/${listingId}`);
+        const response = await apiClient.delete(`/${spaceId}`);
         return response.data;
     } catch (error) {
-        console.error('Error deleting listing:', error);
+        console.error('Error deleting space:', error);
         throw error;
     }
 };
 
 export default {
-    getListingById,
+    getSpaceById,
     getSpaces,
     createSpace,
-    updateListing,
-    deleteListing
+    updateSpace,
+    deleteSpace
 };

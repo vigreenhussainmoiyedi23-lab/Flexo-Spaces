@@ -13,13 +13,13 @@ function CTA() {
     <div className="flex flex-col items-center source-code-pro justify-center xl:justify-start sm:flex-row gap-3 sm:gap-4 mt-6 ">
       <Link
         to={"/register/user"}
-        className="w-full text-brand-100 shanti font-bold text-xl sm:w-2/3 px-6 sm:px-8 py-3 sm:py-4 bg-accent-400 hover:bg-accent-400 active:bg-accent-300 rounded-xl flex items-center justify-center gap-2 transition-colors"
+        className="w-full text-brand-100 exo-2 font-bold text-xl sm:w-2/3 px-6 sm:px-8 py-3 sm:py-4 bg-accent-400 hover:bg-accent-400 active:bg-accent-300 rounded-xl flex items-center justify-center gap-2 transition-colors"
       >
         Find Spaces <ArrowRight size={18} />
       </Link>
       <Link
         to={"/register/workspace_owner"}
-        className="w-full text-brand-100 shanti font-bold text-xl sm:w-2/3 px-6 sm:px-8 py-3 sm:py-4 bg-accent-300 hover:bg-accent-400 active:bg-accent-300 rounded-xl flex items-center justify-center gap-2 transition-colors"
+        className="w-full text-accent-300 exo-2 font-bold text-xl sm:w-2/3 px-6 sm:px-8 py-3 sm:py-4 bg-brand-200 hover:bg-brand-500/90 active:bg-brand-200 rounded-xl flex items-center justify-center gap-2 transition-colors"
       >
         List Your Spaces <ArrowRight size={18} />
       </Link>
@@ -81,7 +81,7 @@ function HeroVisual({ parallaxX, parallaxY }) {
 function HeroText() {
   return (
     <div className="text-center xl:text-left z-1">
-      <h1 className="text-4xl text-text-primary  tracking-normal playfair sm:text-5xl md:text-6xl xl:text-6xl font-bold leading-tight">
+      <h1 className="text-4xl text-text-primary shanti  tracking-normal playfair sm:text-5xl md:text-6xl xl:text-6xl font-bold leading-tight">
         Spaces That
         <br />
         Power <span className="text-gray-800 underline">Modern Work</span>

@@ -62,6 +62,7 @@ const CreateListing = () => {
     },
     amenities: [],
   });
+  
   const { createSpace } = useSpace();
   const [selectedImages, setSelectedImages] = useState([]);
   const [availableTypes, setAvailableTypes] = useState([]);

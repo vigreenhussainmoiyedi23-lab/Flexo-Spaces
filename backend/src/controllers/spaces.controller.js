@@ -16,8 +16,8 @@ APIs to build for listing.routes.js:
 
 const imagekit = require("../config/imagekit");
 const { validateLocation } = require("../Validators/locationValidator");
-const { getAllSpacesService, getListingByIdService, updateListingService, deleteListingService, createSpaceService } = require("../services/space/DBFunctions.service");
-const { deleteAllImageFromListing } = require("../services/space/DeleteImage.service");
+const { getAllSpacesService, updateListingService, createSpaceService, GetSpaceByIdService, deleteSpaceService } = require("../services/space/DBFunctions.service");
+const { deleteAllImageFromSpace } = require("../services/space/DeleteImage.service");
 const { uploadImage } = require("../services/space/UploadImage.service");
 
 
@@ -31,16 +31,16 @@ async function GetAllSpacesHandler(req, res) {
     }
 }
 
-async function GetListingByIdHandler(req, res) {
+async function GetSpaceByIdHandler(req, res) {
     const { id } = req.params;
     try {
-        const listing = await getListingByIdService(id);
-        if (!listing) {
-            return res.status(404).json({ message: "Listing not found", success: false });
+        const Space = await GetSpaceByIdService(id);
+        if (!Space) {
+            return res.status(404).json({ message: "Space not found", success: false });
         }
-        res.status(200).json({ listing, message: "Listing fetched successfully", success: true });
+        res.status(200).json({ Space, message: "Space fetched successfully", success: true });
     } catch (error) {
-        res.status(500).json({ message: "Error fetching listing", success: false });
+        res.status(500).json({ message: "Error fetching Space", success: false });
     }
 }
 
@@ -49,10 +49,11 @@ async function GetListingByIdHandler(req, res) {
 async function UpdateListingByIdHandler(req, res) {
     const { id } = req.params;
     try {
-        const updatedListing = await updateListingService(id, req.body, req.userId);
-        res.status(200).json({ listing: updatedListing, message: "Listing updated successfully", success: true });
+        const updatedSpace = await updateListingService(id, req.body, req.userId);
+
+        res.status(200).json({ space: updatedSpace, message: "Space updated successfully", success: true });
     } catch (error) {
-        res.status(error?.status || 500).json({ message: error.message, success: false, redirectTo: "/listings" });
+        res.status(error?.status || 500).json({ message: error.message, success: false, redirectTo: "/spaces" });
     }
 }
 
@@ -64,6 +65,7 @@ async function CreateWorkSpaceHandler(req, res) {
                 success: false
             });
         }
+        if (req.role == "user") return res.status(403).json({ message: "Unauthorized", success: false });
         const { pricing, spaceType, capacity, amenities, title, description } = req.body;
 
         let { city, state, country, lat, lng } = await validateLocation(JSON.parse(req.body.location))
@@ -83,7 +85,7 @@ async function CreateWorkSpaceHandler(req, res) {
 
         const responses = await Promise.all(promises)
         const images = responses.map(response => { return { url: response.url, fileId: response.fileId, thumbnail: response.thumbnailUrl } })
-        console.log(req.body,images)
+        console.log(req.body, images)
         const listing = await createSpaceService({
             location: location,
             spaceType,
@@ -100,25 +102,25 @@ async function CreateWorkSpaceHandler(req, res) {
         return res.status(500).json({ message: "Error creating WorkSpace", error, success: false })
     }
 }
-async function DeleteListingByIdHandler(req, res) {
+async function DeleteSpaceByIdHandler(req, res) {
 
 
     const { id } = req.params;
-    let deletedListing
+    let deletedSpace
     try {
-        deletedListing = await deleteListingService(id, req.userId);
+        deletedSpace = await deleteSpaceService(id, req.userId);
     } catch (error) {
-        return res.status(400).json({ message: "Error listing not found or unauthorized", error, success: false });
+        return res.status(400).json({ message: "Error space not found or unauthorized", error, success: false });
     }
 
     try {
-        await deleteAllImageFromListing(deletedListing);
+        await deleteAllImageFromSpace(deletedSpace);
 
     } catch (error) {
         console.error("Error deleting images from ImageKit:", error);
         return res.status(500).json({ message: "Error deleting images from ImageKit", error, success: false });
     }
-    res.status(200).json({ message: "Listing deleted successfully", success: true });
+    res.status(200).json({ message: "Space deleted successfully", success: true });
 
 }
 
@@ -127,7 +129,7 @@ async function DeleteListingByIdHandler(req, res) {
 module.exports = {
     CreateWorkSpaceHandler,
     GetAllSpacesHandler,
-    GetListingByIdHandler,
+    GetSpaceByIdHandler,
     UpdateListingByIdHandler,
-    DeleteListingByIdHandler
+    DeleteSpaceByIdHandler
 }

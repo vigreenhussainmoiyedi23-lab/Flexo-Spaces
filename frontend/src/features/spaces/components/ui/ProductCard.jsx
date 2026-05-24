@@ -1,14 +1,14 @@
 // ProductCard.jsx
 import React, { useState } from "react";
-import { MapPin, Star, Users } from "lucide-react";
+import { Edit2, MapPin, Star, Trash, Users } from "lucide-react";
 import useAuth from "../../../auth/hooks/useAuth";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSpace } from "../../hooks/useSpace";
 
 const ProductCard = ({ item }) => {
   const { user } = useAuth();
-  const { deleteListing } = useSpace();
-
+  const { getSpaceById, deleteSpace } = useSpace();
+  const navigate = useNavigate();
   return (
     <section
       className="group block  bg-text-primary w-full h-full rounded-3xl overflow-hidden
@@ -47,18 +47,6 @@ const ProductCard = ({ item }) => {
           >
             {item.spaceType.replace(/_/g, " ")}
           </span>
-
-          {/* Capacity pill — bottom-left inside image */}
-          {item?.capacity && (
-            <span
-              className="absolute bottom-3 left-3 flex items-center gap-1
-          bg-black/50 backdrop-blur-sm text-white/90
-          text-[10px] font-semibold px-2.5 py-1 rounded-full"
-            >
-              <Users className="w-3 h-3" />
-              {item.capacity}
-            </span>
-          )}
         </div>
 
         {/* ── Body ──────────────────────────────────────── */}
@@ -74,10 +62,19 @@ const ProductCard = ({ item }) => {
               {item.title}
             </h3>
             <p className="text-brand-100 font-extrabold text-lg leading-none tracking-tight">
-              ₹{item?.pricing?.rate} / {item?.pricing?.interval.slice(0,-2)}
+              ₹{item?.pricing?.rate} / {item?.pricing?.interval.slice(0, -2)}
             </p>
           </div>
-
+          {/* Capacity pill — bottom-left inside image */}
+          {item?.capacity && (
+            <p
+              className="  flex items-center gap-1
+          text-sm text-start font-semibold  exo-2 text-brand-100/90"
+            >
+              Capacity :-
+              {item.capacity}
+            </p>
+          )}
           {/* Location */}
           <p className="flex items-center gap-1 mt-1 text-brand-100/70 text-xs">
             <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
@@ -103,7 +100,7 @@ const ProductCard = ({ item }) => {
 
             {item.amenities.length > 4 && (
               <span
-                className="px-2 py-1 rounded-full bg-accent-500/10
+                className="px-2 py-1 rounded-full bg-brand-200/90
                  text-[10px] text-accent-300"
               >
                 +{item.amenities.length - 4} more
@@ -149,16 +146,46 @@ const ProductCard = ({ item }) => {
       </Link>
 
       {/* ── Book CTA ──────────────────────────────────── */}
-      <div className="px-4 pb-4">
-        <div
-          className="w-full py-3 rounded-2xl text-center text-sm font-bold tracking-wide
-                     bg-accent-500 text-white
-                     group-hover:bg-accent-400
+      {user?._id.toString() !== item?.owner?._id.toString() &&
+        user.role == "user" && (
+          <div className="px-4 pb-4 w-full">
+            <Link
+              to={`/createBooking/${item._id}`}
+              className="w-full block py-3 rounded-2xl text-center text-sm font-bold tracking-wide
+                     bg-brand-500 text-white
+                     group-hover:bg-brand-200/90
                      active:scale-95 transition-all duration-200"
-        >
-          Book Now
+            >
+              Book Now
+            </Link>
+          </div>
+        )}
+      {user?._id.toString() === item?.owner?._id.toString() && (
+        <div className="px-4 pb-4 w-full flex gap-2  items-center justify-between ">
+          <button
+            className="flex items-center exo-2 text-sm w-full md:text-lg bg-blue-500 rounded-2xl px-2 py-1  gap-2 justify-center"
+            onClick={() =>
+              (window.location.href = `/spaces/update/${item._id}`)
+            }
+          >
+            Update <Edit2 className="w-4" />
+          </button>
+          <button
+            onClick={async (e) => {
+              let isDeleted = window.confirm(
+                "Are you sure you want to delete this space?",
+              );
+              if (isDeleted) {
+                await deleteSpace(item._id);
+                navigate("/spaces");
+              }
+            }}
+            className="flex items-center exo-2 text-sm w-full md:text-lg bg-red-600 rounded-2xl px-2 py-1  gap-2 justify-center text-white "
+          >
+            Delete <Trash className="w-4" />
+          </button>
         </div>
-      </div>
+      )}
     </section>
   );
 };

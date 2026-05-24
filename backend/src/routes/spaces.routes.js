@@ -19,9 +19,10 @@ const router = express.Router()
 const {
     CreateWorkSpaceHandler,
     GetAllSpacesHandler,
-    GetListingByIdHandler,
+    GetSpaceByIdHandler,
     UpdateListingByIdHandler,
-    DeleteListingByIdHandler
+    
+    DeleteSpaceByIdHandler,
 } = require("../controllers/spaces.controller")
 const { isAuthenticated } = require("../middlewares/protectedRoutes.middleware")
 const upload = require("../config/multer")
@@ -31,7 +32,7 @@ const { CreateListingLimiter } = require("../middlewares/rateLimiter")
 
 
 router.post("/get-all", GetAllSpacesHandler)
-router.get("/:id", GetListingByIdHandler)
+router.get("/:id", GetSpaceByIdHandler)
 
 
 router.post("/", CreateListingLimiter,
@@ -40,8 +41,12 @@ router.post("/", CreateListingLimiter,
     validate,
     isAuthenticated,
     CreateWorkSpaceHandler)
-router.patch("/:id", isAuthenticated, updateListingValidator, validate, UpdateListingByIdHandler)
-router.delete("/:id", isAuthenticated, DeleteListingByIdHandler)
+router.patch("/:id", isAuthenticated, 
+    updateListingValidator, validate, 
+    UpdateListingByIdHandler)
+
+
+router.delete("/:id", isAuthenticated, DeleteSpaceByIdHandler)
 
 
 

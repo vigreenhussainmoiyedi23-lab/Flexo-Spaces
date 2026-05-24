@@ -4,41 +4,28 @@ import MyListingsOverlay from "../components/ListingMore/MyListingsOverlay";
 import { AuthContext } from "../../auth/auth.context";
 import { useContext } from "react";
 import { useProfile } from "../../Profile/Hooks/useProfile";
-import { Edit2, Trash } from "lucide-react";
+import { Edit2, MapPin, Trash } from "lucide-react";
 import showToast from "../../../utils/Toastify.util";
 import Loader from "../../commonComponents/Loading";
 import { useSpace } from "../hooks/useSpace";
 
 const ListingMore = () => {
   const { id } = useParams();
+  const { user } = useContext(AuthContext);
+  const { getSpaceById, deleteSpace } = useSpace();
 
   const navigate = useNavigate();
 
-  const { getListingById, deleteListing } =
-    useSpace();
-    
-  const [space, setSpace] = useState({});
+  const [space, setSpace] = useState(null);
+
   useEffect(() => {
     async function fetchListing() {
-      const data = await getListingById(id);
-      setSpace(data.listing);
+      const data = await getSpaceById(id);
+      setSpace(data.Space);
     }
     fetchListing();
   }, [id]);
-  if (!listing) return <Loader />;
-
-  const [isActive, setIsActive] = useState(false);
-  const { fetchUserAllListings } = useProfile();
-  const { user } = useContext(AuthContext);
-  useEffect(() => {
-    if (!user) return;
-    const fetch = async () => {
-      const response = await fetchUserAllListings(user?._id);
-      setMyListings(response?.listings);
-    };
-    fetch();
-  }, [user]);
-
+  if (!space) return <Loader />;
 
   return (
     <div className="min-h-screen relative mt-[10vh] bg-[var(--color-brand-900)] text-white p-6">
@@ -48,7 +35,7 @@ const ListingMore = () => {
           <img
             src={space.images?.[0]?.url}
             alt={space.title}
-            className="w-fit h-100 object-contain rounded-2xl border border-[var(--color-brand-700)]"
+            className="w-fit h-100 object-contain rounded-2xl"
           />
 
           <div className="flex gap-3 mt-4 overflow-x-auto">
@@ -57,49 +44,56 @@ const ListingMore = () => {
                 key={i}
                 src={img.url}
                 alt="preview"
-                className="w-20 h-20 object-cover rounded-lg border border-[var(--color-brand-700)] cursor-pointer"
+                className="w-20 h-20 object-cover rounded-lg cursor-pointer"
               />
             ))}
           </div>
         </div>
 
         {/* RIGHT: DETAILS */}
-        <div className="bg-[var(--color-brand-700)] p-6 rounded-2xl shadow-lg">
-          <h1 className="text-3xl font-bold mb-3">{space.title}</h1>
+        <div className="bg-text-primary p-6 rounded-2xl shadow-lg">
+          <div className="flex-shrink-0 flex items-center justify-between text-start">
+            <h1
+              className="font-bold text-brand-100 text-xl sm:text-3xl leading-snug
+            line-clamp-2 capitalize tracking-tight"
+            >
+              {space.title}
+            </h1>
+            <p className="text-brand-100 font-extrabold text-xl lg:text-3xl leading-none tracking-tight">
+              ₹{space?.pricing?.rate} / {space?.pricing?.interval.slice(0, -2)}
+            </p>
+          </div>
 
           <p className="text-gray-300 mb-4">{space.description}</p>
 
-          {/* TAGS */}
-          <div className="flex flex-wrap gap-2 mb-4">
-            {[
-              space.category,
-              space.clothingType,
-              space.size,
-              space.condition,
-            ].map((item, i) => (
-              <span
-                key={i}
-                className="px-3 py-1 bg-brand-500 rounded-full text-sm"
-              >
-                {item}
-              </span>
-            ))}
-          </div>
+          {/* Title */}
 
-          {/* DETAILS */}
-          <div className="space-y-2 text-sm">
-            <p>
-              <strong>Brand:</strong> {space.brandName}
-            </p>
-            <p>
-              <strong>Estimated Value:</strong> ₹{space.estimatedValue}
-            </p>
-            <p>
-              <strong>Location:</strong> {space.Location?.city},{" "}
-              {space.Location?.State}
-            </p>
-          </div>
+          {/* Price */}
 
+          {/* Location */}
+          <p className="flex items-center gap-1 mt-1 text-brand-100/70 text-xs">
+            <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+            <span className="truncate capitalize">
+              {space.location.city}, {space.location.state}
+            </span>
+          </p>
+          <details>
+            <summary className="text-xl font-black exo-2 text-brand-100 mt-3">
+              Amenities
+            </summary>
+
+            <div className="flex flex-wrap gap-2 mt-3 ">
+              {space.amenities.map((amenity) => (
+                <span
+                  key={amenity}
+                  className="px-2 py-1 rounded-full bg-brand-100 border border-white/10
+                 text-[10px] text-text-secondary font-bold"
+                >
+                  {amenity}
+                </span>
+              ))}
+            </div>
+          </details>
           {/* OWNER INFO */}
           <div className="mt-6 flex items-center gap-4 border-t border-[var(--color-brand-500)] pt-4">
             <img
@@ -115,72 +109,79 @@ const ListingMore = () => {
             </div>
           </div>
 
-          {/* ACTION BUTTON */}
-          {user && user?._id.toString() !== listing?.owner?._id.toString() && (
-            <div className="  z-10 flex-col gap-3  flex w-full mt-3 px-3 py-1 rounded-xl text-xs font-medium capitalize">
-              <Link
-                to={`/profile/${listing?.owner?._id}`}
-                className=" w-full text-center text-accent-300 bg-brand-500 font-semibold source-code-pro hover:bg-brand-600 active:scale-98 transition py-2 rounded-xl text-lg"
-              >
-                VIEW USER PROFILE
-              </Link>
-              {myListings &&
-              myListings.filter(
-                (l) => l.isAvailable && !l.isLocked && !l.isRemoved,
-              ).length > 0 ? (
-                <button
-                  onClick={() => setIsActive(true)}
-                  className="w-full text-center text-accent-500 bg-brand-900 font-semibold source-code-pro hover:bg-brand-800 active:scale-98 transition py-2 rounded-xl text-lg"
-                >
-                  Request Swap
-                </button>
-              ) : (
-                <Link
-                  to={"/createListing"}
-                  className="w-full text-center text-accent-500 bg-brand-900 font-semibold source-code-pro hover:bg-brand-800 active:scale-98 transition py-2 rounded-xl text-lg"
-                >
-                  Create A Listing To Swap
-                </Link>
-              )}
-            </div>
-          )}
-          {user && user?._id.toString() === listing?.owner?._id.toString() && (
-            <div className=" text-black z-10 flex-col gap-3 justify-between flex w-full mt-3 px-3 py-1 rounded-xl text-xs font-medium capitalize">
-              <button
-                className="flex items-center bg-accent-500 rounded-2xl px-2 py-1  gap-2 justify-center"
-                onClick={() =>
-                  (window.location.href = `/listings/update/${id}`)
-                }
-              >
-                Update <Edit2 className="w-4" />
-              </button>
-              <button
-                onClick={(e) => {
-                  let isDeleted = window.confirm(
-                    "Are you sure you want to delete this listing?",
-                  );
-                  if (isDeleted) {
-                    deleteListing(id);
-                  }
-                }}
-                className="flex items-center bg-red-600 rounded-2xl px-2 py-1  gap-2 justify-center text-white "
-              >
-                Delete <Trash className="w-4" />
-              </button>
-            </div>
-          )}
-          {!user && (
-            <button
-              onClick={() => navigate("/login")}
-              className="mt-6 w-full bg-brand-500 hover:bg-[var(--color-brand-300)] transition py-3 rounded-xl font-semibold"
-            >
-              Login to Swap
-            </button>
-          )}
+          <CTA
+            user={user}
+            space={space}
+            navigate={navigate}
+            deleteSpace={deleteSpace}
+          />
         </div>
       </div>
     </div>
   );
 };
+
+function CTA({ user, space, navigate, deleteSpace }) {
+  return (
+    <>
+      {" "}
+      {/* ACTION BUTTON */}
+      {user && user?._id.toString() !== space?.owner?._id.toString() && (
+        <div className="  z-10 flex-col gap-3  flex w-full mt-3 px-3 py-1 rounded-xl text-xs font-medium capitalize">
+          <Link
+            to={`/profile/${space?.owner?._id}`}
+            className=" w-full text-center text-accent-300 shanti bg-brand-500 font-semibold source-code-pro hover:bg-brand-600 active:scale-98 transition py-2 rounded-xl text-lg"
+          >
+            View
+            <span className="mx-2 text-bold text-text-primary">
+              {space?.owner?.username}
+            </span>
+            Profile
+          </Link>
+          <Link
+            to={`/createBooking/${space?._id}`}
+            className=" w-full text-center text-text-primary font-bold stroke-1 stroke-accent-500 exo-2 bg-brand-100  source-code-pro hover:bg-brand-600 active:scale-98 transition py-2 rounded-xl text-lg"
+          >
+            Book WorkSpace
+          </Link>
+        </div>
+      )}
+      {user && user?._id.toString() === space?.owner?._id.toString() && (
+        <div className=" text-black z-10 flex-col gap-3 justify-between flex w-full mt-3 px-3 py-1 rounded-xl text-xs font-medium capitalize">
+          <button
+            className="flex items-center bg-accent-500 rounded-2xl px-2 py-1  gap-2 justify-center"
+            onClick={() =>
+              (window.location.href = `/spaces/update/${space._id}`)
+            }
+          >
+            Update <Edit2 className="w-4" />
+          </button>
+          <button
+            onClick={async (e) => {
+              let isDeleted = window.confirm(
+                "Are you sure you want to delete this space?",
+              );
+              if (isDeleted) {
+                await deleteSpace(space._id);
+                navigate("/spaces");
+              }
+            }}
+            className="flex items-center bg-red-600 rounded-2xl px-2 py-1  gap-2 justify-center text-white "
+          >
+            Delete <Trash className="w-4" />
+          </button>
+        </div>
+      )}
+      {!user && (
+        <button
+          onClick={() => navigate("/login")}
+          className="mt-6 w-full bg-brand-500 hover:bg-[var(--color-brand-200)] transition py-3 rounded-xl font-semibold"
+        >
+          Login to Book WorkSpace
+        </button>
+      )}
+    </>
+  );
+}
 
 export default ListingMore;

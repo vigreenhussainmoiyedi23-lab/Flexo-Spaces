@@ -41,17 +41,17 @@ const Navbar = ({ user }) => {
         )}
 
         {!user && (
-          <div className="flex items-center  sm:gap-4 sm:scale-100 scale-70 gap-2">
+          <div className="flex flex-col sm:flex-row  items-center  sm:gap-4 sm:scale-100 scale-70 gap-2">
             <Link
               to="/login"
-              className="px-6 py-2 text-sm active:scale-95 bg-brand-500 font-medium hover:scale-99 rounded-xl transition-all"
+              className="px-6 font-semibold text-lg text-accent-300 exo-2 py-2  active:scale-95 bg-brand-500  hover:scale-99 rounded-xl transition-all"
             >
               Login
             </Link>
 
             <Link
               to="/register/user"
-              className="px-6 py-2 bg-emerald-600 active:scale-95  hover:bg-emerald-700 text-sm font-semibold rounded-xl transition-all"
+              className="px-6 py-2 exo-2 bg-emerald-600 whitespace-nowrap active:scale-95  hover:bg-emerald-700 text-lg font-semibold rounded-xl transition-all"
             >
               Join Free
             </Link>
