@@ -1,361 +1,319 @@
-🚀 Flexo Spaces
+# Flexo Spaces 🏢
 
-> Smart Co-Working Space Discovery & Booking Platform
+**A SaaS-Level Co-Working Space Discovery & Booking Platform**
 
-A real-time full-stack MERN + Next.js application that enables freelancers, startups, and enterprises to discover, compare, and book co-working spaces with live availability, smart filtering, and seamless communication.
+[![Status](https://img.shields.io/badge/Status-Active%20Development-blue?style=for-the-badge)]()
+[![Stack](https://img.shields.io/badge/Stack-MERN%20%2B%20Next.js-green?style=for-the-badge)]()
+[![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)]()
 
----
+> *Find your space. Book it instantly. Work without friction.*
 
-## 🌍 Overview
+Flexo Spaces is a production-grade, full-stack booking platform that enables freelancers, startups, and enterprises to discover, compare, and book co-working spaces — with real-time availability, smart filtering, and a clean approval workflow.
 
-Flexo Spaces solves the problem of fragmented and outdated workspace discovery systems by providing a centralized, intelligent booking platform.
-
-It allows users to:
-- Discover co-working spaces based on requirements
-- Compare pricing, amenities, and locations
-- View real-time availability
-- Book spaces instantly
-- Communicate with space owners
-- Manage bookings digitally
+Built on lessons from [SwapStyle](https://github.com/vigreenhussainmoiyedi23-lab/SwapStyle) — a deployed peer-to-peer marketplace — Flexo Spaces brings the same architectural discipline to workspace management.
 
 ---
 
-## 🎯 Problem
+## 📌 Problem Statement
 
-Finding the right workspace is difficult due to:
-- Scattered listings across platforms
-- Outdated availability information
-- Lack of transparency in pricing
-- No real-time communication
-- Inefficient booking workflows
+The co-working space market is fragmented. Users bounce between Google Maps, WhatsApp groups, and outdated websites trying to answer three simple questions:
 
----
+- Is there a space that fits my team size and budget?
+- Is it actually available right now?
+- How do I book it without 5 back-and-forth messages?
 
-## 💡 Solution
-
-Flexo Spaces centralizes the entire workflow:
-- Unified workspace discovery system
-- Real-time availability tracking
-- Smart filtering & recommendations
-- Direct communication between users and owners
-- End-to-end booking lifecycle management
-
----
-
-## 👥 Target Users
-
-- Freelancers
-- Remote workers
-- Startups
-- Enterprises
-- Co-working operators
-- Space managers
+Flexo Spaces answers all three in one platform.
 
 ---
 
 ## ✨ Features
 
-### 🔐 Authentication
-- JWT authentication with secure cookies
-- Google OAuth 2.0 login
-- OTP email verification
-- Password reset system
-- Role-based access control (User / Owner / Admin)
+### 🔐 Authentication & Security
+- JWT authentication with secure `httpOnly` cookie sessions
+- Google OAuth 2.0 one-click login
+- OTP email verification for new registrations
+- Redis-backed token blacklisting on logout
+- Role-based access control: **User / Space Owner / Admin**
 
----
+### 🏢 Workspace Listings
+- Create and manage co-working space listings
+- Multi-image upload with cloud CDN optimization
+- Define pricing: hourly, daily, monthly
+- Set capacity, area size, and workspace type (private cabin, shared desk, meeting room)
+- Amenities tagging: Wi-Fi, parking, cafeteria, meeting rooms, power backup, security
 
-### 🏢 Workspace Management
-- Create and manage workspace listings
-- Upload multiple images
-- Define pricing (hourly/daily/monthly)
-- Set seating capacity & area size
-- Manage availability status
-- Add rules and policies
+### 🔎 Smart Search & Matching
+- Multi-filter search: team size, budget, location, amenities, workspace type
+- Location-based discovery with city/area filtering
+- Weighted matching score based on user requirements
+- Sorting by price, rating, popularity, and distance
 
----
-
-### 🔎 Smart Search System
-- Multi-filter search
-- Location-based discovery
-- Budget filtering
-- Workspace type filtering
-- Amenity-based search
-- Sorting (price, rating, popularity, distance)
-
----
-
-### 🧩 Amenities System
-- Wi-Fi, AC, Parking, Cafeteria
-- Meeting rooms & conference halls
-- Security & power backup
-- Printing facilities
-- Custom amenity tagging
-- Filter-based selection
-
----
-
-### 📅 Booking System
-- Real-time availability checks
-- Booking request workflow
-- Approval / rejection system
-- Booking cancellation
-- Booking history tracking
-
-**Booking Status Flow**
-- Pending
-- Approved
-- Rejected
-- Cancelled
-- Completed
-
----
+### 📅 Booking Engine
+- Real-time availability checks using overlap detection (not `isBooked` booleans)
+- Booking request → approval/rejection workflow
+- Booking status lifecycle: `Pending → Approved → Rejected → Cancelled → Completed`
+- Cancellation support with history tracking
+- Pricing snapshot at time of booking (prevents price disputes)
 
 ### 💬 Real-Time Communication
-- Socket.IO based chat system
-- Booking-related conversations
-- Inquiry messaging system
-- Typing indicators
-- Image sharing
-- Read receipts
-
----
-
-### 🔔 Notifications
-- Booking confirmations
-- Status updates
-- Inquiry responses
-- New message alerts
+- Socket.IO-powered chat for booking-related conversations
+- Inquiry system for pre-booking questions
+- Typing indicators, read receipts, image sharing
 - Real-time in-app notifications
 
----
-
 ### 📊 Dashboards
-
-#### User Dashboard
-- Booking history
-- Saved spaces
-- Profile management
-- Notifications
-
-#### Space Owner Dashboard
-- Listing management
-- Booking approvals
-- Revenue tracking
-- Occupancy analytics
-
-#### Admin Dashboard
-- User management
-- Workspace moderation
-- Platform analytics
-- Fraud detection
-
----
-
-## 🧠 Smart Matching System
-
-Workspace recommendations are generated using weighted scoring based on:
-- Team size
-- Budget range
-- Location preference
-- Amenities
-- Availability
-
----
-
-## ⚡ Real-Time System
-
-Built using Socket.IO:
-
-- Live availability updates
-- Instant booking status sync
-- Real-time occupancy tracking
-- Conflict prevention system
+- **User** — Booking history, saved spaces, notifications
+- **Space Owner** — Listing management, booking approvals, occupancy analytics
+- **Admin** — User management, workspace moderation, platform analytics
 
 ---
 
 ## 🏗️ Architecture
 
-### Backend Flow
-Client → Routes → Controllers → Services → Models → MongoDB
+```
+┌─────────────────────────────────────────┐
+│         Client (Next.js 14)             │
+│   Feature-based modules, React Query    │
+└──────────────┬──────────────────────────┘
+               │ HTTP / WebSocket
+┌──────────────▼──────────────────────────┐
+│         Express.js Routes               │
+│  /api/auth  /api/spaces  /api/bookings  │
+└──────────────┬──────────────────────────┘
+               │
+┌──────────────▼──────────────────────────┐
+│           Controllers                   │
+│     Handle HTTP request/response        │
+└──────────────┬──────────────────────────┘
+               │
+┌──────────────▼──────────────────────────┐
+│            Services                     │
+│   Business logic, availability engine   │
+└──────────────┬──────────────────────────┘
+               │
+┌──────────────▼──────────────────────────┐
+│        Mongoose Models                  │
+│  User, Space, Booking, Amenity, Chat... │
+└──────────────┬──────────────────────────┘
+               │
+┌──────────────▼──────────────────────────┐
+│     MongoDB Atlas + Redis Cache         │
+└─────────────────────────────────────────┘
+```
 
----
+### Key Design Decisions
 
-### Frontend Architecture
-- Feature-based folder structure
-- Custom hooks for logic reuse
-- React Query for data fetching
-- Context API for global state
-- Service layer for API calls
+**Why overlap detection instead of `isBooked`?**
+A boolean flag can't handle partial availability — what if a space has 10 desks and 6 are booked? Availability is calculated dynamically by querying confirmed bookings within the requested time window and subtracting from total capacity.
+
+**Why Redis?**
+Token blacklisting on logout (same pattern as SwapStyle), and caching frequent search queries to reduce DB load on popular spaces.
+
+**Why Next.js over plain React?**
+SSR for workspace listing pages improves SEO — space owners need their listings to be discoverable on Google.
+
+**Why pricing snapshots?**
+Booking stores the price at time of request, not the current listing price. Prevents disputes if an owner changes pricing while a booking is pending.
 
 ---
 
 ## 🧱 Tech Stack
 
 ### Frontend
-- Next.js
-- React.js
-- Tailwind CSS
-- Framer Motion
-- React Query
-- Socket.IO Client
-- React Hook Form
-- Zod
+| Technology | Purpose |
+|---|---|
+| Next.js 14 | SSR, routing, SEO |
+| Tailwind CSS | Utility-first styling |
+| Framer Motion | Page transitions and animations |
+| React Query | Server state management |
+| Socket.IO Client | Real-time communication |
+| React Hook Form + Zod | Form handling and validation |
 
 ### Backend
-- Node.js
-- Express.js
-- MongoDB + Mongoose
-- Socket.IO
-- JWT Authentication
-- Bcrypt.js
-- Passport.js (Google OAuth)
-- Redis (Caching)
-- Nodemailer
-- Multer
-
-### DevOps
-- Vercel (Frontend)
-- Render / Railway (Backend)
-- MongoDB Atlas
-- Redis Cloud
+| Technology | Purpose |
+|---|---|
+| Node.js + Express.js | REST API server |
+| MongoDB + Mongoose | Primary database and ODM |
+| Socket.IO | Real-time bidirectional communication |
+| JWT + Bcrypt.js | Authentication and password hashing |
+| Passport.js | Google OAuth 2.0 strategy |
+| Redis | Token blacklisting and query caching |
+| Nodemailer | OTP and transactional emails |
+| Multer | File upload handling |
+| Helmet.js + Rate Limit | Security headers and API protection |
 
 ---
 
-## 📁 Project Structure
+## 📁 Folder Structure
 
-
+```
 Flexo-Spaces/
-│
 ├── backend/
-│ └── src/
-│ ├── controllers/
-│ ├── models/
-│ ├── routes/
-│ ├── services/
-│ ├── sockets/
-│ └── middlewares/
+│   └── src/
+│       ├── config/           # DB, Redis configuration
+│       ├── constants/        # Enums, booking statuses
+│       ├── controllers/      # Route handlers
+│       ├── middlewares/      # Auth guards, validation, rate limiting
+│       ├── models/
+│       │   ├── user/         # User, notification
+│       │   ├── space/        # Space, amenity, availability
+│       │   └── booking/      # Booking, inquiry
+│       ├── routes/           # API route definitions
+│       ├── services/
+│       │   ├── auth/
+│       │   ├── space/
+│       │   ├── booking/      # Overlap detection, availability engine
+│       │   └── user/
+│       ├── sockets/          # Socket.IO event handlers
+│       └── utils/            # Shared helpers
 │
 ├── frontend/
-│ └── src/
-│ ├── app/
-│ ├── features/
-│ ├── components/
-│ ├── hooks/
-│ ├── services/
-│ └── context/
-
+│   └── src/
+│       ├── app/              # Next.js app router
+│       ├── features/         # Feature-based modules
+│       │   ├── auth/
+│       │   ├── spaces/       # Browse, Create, Detail
+│       │   ├── bookings/     # Request, manage, history
+│       │   ├── dashboard/    # User, Owner, Admin views
+│       │   ├── chat/
+│       │   └── notifications/
+│       ├── components/       # Shared UI components
+│       ├── hooks/            # Custom React hooks
+│       └── services/         # API layer
+│
+└── README.md
+```
 
 ---
 
-## 🔌 API Routes
+## 🔌 API Reference
 
-### Auth
+### Authentication — `/api/auth`
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/register` | Register with email + OTP |
+| POST | `/verify-otp` | Verify OTP |
+| POST | `/login` | Email/password login |
+| POST | `/google` | Google OAuth login |
+| POST | `/logout` | Logout + Redis token blacklist |
+| POST | `/forgot-password` | Trigger password reset |
 
-POST /api/auth/register
-POST /api/auth/login
-POST /api/auth/google
-POST /api/auth/logout
+### Spaces — `/api/spaces`
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/` | Paginated spaces with filters |
+| POST | `/` | Create space listing |
+| GET | `/:id` | Get single space |
+| PATCH | `/:id` | Update listing |
+| DELETE | `/:id` | Delete listing |
+| GET | `/:id/availability` | Check real-time availability |
 
+### Bookings — `/api/bookings`
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/` | Create booking request |
+| GET | `/my` | Get user's bookings |
+| PATCH | `/:id/approve` | Owner approves booking |
+| PATCH | `/:id/reject` | Owner rejects booking |
+| PATCH | `/:id/cancel` | Cancel booking |
 
-### Spaces
+### Admin — `/api/admin`
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/analytics` | Platform-wide analytics |
+| GET | `/users` | List all users |
+| POST | `/users/:id/ban` | Ban or unban a user |
+| POST | `/spaces/:id/remove` | Remove a listing |
 
-GET /api/spaces
-POST /api/spaces
-PATCH /api/spaces/:id
-DELETE /api/spaces/:id
+---
 
+## 🚀 Development Roadmap
 
-### Bookings
+### ✅ Phase 1 — MVP Foundation (Current)
+- [x] Repo setup and architecture planning
+- [ ] Role-based authentication (JWT + Google OAuth + OTP)
+- [ ] Space CRUD with image uploads
+- [ ] Booking request → approve/reject flow
+- [ ] Basic availability display
+- [ ] Owner and user dashboards
 
-POST /api/bookings
-PATCH /api/bookings/:id/approve
-PATCH /api/bookings/:id/reject
+### 🔜 Phase 2 — Core Booking Engine
+- [ ] Overlap detection logic
+- [ ] Remaining seat tracking
+- [ ] Capacity calculations
+- [ ] Booking status lifecycle
+- [ ] Availability service layer
 
+### 🔮 Phase 3 — Real-Time UX
+- [ ] Socket.IO live seat updates
+- [ ] Booking notifications
+- [ ] Owner alerts
+- [ ] Availability badges
 
-### Inquiries
+### 🔮 Phase 4 and Beyond
+- Payment gateway integration
+- Recurring bookings
+- AI-based recommendations
+- Redis query caching
+- Analytics dashboard
+- Mobile application
 
-POST /api/inquiries
-GET /api/inquiries/my
+---
 
+## ⚙️ Getting Started
 
-### Admin
+### Prerequisites
+- Node.js 18+
+- MongoDB Atlas account (or local MongoDB)
+- Redis instance (local or [Upstash](https://upstash.com/))
+- Google Cloud Console account
 
-GET /api/admin/analytics
-GET /api/admin/users
-GET /api/admin/spaces
+### 1. Clone the Repository
+```bash
+git clone https://github.com/vigreenhussainmoiyedi23-lab/Flexo-Spaces
+cd Flexo-Spaces
+```
 
+### 2. Backend Setup
+```bash
+cd backend
+npm install
+cp env.example .env   # Fill in your credentials
+npm run dev
+```
+
+### 3. Frontend Setup
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
 ---
 
 ## 🔒 Security
-
-- JWT authentication (HTTP-only cookies)
-- Role-based access control
+- JWT authentication with `httpOnly` cookies
+- Role-based access control on all protected routes
 - Password hashing with bcrypt
-- Rate limiting
-- Helmet security headers
-- Input validation & sanitization
-
----
-
-## 🚀 Future Enhancements
-
-### High Priority
-- Payment gateway integration
-- Calendar booking system
-- Workspace reviews & ratings
-- Push notifications
-
-### Medium Priority
-- AI workspace recommendations
-- Dynamic pricing engine
-- Occupancy heatmaps
-
-### Long Term
-- Mobile application
-- IoT occupancy sensors
-- QR-based check-ins
-- AI chatbot support
-
----
-
-## 📈 Impact
-
-- Improve workspace discovery efficiency
-- Increase booking conversion rates
-- Improve occupancy rates
-- Reduce manual communication
-- Enable data-driven decisions
-
----
-
-## ⚙️ Setup
-
-### Backend
-
-cd backend
-npm install
-npm run dev
-
-
-### Frontend
-
-cd frontend
-npm install
-npm run dev
-
+- Rate limiting on auth and booking endpoints
+- Helmet.js security headers
+- Input validation and sanitization
 
 ---
 
 ## 👨‍💻 Developer
 
 **Hussain Moiyedi**
-
-- GitHub: https://github.com/
+- GitHub: [vigreenhussainmoiyedi23-lab](https://github.com/vigreenhussainmoiyedi23-lab)
 - Email: vigreenhussainmoiyedi23@gmail.com
+- Also built: [SwapStyle](https://github.com/vigreenhussainmoiyedi23-lab/SwapStyle) — a deployed peer-to-peer fashion marketplace
 
 ---
 
-## 📜 License
+## 📄 License
 
-MIT
+This project is licensed under the MIT License.
+
+---
+
+*Built with focus. Shipped with purpose.*
