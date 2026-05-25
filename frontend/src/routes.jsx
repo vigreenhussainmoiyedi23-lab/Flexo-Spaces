@@ -10,7 +10,7 @@ import UpdateListing from "./features/spaces/Pages/UpdateListing";
 import ListingMore from "./features/spaces/Pages/ListingMore";
 import Profile from "./features/Profile/Pages/Profile";
 import ProtectedLayout from "./Layouts/ProtectedLayout";
-import Swaps from "./features/swap/Pages/Swaps";
+import Swaps from "./features/bookings/Pages/bookings";
 import Chats from "./features/chats/Pages/Chats";
 import ProtectedLayoutWithNoFooter from "./Layouts/ProtectedWithNofooterOrFootbar";
 import AdminLayout from "./Layouts/AdminLayout";
@@ -20,6 +20,7 @@ import Disputes from "./features/admin/pages/Disputes";
 import ListingsAdmin from "./features/admin/pages/Listings";
 import Notification from "./features/notifications/Pages/Notification";
 import EditProfile from "./features/Profile/Pages/EditpROFILE.JSX";
+import CreateBooking from "./features/bookings/Pages/createBooking";
 
 const Approutes = () => {
   return (
@@ -102,6 +103,14 @@ const Approutes = () => {
           element={
             <ProtectedLayout>
               <Swaps />
+            </ProtectedLayout>
+          }
+        />
+        <Route
+          path="/createBooking/:id"
+          element={
+            <ProtectedLayout>
+              <CreateBooking />
             </ProtectedLayout>
           }
         />

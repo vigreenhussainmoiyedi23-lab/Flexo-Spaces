@@ -1,4 +1,4 @@
-import { SwapContext } from "../swap.context";
+import { SwapContext } from "../booking.context.jsx";
 import { useContext, useEffect } from "react";
 import showToast, { showLoadingToast, updateToast } from "../../../utils/Toastify.util.jsx";
 import {
@@ -13,13 +13,13 @@ import {
     createDisputeApi,
     getSwapAllDisputeApi,
     createRatingApi
-} from "../service/swap.api";
+} from "../service/swap.api.js";
 import { emitNotification } from "../../../utils/emitNotifications.js";
 
-import useAuth from "../../auth/hooks/useAuth";
+import useAuth from "../../auth/hooks/useAuth.js";
 
 
-const useSwap = () => {
+const useBooking = () => {
     const { user } = useAuth();
     const {
         loading,
@@ -358,4 +358,4 @@ const useSwap = () => {
     };
 };
 
-export default useSwap;
+export default useBooking;

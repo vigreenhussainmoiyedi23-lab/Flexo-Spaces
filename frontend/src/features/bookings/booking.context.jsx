@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { createContext } from "react";
 
-export const SwapContext = createContext();
+export const BookingContext = createContext();
 
 import React from "react";
 
-const SwapContextProvider = ({ children }) => {
+const BookingContextProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [userAllSwaps, setUserAllSwaps] = useState(null);
   const [totalPages, setTotalPages] = useState(1);
@@ -19,7 +19,7 @@ const SwapContextProvider = ({ children }) => {
     shipment_type: "all",
   });
   return (
-    <SwapContext.Provider
+    <BookingContext.Provider
       value={{
         loading,
         userAllSwaps,
@@ -34,8 +34,8 @@ const SwapContextProvider = ({ children }) => {
       }}
     >
       {children}
-    </SwapContext.Provider>
+    </BookingContext.Provider>
   );
 };
 
-export default SwapContextProvider;
+export default BookingContextProvider;
