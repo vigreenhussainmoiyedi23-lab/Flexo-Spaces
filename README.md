@@ -122,7 +122,6 @@ Booking stores the price at time of request, not the current listing price. Prev
 ### Frontend
 | Technology | Purpose |
 |---|---|
-| Next.js 14 | SSR, routing, SEO |
 | Tailwind CSS | Utility-first styling |
 | Framer Motion | Page transitions and animations |
 | React Query | Server state management |
