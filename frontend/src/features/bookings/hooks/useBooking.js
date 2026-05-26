@@ -1,4 +1,4 @@
-import { SwapContext } from "../booking.context.jsx";
+import { BookingContext } from "../booking.context.jsx";
 import { useContext, useEffect } from "react";
 import showToast, { showLoadingToast, updateToast } from "../../../utils/Toastify.util.jsx";
 import {
@@ -7,9 +7,6 @@ import {
     completeSwapRequest,
     rejectSwapRequest,
     acceptSwapRequest,
-    shipmentUpdateSwapRequest,
-    changeShipmentTypeSwapRequest,
-    shipmentAddressApi,
     createDisputeApi,
     getSwapAllDisputeApi,
     createRatingApi
@@ -32,7 +29,7 @@ const useBooking = () => {
         setFilters,
         setSwapAllDisputes,
         setTotalPages
-    } = useContext(SwapContext)
+    } = useContext(BookingContext)
     const getSwapRequests = async ({ filters }) => {
         try {
             setLoading(true);
@@ -164,39 +161,6 @@ const useBooking = () => {
             setLoading(false);
         }
     };
-    const shipmentDetailsHandler = async (swapId, shipmentDetails) => {
-        const id = showLoadingToast("adding sipment details...");
-        try {
-
-            setLoading(true);
-            const response = await shipmentUpdateSwapRequest(swapId, shipmentDetails);
-            await getSwapRequests({ filters });
-            const swap = response?.swap;
-
-            if (swap) {
-                const otherUser =
-                    user._id.toString() === swap.requester.toString()
-                        ? swap.owner
-                        : swap.requester;
-
-                emitNotification({
-                    recipient: otherUser,
-                    type: "SWAP_SHIPPED",
-                    title: "Item Shipped 📦",
-                    message: "Shipment details have been added " + swapId.slice(-6),
-                    link: `/swaps`,
-                    meta: { swapId }
-                });
-            }
-            showToast("Before Completing Make Sure You receive the item", "info");
-            const update = updateToast(id, response.message, "success")
-        } catch (error) {
-            const update = updateToast(id, error.message, "error")
-            throw error;
-        } finally {
-            setLoading(false);
-        }
-    };
     const createDisputeHandler = async (swapId, disputeDetails) => {
         const id = showLoadingToast("creating a dispute...");
         try {
@@ -248,57 +212,6 @@ const useBooking = () => {
             setLoading(false);
         }
     };
-    const shipmentAddressHandler = async (swapId, shipmentAddress) => {
-        const id = showLoadingToast("adding shipping address...");
-        try {
-            setLoading(true);
-            const response = await shipmentAddressApi(swapId, shipmentAddress);
-            await getSwapRequests({ filters });
-            const swap = response?.swap;
-
-            if (swap) {
-                const otherUser =
-                    user._id.toString() === swap.requester.toString()
-                        ? swap.owner
-                        : swap.requester;
-
-                emitNotification({
-                    recipient: otherUser,
-                    type: "SWAP_ADDRESS_ADDED",
-                    title: "Address Added",
-                    message: "Shipping address has been provided " + swapId.slice(-6),
-                    link: `/swaps`,
-                    meta: { swapId }
-                });
-            }
-            const update = updateToast(id, response.message, "success")
-            showToast("Add Tracking Number And Courier Id After Shipping", "info");
-        } catch (error) {
-            const update = updateToast(id, error.message, "error")
-
-            throw error;
-        } finally {
-            setLoading(false);
-        }
-    };
-    const changeShipmentTypeHandler = async (swapId, changeTo) => {
-        const id = showLoadingToast("updating shipment type...");
-        try {
-
-            setLoading(true);
-            const response = await changeShipmentTypeSwapRequest(swapId, changeTo);
-            await getSwapRequests({ filters });
-            if (changeTo === "local_swap") {
-                showToast("Before Completing Make Sure You receive the item", "info");
-            }
-            const update = updateToast(id, response.message, "success")
-        } catch (error) {
-            const update = updateToast(id, error.message, "success")
-            throw error;
-        } finally {
-            setLoading(false);
-        }
-    };
     const createRatingHandler = async (swapId, ratingDetails) => {
         const id = showLoadingToast("Creating Rating...");
 
@@ -344,9 +257,6 @@ const useBooking = () => {
         rejectSwapHandler,
         cancelSwapHandler,
         completeSwapHandler,
-        shipmentDetailsHandler,
-        changeShipmentTypeHandler,
-        shipmentAddressHandler,
         createDisputeHandler,
         getSwapAllDisputesHandler,
         createRatingHandler,

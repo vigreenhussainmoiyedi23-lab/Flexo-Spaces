@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const bookingSchema = new mongoose.Schema(
     {
@@ -6,9 +6,9 @@ const bookingSchema = new mongoose.Schema(
         // RELATIONS
         // ======================================================
 
-        workspace: {
+        space: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Workspace",
+            ref: "spaces",
             required: true,
             index: true,
         },
@@ -19,21 +19,20 @@ const bookingSchema = new mongoose.Schema(
         // Meeting Room
         // Cabin A
         resource: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Resource",
+            type: String,
             default: null,
         },
 
         bookedBy: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
+            ref: "users",
             required: true,
             index: true,
         },
 
         owner: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
+            ref: "users",
             required: true,
             index: true,
         },
@@ -42,7 +41,7 @@ const bookingSchema = new mongoose.Schema(
         // DATE & TIME
         // ======================================================
 
-        startDateTime: {
+        fromDateTime: {
             type: Date,
             required: true,
             index: true,
@@ -54,10 +53,6 @@ const bookingSchema = new mongoose.Schema(
             index: true,
         },
 
-        timezone: {
-            type: String,
-            default: "Asia/Kolkata",
-        },
 
         // ======================================================
         // CAPACITY
@@ -204,10 +199,7 @@ const bookingSchema = new mongoose.Schema(
                 type: String,
                 enum: [
                     "razorpay",
-                    "stripe",
-                    "upi",
-                    "cash",
-                    "bank_transfer",
+                    "cash"
                 ],
             },
 
@@ -215,7 +207,7 @@ const bookingSchema = new mongoose.Schema(
                 type: Date,
             },
         },
-
+    
         // ======================================================
         // BOOKING LOCKING
         // ======================================================
@@ -258,7 +250,7 @@ const bookingSchema = new mongoose.Schema(
         cancellation: {
             cancelledBy: {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: "User",
+                ref: "users",
             },
 
             reason: {
@@ -304,30 +296,6 @@ const bookingSchema = new mongoose.Schema(
             cancellationFee: {
                 type: Number,
                 default: 0,
-            },
-        },
-
-        // ======================================================
-        // RECURRING BOOKINGS
-        // ======================================================
-
-        recurrence: {
-            isRecurring: {
-                type: Boolean,
-                default: false,
-            },
-
-            frequency: {
-                type: String,
-                enum: ["daily", "weekly", "monthly"],
-            },
-
-            interval: {
-                type: Number,
-            },
-
-            recurringEndDate: {
-                type: Date,
             },
         },
 
@@ -435,15 +403,7 @@ bookingSchema.index({
     status: 1,
 });
 
-// pending booking cleanup
-bookingSchema.index({
-    expiresAt: 1,
-});
 
-// payment lock cleanup
-bookingSchema.index({
-    lockExpiresAt: 1,
-});
 
 // recurring booking queries
 bookingSchema.index({
@@ -458,6 +418,6 @@ bookingSchema.index({
 
 
 
-const Booking = mongoose.model("Booking", bookingSchema);
+const bookingModel = mongoose.model("booking", bookingSchema);
 
-export default Booking;
+module.exports = bookingModel;

@@ -43,7 +43,7 @@ export const useSpace = () => {
             const data = await service.createSpace(spaceData);
             await fetchSpaces(filters);
             const update = updateToast(id, data.message, "success");
-            navigate("/listings")
+            navigate("/spaces")
         } catch (error) {
             const update = updateToast(id, error.data.message, "error")
         } finally {

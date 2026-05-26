@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import useSwap from "../../hooks/useSwap";
+import useBooking from "../../hooks/useBooking";
 
 const ViewAllSwapDisputes = ({ swapId, setShowDisputes }) => {
-  const { getSwapAllDisputesHandler, loading, swapAllDisputes } = useSwap();
+  const { getSwapAllDisputesHandler, loading, swapAllDisputes } = useBooking();
 
   useEffect(() => {
     getSwapAllDisputesHandler(swapId);

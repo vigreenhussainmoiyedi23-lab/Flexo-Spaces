@@ -11,11 +11,7 @@ const ListingGrid = ({ spaces ,noneMessage}) => {
         ))}
       </div>
 
-      {spaces.length === 0 && (
-        <div className="text-center py-20 text-brand-400">
-          {noneMessage || "No items match your filters. Try clearing some filters."}
-        </div>
-      )}
+    
     </div>
   );
 };

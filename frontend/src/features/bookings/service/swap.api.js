@@ -65,34 +65,6 @@ const completeSwapRequest = async (swapId) => {
         throw error.response;
     }
 };
-const shipmentUpdateSwapRequest = async (swapId, shipmentDetails) => {
-    try {
-        console.log(shipmentDetails)
-        const response = await apiClient.patch(`/${swapId}/shipment`, { ...shipmentDetails });
-        return response.data;
-    } catch (error) {
-        console.error('Error updating shipment details for swap request:', error);
-        throw error.response.data;
-    }
-};
-const shipmentAddressApi = async (swapId, shipmentAddress) => {
-    try {
-        const response = await apiClient.patch(`/${swapId}/shippingAddress`, { ...shipmentAddress });
-        return response.data;
-    } catch (error) {
-        console.error('Error updating shipment details for swap request:', error);
-        throw error.response.data;
-    }
-};
-const changeShipmentTypeSwapRequest = async (swapId, changeTo) => {
-    try {
-        const response = await apiClient.patch(`/${swapId}/shipmentType`, { changeTo });
-        return response.data;
-    } catch (error) {
-        console.error('Error changing shipment type for swap request:', error);
-        throw error.response;
-    }
-};
 const createDisputeApi = async (swapId, disputeDetails) => {
     try {
         const response = await apiClient.post(`/${swapId}/dispute`, disputeDetails);
@@ -103,6 +75,15 @@ const createDisputeApi = async (swapId, disputeDetails) => {
     }
 }
 const getSwapAllDisputeApi = async (swapId) => {
+    try {
+        const response = await apiClient.get(`/${swapId}/disputes`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching disputes for swap request:', error);
+        throw error.response.data;
+    }
+}
+const getSpaceAllBookingsApi = async (spaceId) => {
     try {
         const response = await apiClient.get(`/${swapId}/disputes`);
         return response.data;
@@ -128,9 +109,7 @@ export {
     rejectSwapRequest,
     cancelSwapRequest,
     completeSwapRequest,
-    shipmentUpdateSwapRequest,
-    changeShipmentTypeSwapRequest,
-    shipmentAddressApi,
+    getSpaceAllBookingsApi,
     createDisputeApi,
     createRatingApi,
     getSwapAllDisputeApi

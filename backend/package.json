@@ -15,6 +15,7 @@
   "dependencies": {
     "@google/genai": "^1.49.0",
     "@imagekit/nodejs": "^7.4.0",
+    "agenda": "^5.0.0",
     "axios": "^1.15.2",
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.9.0",

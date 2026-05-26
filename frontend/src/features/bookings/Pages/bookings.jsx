@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from "react";
-import SwapCard from "../components/SwapCard";
-import SwapFilters from "../components/SwapFilters";
-import useSwap from "../hooks/useSwap";
-import useAuth from "../../auth/hooks/useAuth";
-import { FilterIcon, MenuSquare, X } from "lucide-react";
-import { Link } from "react-router-dom";
-import Pagination from "../../commonComponents/Pagination";
-import Loader from "../../commonComponents/Loading";
 import BookingWizard from "../components/BookingWizard";
+import useBooking from "../hooks/useBooking";
 
 const Swaps = () => {
   let typeConditions = {
@@ -38,7 +31,7 @@ const Swaps = () => {
   };
   const [showFilter, setShowFilter] = useState(false);
   const [activeFilter, setActiveFilter] = useState("all");
-  const { userAllSwaps, loading, getSwapRequests, totalPages } = useSwap();
+  const { userAllSwaps, loading, getSwapRequests, totalPages } = useBooking();
   const [shipment_type, setShipment_type] = useState("all");
   const [page, setPage] = useState(1);
 

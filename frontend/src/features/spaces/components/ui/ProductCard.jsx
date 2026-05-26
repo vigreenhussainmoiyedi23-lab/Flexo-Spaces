@@ -62,7 +62,7 @@ const ProductCard = ({ item }) => {
               {item.title}
             </h3>
             <p className="text-brand-100 font-extrabold text-lg leading-none tracking-tight">
-              ₹{item?.pricing?.rate} / {item?.pricing?.interval.slice(0, -2)}
+              ₹{item?.pricing?.rate} / {item.pricing.interval==="daily"?"day":item?.pricing?.interval.slice(0, -2)}
             </p>
           </div>
           {/* Capacity pill — bottom-left inside image */}

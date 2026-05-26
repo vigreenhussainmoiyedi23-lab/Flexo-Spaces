@@ -25,10 +25,14 @@ const Listings = () => {
   return (
     <section className="w-full pt-[10vh] min-h-screen bg-brand-900 text-white">
       {/* Main Content Area */}
-        {allSpaces.length > 0 && <ListingGrid spaces={allSpaces} />}
+      {allSpaces.length > 0 && <ListingGrid spaces={allSpaces} />}
       <div className="relative lg:ml-80 min-h-[90dvh] bg-brand-900">
         {loading && <Loader />}
-        <Pagination page={filters.page} totalPages={Number(totalPages)} />
+        {allSpaces.length === 0 && (
+          <div className="text-center py-20 text-brand-500">
+            {"No items match your filters. Try clearing some filters."}
+          </div>
+        )}
       </div>
     </section>
   );

@@ -1,49 +1,11 @@
 const swapModel = require("../../models/swap/swap.model")
 
-async function createSwapService(ownerListing, requesterListing, message, user) {
+async function createBookingService() {
    try {
-      // both the listings involved in the swap must exist
-      if (!ownerListing || !requesterListing) {
-         return { message: "Listing not found", success: false, swap: null }
-      }
+      
 
-      if (ownerListing.owner._id.toString() === user) {
-         return { message: "Cannot swap your own listing", success: false, swap: null }
-      }
-      // swaprequester should not be the owner 
-      if (requesterListing.owner._id.toString() !== user) {
-         return { message: "Unauthorized", success: false, swap: null }
-      }
-      const swapRequestAlreadyExists = await swapModel.findOne({
-         $or: [
-
-            {
-               requesterListing: requesterListing._id,
-               ownerListing: ownerListing._id
-            },
-
-            {
-               requesterListing: ownerListing._id,
-               ownerListing: requesterListing._id
-            }
-         ],
-         status: { $in: ["pending", "accepted"] } // important
-      });
-      if (swapRequestAlreadyExists) {
-         return {
-            message: "Swap request already exists",
-            success: false,
-            swap: null
-         }
-      }
-      const swap = await swapModel.create({
-         requester: user,
-         owner: ownerListing.owner,
-         ownerListing: ownerListing._id,// the listing of the owner or the listing user asks for
-         requesterListing: requesterListing._id, // the listing offered by the user
-         message,
-         status: "pending"
-      })
+ 
+      
       return {
          success: true,
          swap: swap.toObject(),
@@ -53,6 +15,7 @@ async function createSwapService(ownerListing, requesterListing, message, user) 
       throw new Error(error)
    }
 }
+
 const getTrackingLink = (courier, trackingId) => {
    if (!trackingId) return null;
 
@@ -88,7 +51,7 @@ const getTrackingLink = (courier, trackingId) => {
          )}`;
    }
 };
-module.exports = { createSwapService, getTrackingLink }
+module.exports = { createBookingService, getTrackingLink }
 
 /*  
 Swap Services Documentation - Hussain

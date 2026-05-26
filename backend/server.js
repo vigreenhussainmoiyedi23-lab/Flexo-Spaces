@@ -9,8 +9,8 @@ const { getDataFromToken } = require("./src/utils/jsonwebtoken.js");
 const userModel = require("./src/models/user/user.model.js");
 const { initSocket } = require("./src/sockets/initialize.js");
 const PORT = process.env.PORT || 3000;
-
 connectDB();
+
 const httpServer = createServer(app);
 
 initSocket(httpServer)

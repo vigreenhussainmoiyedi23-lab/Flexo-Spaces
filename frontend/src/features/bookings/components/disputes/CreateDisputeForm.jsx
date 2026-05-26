@@ -1,5 +1,5 @@
 import { useState } from "react";
-import useSwap from "../../hooks/useSwap";
+import useBooking from "../../hooks/useBooking";
 
 const DISPUTE_TYPES = [
   "NOT_SHIPPED",
@@ -15,7 +15,7 @@ const CreateDisputeForm = ({ swapId, setShowForm }) => {
     reason: "",
     description: "",
   });
-  const { createDisputeHandler, loading } = useSwap();
+  const { createDisputeHandler, loading } = useBooking();
 
   const handleChange = (e) => {
     setForm((prev) => ({
