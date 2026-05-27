@@ -102,27 +102,14 @@ const bookingSchema = new mongoose.Schema(
                 type: Number,
                 required: true,
             },
-
-            taxes: {
-                type: Number,
-                default: 0,
-            },
-
             platformFee: {
                 type: Number,
                 default: 0,
             },
-
-            discount: {
-                type: Number,
-                default: 0,
-            },
-
             finalPrice: {
                 type: Number,
                 required: true,
             },
-
             currency: {
                 type: String,
                 default: "INR",
@@ -138,15 +125,12 @@ const bookingSchema = new mongoose.Schema(
                 type: Boolean,
                 default: false,
             },
-
             requestedPrice: {
                 type: Number,
             },
-
             counterOffer: {
                 type: Number,
             },
-
             finalAgreedPrice: {
                 type: Number,
             },
@@ -207,7 +191,7 @@ const bookingSchema = new mongoose.Schema(
                 type: Date,
             },
         },
-    
+
         // ======================================================
         // BOOKING LOCKING
         // ======================================================
@@ -355,20 +339,17 @@ const bookingSchema = new mongoose.Schema(
 // VALIDATIONS
 // ======================================================
 
-bookingSchema.pre("save", function (next) {
+bookingSchema.pre("save", async function (next) {
     // invalid range
-    if (this.startDateTime >= this.endDateTime) {
-        return next(new Error("Invalid booking range"));
+    if (this.fromDateTime >= this.endDateTime) {
+        throw new Error("Invalid booking range");
     }
 
     // seats validation
     if (this.seatsBooked > this.totalCapacitySnapshot) {
-        return next(
-            new Error("Seats booked exceed workspace capacity")
-        );
+    throw new Error("Seats booked exceed workspace capacity")
     }
 
-    next();
 });
 
 
@@ -379,15 +360,15 @@ bookingSchema.pre("save", function (next) {
 
 // overlap queries
 bookingSchema.index({
-    workspace: 1,
-    startDateTime: 1,
+    space: 1,
+    fromDateTime: 1,
     endDateTime: 1,
 });
 
 // resource overlap queries
 bookingSchema.index({
     resource: 1,
-    startDateTime: 1,
+    fromDateTime: 1,
     endDateTime: 1,
 });
 

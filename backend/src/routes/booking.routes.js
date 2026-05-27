@@ -5,7 +5,7 @@ const swapRouter = express.Router()
 const { isAuthenticated } = require("../middlewares/protectedRoutes.middleware")
 
 const {
-  getUserSwapsHandler,
+  getUserBookingsHandler,
   getSingleSwapHandler,
   acceptSwapHandler,
   rejectSwapHandler,
@@ -15,7 +15,9 @@ const {
   getSwapAllDisputesHandler,
   createRatingHandler,
   getSpaceBookingHandler,
-  createBookingHandler
+  createBookingHandler,
+  getBookingAlternativeHandler,
+  getBookingConsequencesHandler
 } = require("../controllers/swap.controller")
 const { createDisputeValidator } = require("../Validators/swap.validator")
 const { validate } = require("../Validators/validate")
@@ -38,44 +40,46 @@ swapRouter.post("/:spaceId", isAuthenticated, createBookingHandler)
   @description - Get all swaps of logged-in user - Includes both sent & received swaps
   @body filter:{status,shippmentType} 
   @return  swaps: []*/
-swapRouter.post("/", isAuthenticated, getUserSwapsHandler)
+swapRouter.get("/", isAuthenticated, getUserBookingsHandler)
 
 
-/* @route GET - /api/swaps/:swapId
+/* @route GET - /api/swaps/:bookingId
 @description  - Get details of a specific swap
-@params  swapId: ObjectId
+@params  bookingId: ObjectId
 @return  swap: object*/
-swapRouter.get("/:swapId", isAuthenticated, getSingleSwapHandler)
-swapRouter.get("/:swapId/disputes", isAuthenticated, getSwapAllDisputesHandler)
+swapRouter.get("/:bookingId", isAuthenticated, getSingleSwapHandler)
+swapRouter.get("/:bookingId/alternative", isAuthenticated, getBookingAlternativeHandler)
+swapRouter.get("/:bookingId/consequences", isAuthenticated, getBookingConsequencesHandler)
+swapRouter.get("/:bookingId/disputes", isAuthenticated, getSwapAllDisputesHandler)
 
 
-swapRouter.post("/:swapId/dispute", createDisputeValidator, validate, isAuthenticated, createDisputeHandler)
-swapRouter.post("/:swapId/rating", isAuthenticated, createRatingHandler)
+swapRouter.post("/:bookingId/dispute", createDisputeValidator, validate, isAuthenticated, createDisputeHandler)
+swapRouter.post("/:bookingId/rating", isAuthenticated, createRatingHandler)
 
-/* @route PATCH - /api/swaps/:swapId/accept
+/* @route PATCH - /api/swaps/:bookingId/accept
 @description - Accept a swap request (only listing owner)
-@params   swapId: ObjectId
+@params   bookingId: ObjectId
 @return  message: "Swap accepted"*/
 
-swapRouter.patch("/:swapId/accept", isAuthenticated, acceptSwapHandler)
+swapRouter.patch("/:bookingId/accept", isAuthenticated, acceptSwapHandler)
 
-/*@route - PATCH - /api/swaps/:swapId/reject
+/*@route - PATCH - /api/swaps/:bookingId/reject
 @description - Reject a swap request (only listing owner)
-@params  swapId: ObjectId
+@params  bookingId: ObjectId
 @return  message: "Swap rejected"*/
 
-swapRouter.patch("/:swapId/reject", isAuthenticated, rejectSwapHandler)
+swapRouter.patch("/:bookingId/reject", isAuthenticated, rejectSwapHandler)
 
-/* @route PATCH - /api/swaps/:swapId/cancel
+/* @route PATCH - /api/swaps/:bookingId/cancel
 @description - Cancel a swap request (only requester) - Only allowed if status is PENDING
-@params  swapId: ObjectId
+@params  bookingId: ObjectId
 @return message: "Swap cancelled" */
 
-swapRouter.patch("/:swapId/cancel", isAuthenticated, cancelSwapHandler)
+swapRouter.patch("/:bookingId/cancel", isAuthenticated, cancelSwapHandler)
 
-/* @route PATCH - /api/swaps/:swapId/complete
+/* @route PATCH - /api/swaps/:bookingId/complete
 @description - Mark swap as completed after exchange (only requester) - Only allowed if status is ACCEPTED
-@params swapId: ObjectId
+@params bookingId: ObjectId
 @return message: "Swap completed" */
 swapRouter.patch("/:swapId/complete", isAuthenticated, completeSwapHandler)
 

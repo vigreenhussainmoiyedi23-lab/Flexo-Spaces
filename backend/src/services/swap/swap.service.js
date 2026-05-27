@@ -1,21 +1,236 @@
-const swapModel = require("../../models/swap/swap.model")
+const bookingModel = require("../../models/booking/booking.model");
+const spaceModel = require("../../models/space.model");
 
-async function createBookingService() {
+async function createBookingService({ user, spaceId, fromDateTime, toDateTime, seatsBooked, fullName, notes, availability }, req) {
    try {
-      
+      // remaining seats after this booking
+      // totalCapacitySnapshot
+      // remainingCapacitySnapshot
 
- 
-      
+      const space = await spaceModel.findById(spaceId)
+      if (!space) {
+         throw new Error("Space not found")
+      }
+      if (fromDateTime < new Date()) {
+         throw new Error("Cannot book for past date and time")
+      }
+
+
+      const bookingType = space.pricing.interval
+      const bookedBy = user
+      const owner = space.owner
+      const resource = space.spaceType
+      const totalCapacitySnapshot = Number(space.capacity)
+      const remainingCapacitySnapshot = availability.availableSeats - seatsBooked
+      const basePrice = calculateBookingPrice({
+         rate: space.pricing.rate,
+         interval: space.pricing.interval,
+         seatsBooked,
+         totalCapacity: totalCapacitySnapshot,
+         fromDateTime,
+         toDateTime
+      })
+      const workspaceSnapshot = {
+         title: space.title,
+         city: space.location.city,
+         state: space.location.state,
+         country: space.location.country,
+         selectedAmenities: space.amenities,
+      }
+
+      const booking = await bookingModel.create({
+         fromDateTime,
+         endDateTime: toDateTime,
+         seatsBooked,
+         fullName,
+         notes,
+         bookingType,
+         bookedBy,
+         owner,
+         resource,
+         totalCapacitySnapshot,
+         remainingCapacitySnapshot,
+         space: spaceId,
+         workspaceSnapshot,
+         pricing: { basePrice, platformFee: Number(basePrice * 0.1), finalPrice: Number(basePrice * 1.1) }
+      })
+
       return {
          success: true,
-         swap: swap.toObject(),
-         message: "Swap request created"
+         booking,
+         message: "booking request created"
       }
    } catch (error) {
       throw new Error(error)
    }
 }
+async function getAvailabilityService({ spaceId, fromDate, fromTime, toDate, toTime }) {
+   try {
+      const fromDateTime =
+         new Date(`${fromDate}T${fromTime}:00.000Z`);
 
+      const toDateTime =
+         new Date(`${toDate}T${toTime}:00.000Z`);
+      const overlappingBookings =
+         await bookingModel.find({
+
+            space: spaceId,
+
+            status: {
+               $in: [
+                  "pending",
+                  "approved",
+                  "payment_pending",
+                  "confirmed",
+                  "checked_in"
+               ]
+            },
+
+            fromDateTime: {
+               $lt: toDateTime
+            },
+
+            toDateTime: {
+               $gt: fromDateTime
+            }
+
+         }).select("seatsBooked fromDateTime toDateTime")
+            .lean();
+
+      const space = await spaceModel
+         .findById(spaceId)
+         .select("capacity")
+         .lean();
+      const bookedSeats =
+         overlappingBookings.reduce(
+            (acc, booking) =>
+               acc + booking.seatsBooked,
+            0
+         );
+
+      const availableSeats =
+         Math.max(
+            0,
+            space.capacity - bookedSeats
+         );
+      return {
+         success: true,
+         availableSeats,
+         overlappingBookings
+      }
+
+   } catch (error) {
+      throw new Error(error)
+   }
+}
+function calculateBookingPrice({
+   rate,
+   interval,
+   seatsBooked,
+   totalCapacity,
+   fromDateTime,
+   toDateTime,
+}) {
+
+   const seatRate =
+      rate / totalCapacity;
+
+   const durationMs =
+      toDateTime - fromDateTime;
+
+   const durationHours =
+      durationMs / (1000 * 60 * 60);
+
+   const durationDays =
+      durationMs / (1000 * 60 * 60 * 24);
+
+   let multiplier = 1;
+
+   switch (interval) {
+
+      case "hourly":
+         multiplier = Math.ceil(durationHours);
+         break;
+
+      case "daily":
+         multiplier = Math.ceil(durationDays);
+         break;
+
+      case "weekly":
+         multiplier =
+            Math.ceil(durationDays / 7);
+         break;
+
+      case "monthly":
+         multiplier =
+            Math.ceil(durationDays / 30);
+         break;
+
+      default:
+         multiplier = 1;
+   }
+
+   const basePrice =
+      seatRate *
+      seatsBooked *
+      multiplier;
+
+   return Math.round(basePrice);
+}
+
+function isOverlapping(a, b) {
+   return (
+      a.fromDateTime < b.endDateTime &&
+      a.endDateTime > b.fromDateTime
+   );
+}
+function isCompatible(a, b) {
+   // compatible = NOT overlapping
+   return !isOverlapping(a, b) || a.remainingCapacitySnapshot >= b.seatsBooked;
+}
+
+async function generateAlternatives(currentBooking, bookings) {
+   const currentPrice = currentBooking.pricing.finalPrice;
+
+   let singleBetter = [];
+   let combinations = [];
+
+   // 1. Singles (better revenue than current)
+   for (let b of bookings) {
+      if (b.pricing.finalPrice > currentPrice) {
+         singleBetter.push({
+            bookings: [b],
+            revenue: b.pricing.finalPrice
+         });
+      }
+      console.log("Booking ID:", b._id, "Price:", b.pricing.finalPrice, "Current Price:", currentPrice);
+   }
+
+   // 2. Pair combinations (non-overlapping only)
+   for (let i = 0; i < bookings.length; i++) {
+      for (let j = i + 1; j < bookings.length; j++) {
+         const a = bookings[i];
+         const b = bookings[j];
+
+         if (isCompatible(a, b)) {
+            combinations.push({
+               bookings: [a, b],
+               revenue: a.pricing.finalPrice + b.pricing.finalPrice
+            });
+         }
+         console.log(`Checking combination: ${a._id} & ${b._id} - Compatible: ${isCompatible(a, b)} - Revenue: ${a.pricing.finalPrice + b.pricing.finalPrice}`);
+      }
+   }
+
+   // 3. Sort by best revenue (optional but useful)
+   singleBetter.sort((x, y) => y.revenue - x.revenue);
+   combinations.sort((x, y) => y.revenue - x.revenue);
+
+   return {
+      singleBetter,
+      combinations
+   };
+}
 const getTrackingLink = (courier, trackingId) => {
    if (!trackingId) return null;
 
@@ -51,7 +266,7 @@ const getTrackingLink = (courier, trackingId) => {
          )}`;
    }
 };
-module.exports = { createBookingService, getTrackingLink }
+module.exports = { createBookingService, generateAlternatives, getTrackingLink, getAvailabilityService, calculateBookingPrice }
 
 /*  
 Swap Services Documentation - Hussain

@@ -37,7 +37,6 @@ const BookingWizard = () => {
     fullName: "",
     notes: "",
 
-    bookingType: "hourly",
 
     estimatedPrice: 5400,
   });
@@ -300,10 +299,6 @@ function ReviewStep({ formData }) {
           gap: 2,
         }}
       >
-        <Typography>
-          <strong>Booking Type:</strong> {formData.bookingType}
-        </Typography>
-
         <Typography>
           <strong>Seats:</strong> {formData.selectedSeats}
         </Typography>

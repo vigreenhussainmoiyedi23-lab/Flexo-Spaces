@@ -6,35 +6,57 @@ const ratingModel = require("../models/user/rating.model");
 const userModel = require("../models/user/user.model");
 const bookingModel = require("../models/booking/booking.model");
 const spaceModel = require("../models/space.model");
-const { createBookingService } = require("../services/swap/swap.service");
+const { createBookingService, getAvailabilityService, generateAlternatives } = require("../services/swap/swap.service");
 
 async function createBookingHandler(req, res) {
     try {
         const { spaceId } = req.params
         const { fromDate, fromTime, toDate, toTime,
-            selectedSeats, fullName, notes, bookingType } = req.body
+            selectedSeats, fullName, notes } = req.body
         if (!spaceId) {
             return res.status(400).json({ message: " spaceId  is required", success: false })
         }
+        const availability = await getAvailabilityService({
+            spaceId,
+            fromDate,
+            toDate,
+            fromTime,
+            toTime
+        });
+        if (
+            availability.availableSeats <
+            selectedSeats
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: "Not enough seats available"
+            });
+        }
+
         const space = await spaceModel.findById(spaceId)
         if (!space) {
             return res.status(404).json({ message: "Space not found", success: false })
         }
         const user = req.userId
-        const userRole = req.userRole
 
         const response = await createBookingService({
-            fromDateTime: new Date(`${fromDate}T${fromTime}:00.000Z`), toDateTime: new Date(`${toDate}T${toTime}:00.000Z`), seatsBooked: selectedSeats,
+            fromDateTime: new Date(`${fromDate}T${fromTime}:00.000Z`),
+            toDateTime: new Date(`${toDate}T${toTime}:00.000Z`),
+            seatsBooked: selectedSeats,
             fullName,
             notes,
-            bookingType,
-            space: spaceId,
+            bookingType: space.pricing.interval,
+            spaceId,
+            user,
+            availability,
             bookedBy: user,
             owner: space.owner,
-            resource: space.spaceType
+            resource: space.spaceType,
+            totalCapacitySnapshot: space.capacity,
+            remainingCapacitySnapshot: availability.availableSeats - selectedSeats
         })
 
-  
+
         res.status(201).json({
             booking: response.booking,
             message: "booking created",
@@ -43,79 +65,80 @@ async function createBookingHandler(req, res) {
     } catch (error) {
         if (error?.status) return res.status(error.status).json({ message: error.message, success: false })
         res.status(500).json({
-            message: "Error creating booking",
+            message: error.message || "Error creating booking",
             success: false
         })
     }
 }
 async function getSpaceBookingHandler(req, res) {
     try {
-        const { spaceId } = req.params
-        const user = req.userId
-        const role = req.userRole
-        const { fromDate, fromTime, toDate, toTime } = req.body
-        const bookings = await bookingModel.find({
-            createdAt: {
-                $gte: new Date(`${fromDate}T${fromTime}:00.000Z`),
-                $lte: new Date(`${toDate}T${toTime}:00.000Z`)
-            },
-            space: spaceId
-        }).select("remainingCapacitySnapshot totalCapacitySnapshot createdAt").lean()
-        const space = await spaceModel.findById(spaceId).select("capacity").lean()
-        let seatsAvailable = space.capacity
-        seatsAvailable = bookings.reduce((acc, val) => {
-            return Math.min(Number(val.remainingCapacitySnapshot), Number(acc))
-        }, seatsAvailable)
+        const { spaceId } = req.params;
+        const {
+            fromDate,
+            fromTime,
+            toDate,
+            toTime
+        } = req.body;
+        const { availableSeats, overlappingBookings } = await getAvailabilityService({
+            spaceId,
+            fromDate,
+            toDate,
+            toTime,
+            fromTime
+        })
         res.status(200).json({
-            bookings,
-            seatsAvailable,
-            message: "Bookings for space fetched successfully",
-            success: true
-        })
-
+            success: true,
+            availableSeats,
+            overlappingBookings
+        });
     } catch (error) {
-        if (error.status) return res.status(error.status).json({ message: error.message, success: false })
+
         res.status(500).json({
-            message: error.message || "Error fetching bookings",
-            success: false
-        })
+            success: false,
+            message: error.message
+        });
+
     }
 }
-
-
-
-
-
-
-async function getUserSwapsHandler(req, res) {
+async function getUserBookingsHandler(req, res) {
     try {
         const user = req.userId
-        const { filters } = req.body
-        const { status, shipment_type, type, page, limit } = filters || {}
+        const role = req.userRole
+        let page = 1
+        let limit = 10
+        // const { filters } = req.body
+        // const { status, shipment_type, type, page, limit } = filters || {}
         let query = {}
-        if (type === "sent") {
-            query.requester = user
-        } else if (type === "received") {
-            query.owner = user
-        } else {
+        // if (type === "sent") {
+        //     query.requester = user
+        // } else if (type === "received") {
+        //     query.owner = user
+        // } else {
+        //     query = {
+        //         $or: [
+        //             { requester: user },
+        //             { owner: user }
+        //         ]
+        //     }
+        // }
+        // if (status !== "all" && Array.isArray(status)) {
+        //     query.status = { $in: status }
+        // } else if (status !== "all") {
+        //     query.status = status
+        // }
+        // if (shipment_type !== "all") {
+        //     query.shipment_type = shipment_type
+        // }
+        if (role === "user") {
             query = {
-                $or: [
-                    { requester: user },
-                    { owner: user }
-                ]
+                bookedBy: user
             }
+        } else if (role === "space_owner") {
+            query.owner = user
         }
-        if (status !== "all" && Array.isArray(status)) {
-            query.status = { $in: status }
-        } else if (status !== "all") {
-            query.status = status
-        }
-        if (shipment_type !== "all") {
-            query.shipment_type = shipment_type
-        }
-        const swaps = await swapModel.find(query).populate([
+        const Bookings = await bookingModel.find(query).populate([
             {
-                path: "requester",
+                path: "bookedBy",
                 select: "rating profilePicture _id username email"
             },
             {
@@ -123,41 +146,132 @@ async function getUserSwapsHandler(req, res) {
                 select: "rating profilePicture _id username email"
             },
             {
-                path: "requesterListing"
+                path: "space"
             },
-            {
-                path: "ownerListing"
-            }
         ]).skip((page - 1) * limit).limit(limit).lean()
-        let totalSwaps = await swapModel.countDocuments(query)
-        let totalPages = Math.ceil(totalSwaps / limit)
-        let swapWithRolesAndShipped = swaps.map(swap => {
-            let role = null
-            let hasShipped = swap.shipment_type == "local_swap" || !!swap.shipments.find(s => s.from.toString() === user.toString())
-            if (swap.requester._id.toString() === user) {
-                role = "requester"
-            }
-            if (swap.owner._id.toString() === user) {
-                role = "owner"
-            }
-            let hasCompleted = swap.completedBy[role]
-            let hasGivenAddress = swap.AddresGivenBy[role]
-            let hasRaisedDispute = swap.disputedBy[role]
-            let hasRatedUser = swap.ratedBy[role]
-            return { ...swap, role, hasShipped, hasCompleted, hasGivenAddress, hasRaisedDispute, hasRatedUser }
-        })
+        let totalBookings = await bookingModel.countDocuments(query)
+        let totalPages = Math.ceil(totalBookings / limit)
+
         res.status(200).json({
-            swaps: swapWithRolesAndShipped,
-            totalSwaps,
+            bookings: Bookings,
+            totalBookings,
             totalPages,
-            message: "Swaps fetched",
+            message: "Bookings fetched",
             success: true
         })
 
     } catch (error) {
         if (error?.status) return res.status(error.status).json({ message: error.message, success: false })
         res.status(500).json({
-            message: "Error fetching user's swap",
+            message: error.message || "Error fetching user's bookings",
+            success: false
+        })
+    }
+}
+async function getBookingAlternativeHandler(req, res) {
+    try {
+        const user = req.userId
+        const role = req.userRole
+        const currentBooking = await bookingModel.findById(req.params.bookingId)
+        console.log("getting alternatives for booking ", req.params.bookingId)
+        const Bookings = await bookingModel.find({
+            status: "pending",
+            _id: { $ne: req.params.bookingId },
+            space: currentBooking.space,
+            fromDateTime: { $lte: currentBooking.endDateTime },
+            endDateTime: { $gte: currentBooking.fromDateTime },
+        }).populate([
+            {
+                path: "bookedBy",
+                select: "rating profilePicture _id username email"
+            },
+            {
+                path: "owner",
+                select: "rating profilePicture _id username email"
+            },
+            {
+                path: "space"
+            },
+        ]).sort({ fromDateTime: 1 }).lean()
+        const result = await generateAlternatives(currentBooking, Bookings)
+        res.status(200).json({
+            result,
+            message: "Bookings fetched",
+            success: true
+        })
+
+    } catch (error) {
+        if (error?.status) return res.status(error.status).json({ message: error.message, success: false })
+        res.status(500).json({
+            message: error.message || "Error fetching user's bookings",
+            success: false
+        })
+    }
+}
+async function getBookingConsequencesHandler(req, res) {
+    try {
+        const user = req.userId
+        const role = req.userRole
+        let page = 1
+        let limit = 10
+        // const { filters } = req.body
+        // const { status, shipment_type, type, page, limit } = filters || {}
+        let query = {}
+        // if (type === "sent") {
+        //     query.requester = user
+        // } else if (type === "received") {
+        //     query.owner = user
+        // } else {
+        //     query = {
+        //         $or: [
+        //             { requester: user },
+        //             { owner: user }
+        //         ]
+        //     }
+        // }
+        // if (status !== "all" && Array.isArray(status)) {
+        //     query.status = { $in: status }
+        // } else if (status !== "all") {
+        //     query.status = status
+        // }
+        // if (shipment_type !== "all") {
+        //     query.shipment_type = shipment_type
+        // }
+        if (role === "user") {
+            query = {
+                bookedBy: user
+            }
+        } else if (role === "space_owner") {
+            query.owner = user
+        }
+        const Bookings = await bookingModel.find(query).populate([
+            {
+                path: "bookedBy",
+                select: "rating profilePicture _id username email"
+            },
+            {
+                path: "owner",
+                select: "rating profilePicture _id username email"
+            },
+            {
+                path: "space"
+            },
+        ]).skip((page - 1) * limit).limit(limit).lean()
+        let totalBookings = await bookingModel.countDocuments(query)
+        let totalPages = Math.ceil(totalBookings / limit)
+
+        res.status(200).json({
+            bookings: Bookings,
+            totalBookings,
+            totalPages,
+            message: "Bookings fetched",
+            success: true
+        })
+
+    } catch (error) {
+        if (error?.status) return res.status(error.status).json({ message: error.message, success: false })
+        res.status(500).json({
+            message: error.message || "Error fetching user's bookings",
             success: false
         })
     }
@@ -513,13 +627,15 @@ async function completeSwapHandler(req, res) {
 
 module.exports = {
     createBookingHandler,
-    getUserSwapsHandler,
+    getUserBookingsHandler,
     getSingleSwapHandler,
     acceptSwapHandler,
     rejectSwapHandler,
     cancelSwapHandler,
     completeSwapHandler,
     createDisputeHandler,
+    getBookingConsequencesHandler,
+    getBookingAlternativeHandler,
     getSwapAllDisputesHandler, createRatingHandler, getSpaceBookingHandler
 }
 
