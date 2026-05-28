@@ -52,7 +52,7 @@ async function createBookingService({ user, spaceId, fromDateTime, toDateTime, s
          remainingCapacitySnapshot,
          space: spaceId,
          workspaceSnapshot,
-         pricing: { basePrice, platformFee: Number(basePrice * 0.1), finalPrice: Number(basePrice * 1.1) }
+         pricing: { basePrice, platformFee: Number((basePrice * 0.1).toFixed(2)), finalPrice: Number((basePrice * 1.1).toFixed(2)) }
       })
 
       return {
@@ -64,13 +64,23 @@ async function createBookingService({ user, spaceId, fromDateTime, toDateTime, s
       throw new Error(error)
    }
 }
-async function getAvailabilityService({ spaceId, fromDate, fromTime, toDate, toTime }) {
-   try {
-      const fromDateTime =
-         new Date(`${fromDate}T${fromTime}:00.000Z`);
 
-      const toDateTime =
-         new Date(`${toDate}T${toTime}:00.000Z`);
+async function getAvailabilityService({ spaceId, fromDate, fromTime, toDate, toTime, fromDateTime, endDateTime }) {
+   console.log(fromDateTime, endDateTime)
+   try {
+      if (!fromDateTime && !endDateTime) {
+         if (!fromDate || !fromTime || !toDate || !toTime) {
+            throw new Error("Either fromDateTime and endDateTime or fromDate, fromTime, toDate, toTime must be provided")
+         }
+      }
+      let startDateTime, toDateTime
+      if (fromDateTime && endDateTime) {
+         startDateTime = new Date(fromDateTime)
+         toDateTime = new Date(endDateTime)
+      } else {
+         startDateTime = new Date(`${fromDate}T${fromTime}`)
+         toDateTime = new Date(`${toDate}T${toTime}`)
+      }
       const overlappingBookings =
          await bookingModel.find({
 
@@ -78,8 +88,7 @@ async function getAvailabilityService({ spaceId, fromDate, fromTime, toDate, toT
 
             status: {
                $in: [
-                  "pending",
-                  "approved",
+                  "accepted",
                   "payment_pending",
                   "confirmed",
                   "checked_in"
@@ -90,24 +99,24 @@ async function getAvailabilityService({ spaceId, fromDate, fromTime, toDate, toT
                $lt: toDateTime
             },
 
-            toDateTime: {
-               $gt: fromDateTime
+            endDateTime: {
+               $gt: startDateTime
             }
 
-         }).select("seatsBooked fromDateTime toDateTime")
+         }).select("seatsBooked fromDateTime endDateTime")
             .lean();
 
       const space = await spaceModel
          .findById(spaceId)
          .select("capacity")
          .lean();
+      console.log(space)
       const bookedSeats =
          overlappingBookings.reduce(
             (acc, booking) =>
                acc + booking.seatsBooked,
             0
          );
-
       const availableSeats =
          Math.max(
             0,
@@ -171,9 +180,9 @@ function calculateBookingPrice({
    }
 
    const basePrice =
-      seatRate *
-      seatsBooked *
-      multiplier;
+      Number((seatRate *
+         seatsBooked *
+         multiplier).toFixed(2));
 
    return Math.round(basePrice);
 }
@@ -203,7 +212,6 @@ async function generateAlternatives(currentBooking, bookings) {
             revenue: b.pricing.finalPrice
          });
       }
-      console.log("Booking ID:", b._id, "Price:", b.pricing.finalPrice, "Current Price:", currentPrice);
    }
 
    // 2. Pair combinations (non-overlapping only)
@@ -218,7 +226,6 @@ async function generateAlternatives(currentBooking, bookings) {
                revenue: a.pricing.finalPrice + b.pricing.finalPrice
             });
          }
-         console.log(`Checking combination: ${a._id} & ${b._id} - Compatible: ${isCompatible(a, b)} - Revenue: ${a.pricing.finalPrice + b.pricing.finalPrice}`);
       }
    }
 
@@ -231,6 +238,20 @@ async function generateAlternatives(currentBooking, bookings) {
       combinations
    };
 }
+
+async function genearateConsequence(currentBooking, bookings) {
+   let consequences = []
+   bookings.map(b => {
+      if (currentBooking.remainingCapacitySnapshot < b.seatsBooked) {
+         consequences.push({
+            booking: [b],
+            revenue: b.pricing.finalPrice
+         })
+      }
+   })
+   return consequences
+}
+
 const getTrackingLink = (courier, trackingId) => {
    if (!trackingId) return null;
 
@@ -266,7 +287,7 @@ const getTrackingLink = (courier, trackingId) => {
          )}`;
    }
 };
-module.exports = { createBookingService, generateAlternatives, getTrackingLink, getAvailabilityService, calculateBookingPrice }
+module.exports = { createBookingService, genearateConsequence, generateAlternatives, getTrackingLink, getAvailabilityService, calculateBookingPrice }
 
 /*  
 Swap Services Documentation - Hussain

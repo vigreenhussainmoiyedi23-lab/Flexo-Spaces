@@ -144,15 +144,15 @@ const bookingSchema = new mongoose.Schema(
             type: String,
             enum: [
                 "pending",
-                "approved",
+                "accepted",
                 "payment_pending",
                 "confirmed",
                 "checked_in",
                 "completed",
+                "refunded",
                 "cancelled",
                 "rejected",
                 "expired",
-                "refunded",
             ],
             default: "pending",
             index: true,
@@ -166,7 +166,6 @@ const bookingSchema = new mongoose.Schema(
             type: String,
             enum: [
                 "pending",
-                "partially_paid",
                 "paid",
                 "failed",
                 "refunded",
@@ -245,11 +244,6 @@ const bookingSchema = new mongoose.Schema(
 
             cancelledAt: {
                 type: Date,
-            },
-
-            refundAmount: {
-                type: Number,
-                default: 0,
             },
         },
 
@@ -347,7 +341,7 @@ bookingSchema.pre("save", async function (next) {
 
     // seats validation
     if (this.seatsBooked > this.totalCapacitySnapshot) {
-    throw new Error("Seats booked exceed workspace capacity")
+        throw new Error("Seats booked exceed workspace capacity")
     }
 
 });

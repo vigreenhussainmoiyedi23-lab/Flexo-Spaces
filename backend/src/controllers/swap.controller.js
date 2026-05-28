@@ -1,12 +1,13 @@
 const swapModel = require("../models/swap/swap.model");
-const { getSwapByIdService, validateStateAndUser, validateSwapState, validateUserRole, ValidateSwap, updateBothListingFromSwapId, checkBothListingAreElligibleToSwap } = require("../services/swap/swap.utiliy");
+const { getSwapByIdService, validateStateAndUser, validateSwapState, validateUserRole, ValidateSwap, updateBothListingFromSwapId, checkBothListingAreElligibleToSwap, updateOneBooking, validateBooking, validateBookingState, getBookingByIdService } = require("../services/swap/swap.utiliy");
 const axios = require('axios');
 const disputeModel = require("../models/swap/dispute.model");
 const ratingModel = require("../models/user/rating.model");
 const userModel = require("../models/user/user.model");
 const bookingModel = require("../models/booking/booking.model");
 const spaceModel = require("../models/space.model");
-const { createBookingService, getAvailabilityService, generateAlternatives } = require("../services/swap/swap.service");
+const { createBookingService, getAvailabilityService, generateAlternatives, genearateConsequence } = require("../services/swap/swap.service");
+const agenda = require("../config/agenda");
 
 async function createBookingHandler(req, res) {
     try {
@@ -32,7 +33,6 @@ async function createBookingHandler(req, res) {
                 message: "Not enough seats available"
             });
         }
-
         const space = await spaceModel.findById(spaceId)
         if (!space) {
             return res.status(404).json({ message: "Space not found", success: false })
@@ -57,6 +57,7 @@ async function createBookingHandler(req, res) {
         })
 
 
+        await agenda.schedule("in 24 hours", "expire booking", { bookingId: response.booking._id })
         res.status(201).json({
             booking: response.booking,
             message: "booking created",
@@ -212,39 +213,14 @@ async function getBookingConsequencesHandler(req, res) {
     try {
         const user = req.userId
         const role = req.userRole
-        let page = 1
-        let limit = 10
-        // const { filters } = req.body
-        // const { status, shipment_type, type, page, limit } = filters || {}
-        let query = {}
-        // if (type === "sent") {
-        //     query.requester = user
-        // } else if (type === "received") {
-        //     query.owner = user
-        // } else {
-        //     query = {
-        //         $or: [
-        //             { requester: user },
-        //             { owner: user }
-        //         ]
-        //     }
-        // }
-        // if (status !== "all" && Array.isArray(status)) {
-        //     query.status = { $in: status }
-        // } else if (status !== "all") {
-        //     query.status = status
-        // }
-        // if (shipment_type !== "all") {
-        //     query.shipment_type = shipment_type
-        // }
-        if (role === "user") {
-            query = {
-                bookedBy: user
-            }
-        } else if (role === "space_owner") {
-            query.owner = user
-        }
-        const Bookings = await bookingModel.find(query).populate([
+        const currentBooking = await bookingModel.findById(req.params.bookingId)
+        const Bookings = await bookingModel.find({
+            status: "pending",
+            _id: { $ne: req.params.bookingId },
+            space: currentBooking.space,
+            fromDateTime: { $lte: currentBooking.endDateTime },
+            endDateTime: { $gte: currentBooking.fromDateTime },
+        }).populate([
             {
                 path: "bookedBy",
                 select: "rating profilePicture _id username email"
@@ -256,14 +232,10 @@ async function getBookingConsequencesHandler(req, res) {
             {
                 path: "space"
             },
-        ]).skip((page - 1) * limit).limit(limit).lean()
-        let totalBookings = await bookingModel.countDocuments(query)
-        let totalPages = Math.ceil(totalBookings / limit)
-
+        ]).sort({ fromDateTime: 1 }).lean()
+        const result = await genearateConsequence(currentBooking, Bookings)
         res.status(200).json({
-            bookings: Bookings,
-            totalBookings,
-            totalPages,
+            consequences: result,
             message: "Bookings fetched",
             success: true
         })
@@ -278,38 +250,188 @@ async function getBookingConsequencesHandler(req, res) {
 }
 
 
-async function getSingleSwapHandler(req, res) {
+async function getSingleBookingHandler(req, res) {
     try {
-        const { swapId } = req.params
+        const { bookingId } = req.params
         const user = req.userId
-        const swap = await getSwapByIdService(swapId)
+        const booking = await bookingModel.findById(bookingId).populate([
 
-        ValidateSwap(swap, user)
-        if (swap.requester.toString() !== user && swap.owner.toString() !== user) {
+        ])
+        if (!booking) {
+            return res.status(404).json({ message: "Booking not found", success: false })
+        }
+        if (booking.bookedBy.toString() !== user && booking.owner.toString() !== user) {
             // neither requester nor owner
             return res.status(401).json({ message: "Unauthorized", success: false })
         }
         res.status(200).json({
-            swap,
-            message: "Swap fetched successfully",
+            booking,
+            message: "Booking fetched successfully",
             success: true
         })
 
     } catch (error) {
-        console.log(error)
         if (error.status) return res.status(error.status).json({ message: error.message, success: false })
         res.status(500).json({
-            message: "Error fetching swap",
+            message: "Error fetching booking details",
             success: false
         })
     }
 }
 
 
-//Swap status transition flow:
-// pending -> accepted -> completed
+//Booking status transition flow:
+// pending -> accepted -> payment_pending -> confirmed -> checked_in -> completed
 // pending -> rejected
 // pending -> cancelled
+// accepted -> cancelled (by owner or requester, but with different consequences)
+// pending -> expired
+async function acceptBookingHandler(req, res) {
+    try {
+        const { bookingId } = req.params
+        const booking = await updateOneBooking("pending", "accepted", bookingId, req.userId)
+        const { availableSeats } = await getAvailabilityService({
+            spaceId: booking.space,
+            fromDateTime: booking.fromDateTime,
+            endDateTime: booking.endDateTime
+        })
+        const bookings = await bookingModel.updateMany(
+            {
+                _id: { $ne: bookingId },
+                space: booking.space,
+                fromDateTime: { $lt: booking.endDateTime },
+                endDateTime: { $gt: booking.fromDateTime },
+                status: "pending",
+                seatsBooked: { $gt: availableSeats }
+            },
+            {
+                $set: { status: "rejected" }
+            }
+        );
+        res.status(200).json({
+            booking,
+            message: "booking accepted",
+            success: true,
+            bookings
+        })
+
+    } catch (error) {
+        res.status(error.status || 500).json({
+            message: error.message || "Error accepting booking",
+            success: false
+        })
+    }
+}
+async function rejectBookingHandler(req, res) {
+    try {
+        const { bookingId } = req.params
+        const user = req.userId
+        const booking = await getBookingByIdService(bookingId)
+
+        validateBooking(booking, user)
+        validateBookingState(booking, "pending")
+        validateUserRole(booking, user, "owner")
+
+        booking.status = "rejected"
+        await booking.save()
+
+        res.status(200).json({
+            booking,
+            message: "Booking rejected",
+            success: true
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message || "Error rejecting booking",
+            success: false
+        })
+    }
+}
+async function cancelBookingHandler(req, res) {
+    try {
+        const { bookingId } = req.params
+        if (!req.body.reason) {
+            return res.status(400).json({ message: "Cancellation reason is required", success: false })
+        }
+        const user = req.userId
+        const booking = await getBookingByIdService(bookingId)
+
+        validateUserRole(booking, user, "requester")
+        validateBooking(booking, user)
+        if (booking.status !== "accepted") {
+            return res.status(400).json({ message: "Only accepted bookings can be cancelled", success: false })
+        }
+
+        booking.status = "cancelled"
+        booking.cancellation = {
+            cancelledBy: user,
+            cancelledAt: new Date(),
+            reason: req.body.reason,
+        }
+        await booking.save()
+        await userModel.findByIdAndUpdate(user, {
+            $inc: { totalCanceled: 1, fraudScore: 10 },
+        })
+        res.status(200).json({
+            booking,
+            message: "Booking cancelled",
+            success: true
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message || "Error cancelling booking",
+            success: false
+        })
+    }
+}
+
+async function completeBookingHandler(req, res) {
+    try {
+        const { swapId } = req.params
+        const user = req.userId
+
+        const swap = await getSwapByIdService(swapId)
+
+        ValidateSwap(swap, user)
+        validateSwapState(swap, "shipping")
+
+        let hasShipped = swap.shipments.find(s => s.from.toString() === user)
+        if (!hasShipped && swap.shipment_type === "shipping") {
+            return res.status(400).json({ message: "First you should ship", success: false })
+        }
+        const role = swap.owner.toString() === user ? "owner" : "requester"
+
+        swap.completedBy[role] = true
+        await swap.save()
+        if (swap.completedBy.owner && swap.completedBy.requester) {
+            swap.status = "completed"
+            await swap.save()
+            await updateBothListingFromSwapId(swapId, { isAvailable: false })
+        }
+        const { owner, requester } = swap
+        const ownerUser = await userModel.findById(owner)
+        const requesterUser = await userModel.findById(requester)
+        ownerUser.totalSwaps += 1;
+        requesterUser.totalSwaps += 1;
+        await ownerUser.save();
+        await requesterUser.save();
+        res.status(200).json({
+            swap,
+            message: "Swap completed",
+            success: true
+        })
+
+    } catch (error) {
+        if (error?.status) return res.status(error.status).json({ message: error.message, success: false })
+        res.status(500).json({
+            message: error.message || "Error completing swap",
+            success: false
+        })
+    }
+}
+
 
 async function createDisputeHandler(req, res) {
     try {
@@ -449,7 +571,6 @@ async function createRatingHandler(req, res) {
         });
     }
 }
-
 async function getSwapAllDisputesHandler(req, res) {
     try {
         const { swapId } = req.params
@@ -476,163 +597,15 @@ async function getSwapAllDisputesHandler(req, res) {
     }
 }
 
-async function acceptSwapHandler(req, res) {
-    try {
-        const { swapId } = req.params
-        const user = req.userId
-        const swap = await getSwapByIdService(swapId)
-
-        const isEligible = await checkBothListingAreElligibleToSwap(swapId)
-        if (!isEligible) {
-            return res.status(400).json({ message: "One of the listing is not available or locked", success: false })
-        }
-        ValidateSwap(swap, user)
-        validateSwapState(swap, "pending")
-        validateUserRole(swap, user, "owner")
-        swap.status = "accepted"
-        await swap.save()
-        await updateBothListingFromSwapId(swapId, { isLocked: true })
-        await swapModel.updateMany(
-            {
-                _id: { $ne: swap._id },
-                $or: [
-                    { requesterListing: swap.requesterListing },
-                    { ownerListing: swap.ownerListing },
-                    { ownerListing: swap.requesterListing },
-                    { requesterListing: swap.ownerListing },
-                ]
-            },
-            {
-                $set: { status: "cancelled" }
-            }
-        );
-        res.status(200).json({
-            swap,
-            message: "Swap accepted",
-            success: true
-        })
-
-    } catch (error) {
-        console.log(error)
-        res.status(error.status || 500).json({
-            message: error.message || "Error accepting swap",
-            success: false
-        })
-    }
-}
-async function rejectSwapHandler(req, res) {
-    try {
-        const { swapId } = req.params
-        const user = req.userId
-        const swap = await getSwapByIdService(swapId)
-
-        ValidateSwap(swap, user)
-
-        validateSwapState(swap, "pending")
-        validateUserRole(swap, user, "owner")
-
-        swap.status = "rejected"
-        await swap.save()
-        await updateBothListingFromSwapId(swapId, { isLocked: false })
-
-        res.status(200).json({
-            swap,
-            message: "Swap rejected",
-            success: true
-        })
-
-    } catch (error) {
-        res.status(500).json({
-            message: error.message || "Error rejecting swap",
-            success: false
-        })
-    }
-}
-async function cancelSwapHandler(req, res) {
-    try {
-        const { swapId } = req.params
-        const user = req.userId
-        const swap = await getSwapByIdService(swapId)
-
-        validateUserRole(swap, user, "requester")
-        ValidateSwap(swap, user)
-        validateSwapState(swap, "pending")
-        await updateBothListingFromSwapId(swapId, { isLocked: false })
-
-        swap.status = "cancelled"
-        await swap.save()
-        const Requester = await userModel.findById(user)
-        Requester.totalCanceled += 1;
-        await Requester.save();
-
-        res.status(200).json({
-            swap,
-            message: "Swap cancelled",
-            success: true
-        })
-
-    } catch (error) {
-        res.status(500).json({
-            message: error.message || "Error cancelling swap",
-            success: false
-        })
-    }
-}
-async function completeSwapHandler(req, res) {
-    try {
-        const { swapId } = req.params
-        const user = req.userId
-
-        const swap = await getSwapByIdService(swapId)
-
-        ValidateSwap(swap, user)
-        validateSwapState(swap, "shipping")
-
-        let hasShipped = swap.shipments.find(s => s.from.toString() === user)
-        if (!hasShipped && swap.shipment_type === "shipping") {
-            return res.status(400).json({ message: "First you should ship", success: false })
-        }
-        const role = swap.owner.toString() === user ? "owner" : "requester"
-
-        swap.completedBy[role] = true
-        await swap.save()
-        if (swap.completedBy.owner && swap.completedBy.requester) {
-            swap.status = "completed"
-            await swap.save()
-            await updateBothListingFromSwapId(swapId, { isAvailable: false })
-        }
-        const { owner, requester } = swap
-        const ownerUser = await userModel.findById(owner)
-        const requesterUser = await userModel.findById(requester)
-        ownerUser.totalSwaps += 1;
-        requesterUser.totalSwaps += 1;
-        await ownerUser.save();
-        await requesterUser.save();
-        res.status(200).json({
-            swap,
-            message: "Swap completed",
-            success: true
-        })
-
-    } catch (error) {
-        if (error?.status) return res.status(error.status).json({ message: error.message, success: false })
-        res.status(500).json({
-            message: error.message || "Error completing swap",
-            success: false
-        })
-    }
-}
-
-
 
 module.exports = {
     createBookingHandler,
     getUserBookingsHandler,
-    getSingleSwapHandler,
-    acceptSwapHandler,
-    rejectSwapHandler,
-    cancelSwapHandler,
-    completeSwapHandler,
+    getSingleBookingHandler,
+    acceptBookingHandler,
+    rejectBookingHandler,
+    cancelBookingHandler,
+    completeBookingHandler,
     createDisputeHandler,
     getBookingConsequencesHandler,
     getBookingAlternativeHandler,

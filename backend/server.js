@@ -1,5 +1,5 @@
 require("dotenv").config()
-
+require("./src/jobs/bookingJobs")
 const express = require("express");
 const { createServer } = require("http");
 const { Server } = require("socket.io");

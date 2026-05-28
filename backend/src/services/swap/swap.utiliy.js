@@ -13,55 +13,55 @@
 
 */
 
+const bookingModel = require("../../models/booking/booking.model");
 const listingModel = require("../../models/space.model");
 const swapModel = require("../../models/swap/swap.model");
 
-async function getSwapByIdService(swapId) {
-   // validates that the swapid is real and the user asked for 
-   // it is part of the swap
-   const swap = await swapModel.findById(swapId)
-   if (!swap) {
-      throw new Error("Swap not found", 404)
+async function getBookingByIdService(bookingId) {
+   // validates that the bookingId is real and the user asked for 
+   // it is part of the booking
+   const booking = await bookingModel.findById(bookingId)
+   if (!booking) {
+      throw new Error("Booking not found", 404)
    }
-   return swap
+   return booking
 }
-function ValidateSwap(swap, user) {
+function validateBooking(booking, user) {
    if (
-      swap.requester.toString() !== user &&
-      swap.owner.toString() !== user
+      booking.bookedBy.toString() !== user &&
+      booking.owner.toString() !== user
    ) {
       throw new Error("Unauthorized", 403)
    }
 }
 
-function validateSwapState(swap, expectedState) {
-   if (swap.status !== expectedState) {
-      throw new Error("Invalid swap state", 400);
+function validateBookingState(booking, expectedState) {
+   if (booking.status !== expectedState) {
+      throw new Error("Invalid booking state", 400);
    }
 }
-function validateUserRole(swap, userId, role) {
-   const isOwner = swap.owner.toString() === userId;
-   const isRequester = swap.requester.toString() === userId;
-   if (role === "requester" && !isRequester) {
-      throw new Error("Only requester can perform this action", 403);
+function validateUserRole(booking, userId, role) {
+   const isOwner = booking.owner.toString() === userId;
+   const isBooker = booking.bookedBy.toString() === userId;
+   if (role === "bookedBy" && !isBooker) {
+      throw new Error("Only bookedBy can perform this action", 403);
    }
    if (role === "owner" && !isOwner) {
       throw new Error("Only owner can perform this action", 403);
    }
 }
-async function updateBothListingFromSwapId(swapId, updateDetails) {
-   const { requesterListing, ownerListing } = await getSwapByIdService(swapId)
-   await listingModel.findByIdAndUpdate(requesterListing, updateDetails)
-   await listingModel.findByIdAndUpdate(ownerListing, updateDetails)
-   return { requesterListing, ownerListing }
-}
-async function checkBothListingAreElligibleToSwap(swapId) {
-   const { requesterListing, ownerListing } = await getSwapByIdService(swapId)
-   const requester = await listingModel.findById(requesterListing)
-   const owner = await listingModel.findById(ownerListing)
-   if (requester.isAvailable && owner.isAvailable && !requester.isLocked && !owner.isLocked) {
-      return true
+async function updateOneBooking(from, to, bookingId, userId) {
+   const booking = await bookingModel.findOneAndUpdate({
+      _id: bookingId,
+      status: from,
+      owner: userId
+   }, {
+      status: to
+   }, { new: true }
+)
+   if (!booking) {
+      throw new Error("Booking not found or user not authorized or invalid booking state")
    }
-   return false
+   return booking
 }
-module.exports = { updateBothListingFromSwapId,checkBothListingAreElligibleToSwap, getSwapByIdService, validateSwapState, validateUserRole, ValidateSwap }
+module.exports = { updateOneBooking, getBookingByIdService, validateBookingState, validateUserRole, validateBooking }
