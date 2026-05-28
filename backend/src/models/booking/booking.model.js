@@ -145,7 +145,6 @@ const bookingSchema = new mongoose.Schema(
             enum: [
                 "pending",
                 "accepted",
-                "payment_pending",
                 "confirmed",
                 "checked_in",
                 "completed",
@@ -185,7 +184,11 @@ const bookingSchema = new mongoose.Schema(
                     "cash"
                 ],
             },
-
+            razorpayOrder: {
+                id: String,
+                currency: String,
+                amount: Number
+            },
             paidAt: {
                 type: Date,
             },

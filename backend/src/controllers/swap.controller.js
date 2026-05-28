@@ -8,7 +8,8 @@ const bookingModel = require("../models/booking/booking.model");
 const spaceModel = require("../models/space.model");
 const { createBookingService, getAvailabilityService, generateAlternatives, genearateConsequence } = require("../services/swap/swap.service");
 const agenda = require("../config/agenda");
-
+const razorpay = require("../config/razorpay");
+const { verifyRazorpayPayment } = require("../utils/razorpay");
 async function createBookingHandler(req, res) {
     try {
         const { spaceId } = req.params
@@ -171,8 +172,6 @@ async function getUserBookingsHandler(req, res) {
 }
 async function getBookingAlternativeHandler(req, res) {
     try {
-        const user = req.userId
-        const role = req.userRole
         const currentBooking = await bookingModel.findById(req.params.bookingId)
         console.log("getting alternatives for booking ", req.params.bookingId)
         const Bookings = await bookingModel.find({
@@ -281,7 +280,7 @@ async function getSingleBookingHandler(req, res) {
 
 
 //Booking status transition flow:
-// pending -> accepted -> payment_pending -> confirmed -> checked_in -> completed
+// pending -> accepted  -> confirmed -> checked_in -> completed
 // pending -> rejected
 // pending -> cancelled
 // accepted -> cancelled (by owner or requester, but with different consequences)
@@ -295,6 +294,13 @@ async function acceptBookingHandler(req, res) {
             fromDateTime: booking.fromDateTime,
             endDateTime: booking.endDateTime
         })
+        const order = await razorpay.orders.create({
+            amount: booking.pricing.finalPrice * 100, // amount in paise
+            currency: "INR",
+            receipt: `booking_${booking._id}`,
+        })
+        booking.paymentDetails.razorpayOrder = order
+        await booking.save()
         const bookings = await bookingModel.updateMany(
             {
                 _id: { $ne: bookingId },
@@ -322,71 +328,103 @@ async function acceptBookingHandler(req, res) {
         })
     }
 }
-async function rejectBookingHandler(req, res) {
+async function verifyPaymentHandler(req, res) {
     try {
+
         const { bookingId } = req.params
-        const user = req.userId
-        const booking = await getBookingByIdService(bookingId)
 
-        validateBooking(booking, user)
-        validateBookingState(booking, "pending")
-        validateUserRole(booking, user, "owner")
+        const {
+            razorpay_payment_id,
+            razorpay_order_id,
+            razorpay_signature
+        } = req.body
 
-        booking.status = "rejected"
+        // 1. Find booking
+
+        const booking =
+            await bookingModel.findById(bookingId)
+
+        if (!booking) {
+            return res.status(404).json({
+                success: false,
+                message: "Booking not found"
+            })
+        }
+        if (booking.paymentStatus === "paid") {
+            return res.status(200).json({
+                success: true,
+                message: "Already paid",
+                booking
+            })
+        }
+        // 2. Validate booking state
+
+        if (
+            booking.status !== "accepted" ||
+            booking.paymentStatus !== "pending"
+        ) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Booking not awaiting payment"
+            })
+        }
+
+        // 3. Verify signature
+        const isAuthentic = verifyRazorpayPayment({
+            orderId: razorpay_order_id,
+            paymentId: razorpay_payment_id,
+            signature: razorpay_signature
+        })
+        if (!isAuthentic) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Payment verification failed"
+            })
+        }
+
+        // 4. Confirm booking
+
+        booking.status = "confirmed"
+
+        booking.paymentStatus = "paid"
+
+        booking.paymentDetails = {
+            ...booking.paymentDetails,
+
+            transactionId:
+                razorpay_payment_id,
+
+            razorpayOrderId:
+                razorpay_order_id,
+
+            paymentMethod: "razorpay",
+
+            paidAt: new Date()
+        }
+
+        // optional cleanup
+        booking.lockExpiresAt = null
+
         await booking.save()
 
-        res.status(200).json({
-            booking,
-            message: "Booking rejected",
-            success: true
+        return res.status(200).json({
+            success: true,
+            message:
+                "Payment verified successfully",
+            booking
         })
 
     } catch (error) {
-        res.status(500).json({
-            message: error.message || "Error rejecting booking",
-            success: false
+
+        return res.status(500).json({
+            success: false,
+            message: error.message
         })
+
     }
 }
-async function cancelBookingHandler(req, res) {
-    try {
-        const { bookingId } = req.params
-        if (!req.body.reason) {
-            return res.status(400).json({ message: "Cancellation reason is required", success: false })
-        }
-        const user = req.userId
-        const booking = await getBookingByIdService(bookingId)
-
-        validateUserRole(booking, user, "requester")
-        validateBooking(booking, user)
-        if (booking.status !== "accepted") {
-            return res.status(400).json({ message: "Only accepted bookings can be cancelled", success: false })
-        }
-
-        booking.status = "cancelled"
-        booking.cancellation = {
-            cancelledBy: user,
-            cancelledAt: new Date(),
-            reason: req.body.reason,
-        }
-        await booking.save()
-        await userModel.findByIdAndUpdate(user, {
-            $inc: { totalCanceled: 1, fraudScore: 10 },
-        })
-        res.status(200).json({
-            booking,
-            message: "Booking cancelled",
-            success: true
-        })
-
-    } catch (error) {
-        res.status(500).json({
-            message: error.message || "Error cancelling booking",
-            success: false
-        })
-    }
-}
-
 async function completeBookingHandler(req, res) {
     try {
         const { swapId } = req.params
@@ -431,6 +469,72 @@ async function completeBookingHandler(req, res) {
         })
     }
 }
+async function rejectBookingHandler(req, res) {
+    try {
+        const { bookingId } = req.params
+        const user = req.userId
+        const booking = await getBookingByIdService(bookingId)
+
+        validateBooking(booking, user)
+        validateBookingState(booking, "pending")
+        validateUserRole(booking, user, "owner")
+
+        booking.status = "rejected"
+        await booking.save()
+
+        res.status(200).json({
+            booking,
+            message: "Booking rejected",
+            success: true
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message || "Error rejecting booking",
+            success: false
+        })
+    }
+}
+async function cancelBookingHandler(req, res) {
+    try {
+        const { bookingId } = req.params
+        if (!req.body.reason) {
+            return res.status(400).json({ message: "Cancellation reason is required", success: false })
+        }
+        const user = req.userId
+        const booking = await getBookingByIdService(bookingId)
+
+        validateUserRole(booking, user, "requester")
+        validateBooking(booking, user)
+        if (booking.status !== "accepted" && booking.paymentStatus == "pending") {
+            return res.status(400).json({ message: "Only accepted bookings can be cancelled", success: false })
+        }
+
+        booking.status = "cancelled"
+        booking.cancellation = {
+            cancelledBy: user,
+            cancelledAt: new Date(),
+            reason: req.body.reason,
+        }
+        await booking.save()
+        await userModel.findByIdAndUpdate(user, {
+            $inc: { totalCanceled: 1, fraudScore: 10 },
+        })
+        res.status(200).json({
+            booking,
+            message: "Booking cancelled",
+            success: true
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message || "Error cancelling booking",
+            success: false
+        })
+    }
+}
+
+
 
 
 async function createDisputeHandler(req, res) {
@@ -609,6 +713,7 @@ module.exports = {
     createDisputeHandler,
     getBookingConsequencesHandler,
     getBookingAlternativeHandler,
+    verifyPaymentHandler,
     getSwapAllDisputesHandler, createRatingHandler, getSpaceBookingHandler
 }
 
