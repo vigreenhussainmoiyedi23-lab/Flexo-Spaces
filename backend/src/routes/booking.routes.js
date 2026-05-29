@@ -23,7 +23,7 @@ const { createDisputeValidator } = require("../Validators/swap.validator")
 const { validate } = require("../Validators/validate")
 // @req.userId contains the current user ID
 
-swapRouter.get("/:spaceId/bookings", isAuthenticated, getSpaceBookingHandler)
+swapRouter.post("/:spaceId/bookings", isAuthenticated, getSpaceBookingHandler)
 
 /* 
 @route - POST - /api/swaps

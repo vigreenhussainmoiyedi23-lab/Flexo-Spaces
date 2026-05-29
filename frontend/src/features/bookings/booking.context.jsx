@@ -8,8 +8,10 @@ import React from "react";
 const BookingContextProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [userAllSwaps, setUserAllSwaps] = useState(null);
-  const [totalPages, setTotalPages] = useState(1);
+  const [availableSeats, setAvailableSeats] = useState(null);
+  const [overlappingBookings, setOverlappingBookings] = useState([]);
 
+  const [totalPages, setTotalPages] = useState(1);
   const [swapAllDisputes, setSwapAllDisputes] = useState(null);
   const [filters, setFilters] = useState({
     page: 1,
@@ -26,11 +28,15 @@ const BookingContextProvider = ({ children }) => {
         filters,
         swapAllDisputes,
         totalPages,
+        availableSeats,
+        overlappingBookings,
+        setAvailableSeats,
+        setOverlappingBookings, 
         setLoading,
         setUserAllSwaps,
         setFilters,
         setSwapAllDisputes,
-        setTotalPages
+        setTotalPages,
       }}
     >
       {children}

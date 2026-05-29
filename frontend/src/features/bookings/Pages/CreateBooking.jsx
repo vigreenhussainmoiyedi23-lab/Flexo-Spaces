@@ -2,17 +2,10 @@ import React from "react";
 import BookingWizard from "../components/BookingWizard";
 
 const CreateBooking = () => {
-  const validateStepOne = () => {
-    const { startDate, startTime, endDate, endTime } = formData;
-
-    if (!startDate || !startTime || !endDate || !endTime) {
-      return false;
-    }
-
-    return true;
-  };
+ 
+  
   return (
-    <div>
+    <div className="min-h-screen w-full flex items-center justify-center">
       <BookingWizard />
     </div>
   );

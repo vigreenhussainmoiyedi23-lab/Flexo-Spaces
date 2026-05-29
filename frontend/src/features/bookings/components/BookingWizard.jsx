@@ -12,6 +12,12 @@ import {
   Grid,
   Alert,
 } from "@mui/material";
+import useBooking from "../hooks/useBooking";
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import showToast from "../../../utils/Toastify.util";
+import { useSpace } from "../../spaces/hooks/useSpace";
+import Loader from "../../commonComponents/Loading";
 
 const steps = [
   "Select Time",
@@ -23,25 +29,43 @@ const steps = [
 ];
 
 const BookingWizard = () => {
+  const validateStepOne = () => {
+    const { fromDate, fromTime, toTime, toDate } = formData;
+
+    if (!fromDate || !fromTime || !toTime || !toDate) {
+      return false;
+    }
+
+    return true;
+  };
+  const [space, setSpace] = useState({});
+  const { id } = useParams();
+  const { getSpaceById } = useSpace();
   const [activeStep, setActiveStep] = useState(0);
-
+  useBooking();
   const [formData, setFormData] = useState({
-    startDate: "",
-    startTime: "",
-    endDate: "",
-    endTime: "",
+    fromDate: "",
+    fromTime: "",
+    toDate: "",
+    toTime: "",
 
-    maxAvailableSeats: 10,
+    maxAvailableSeats: 0,
+    overlappingBookings: [],
     selectedSeats: 1,
-
     fullName: "",
     notes: "",
-
-
-    estimatedPrice: 5400,
   });
-
+  useEffect(() => {
+    async function fetchspace() {
+      const response = await getSpaceById(id);
+      setSpace(response.Space);
+    }
+    fetchspace();
+  }, [id]);
+  if (!space) return <Loader />;
   const nextStep = () => {
+    if (activeStep === 0 && !validateStepOne())
+      return showToast("Please select a valid time range", "error");
     setActiveStep((prev) => prev + 1);
   };
 
@@ -64,7 +88,9 @@ const BookingWizard = () => {
         );
 
       case 1:
-        return <AvailabilityStep formData={formData} />;
+        return (
+          <AvailabilityStep formData={formData} setFormData={setFormData} />
+        );
 
       case 2:
         return (
@@ -73,14 +99,18 @@ const BookingWizard = () => {
 
       case 3:
         return (
-          <BookingDetailsStep formData={formData} updateField={updateField} />
+          <BookingDetailsStep
+            space={space}
+            formData={formData}
+            updateField={updateField}
+          />
         );
 
       case 4:
-        return <ReviewStep formData={formData} />;
+        return <ReviewStep space={space} formData={formData} />;
 
       case 5:
-        return <ConfirmationStep />;
+        return <ConfirmationStep spaceId={id} data={formData} />;
 
       default:
         return null;
@@ -135,7 +165,6 @@ const BookingWizard = () => {
     </Box>
   );
 };
-
 function TimeSelectionStep({ formData, updateField }) {
   return (
     <Box>
@@ -144,47 +173,83 @@ function TimeSelectionStep({ formData, updateField }) {
       </Typography>
 
       <Grid container spacing={3}>
+        {/* Start Date */}
         <Grid item xs={12} md={6}>
           <TextField
             fullWidth
             type="date"
             label="Start Date"
-            InputLabelProps={{ shrink: true }}
-            value={formData.startDate}
-            onChange={(e) => updateField("startDate", e.target.value)}
+            value={formData.fromDate}
+            onChange={(e) => updateField("fromDate", e.target.value)}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            sx={{
+              "& .MuiInputLabel-root": {
+                backgroundColor: "white",
+                px: 0.5,
+              },
+            }}
           />
         </Grid>
 
+        {/* Start Time */}
         <Grid item xs={12} md={6}>
           <TextField
             fullWidth
             type="time"
             label="Start Time"
-            InputLabelProps={{ shrink: true }}
-            value={formData.startTime}
-            onChange={(e) => updateField("startTime", e.target.value)}
+            value={formData.fromTime}
+            onChange={(e) => updateField("fromTime", e.target.value)}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            sx={{
+              "& .MuiInputLabel-root": {
+                backgroundColor: "white",
+                px: 0.5,
+              },
+            }}
           />
         </Grid>
 
+        {/* End Date */}
         <Grid item xs={12} md={6}>
           <TextField
             fullWidth
             type="date"
             label="End Date"
-            InputLabelProps={{ shrink: true }}
-            value={formData.endDate}
-            onChange={(e) => updateField("endDate", e.target.value)}
+            value={formData.toDate}
+            onChange={(e) => updateField("toDate", e.target.value)}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            sx={{
+              "& .MuiInputLabel-root": {
+                backgroundColor: "white",
+                px: 0.5,
+              },
+            }}
           />
         </Grid>
 
+        {/* End Time */}
         <Grid item xs={12} md={6}>
           <TextField
             fullWidth
             type="time"
             label="End Time"
-            InputLabelProps={{ shrink: true }}
-            value={formData.endTime}
-            onChange={(e) => updateField("endTime", e.target.value)}
+            value={formData.toTime}
+            onChange={(e) => updateField("toTime", e.target.value)}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            sx={{
+              "& .MuiInputLabel-root": {
+                backgroundColor: "white",
+                px: 0.5,
+              },
+            }}
           />
         </Grid>
       </Grid>
@@ -192,7 +257,35 @@ function TimeSelectionStep({ formData, updateField }) {
   );
 }
 
-function AvailabilityStep({ formData }) {
+function AvailabilityStep({ formData, setFormData }) {
+  const {
+    availableSeats,
+    getAvailableSeatsAndOverLappingBookings,
+    overlappingBookings,
+  } = useBooking();
+  const { id: spaceId } = useParams();
+  useEffect(() => {
+    if (formData.maxAvailableSeats && formData.overlappingBookings.length > 0)
+      return;
+    async function fetch() {
+      await getAvailableSeatsAndOverLappingBookings(spaceId, {
+        fromDate: formData.fromDate,
+        toDate: formData.toDate,
+        toTime: formData.toTime,
+        fromTime: formData.fromTime,
+      });
+      setFormData((prev) => ({
+        ...prev,
+        maxAvailableSeats: availableSeats,
+        overlappingBookings,
+      }));
+      console.log("setting available seats", availableSeats);
+    }
+    if (formData.fromDate && formData.toDate) {
+      fetch();
+    }
+  }, [formData.fromTime, formData.toTime, formData.fromDate, formData.toDate]);
+
   return (
     <Box>
       <Typography variant="h5" fontWeight="bold" mb={3}>
@@ -205,18 +298,13 @@ function AvailabilityStep({ formData }) {
       </Alert>
 
       <Paper variant="outlined" sx={{ p: 3 }}>
-        <Typography variant="body1">
-          • 10 AM - 2 PM → 20 seats remaining
-        </Typography>
-
-        <Typography variant="body1">
-          • 2 PM - 3 PM → 50 seats remaining
-        </Typography>
-
-        <Typography variant="body1">
-          • 3 PM - 8 PM → 10 seats remaining
-        </Typography>
-
+        {overlappingBookings.map((booking) => (
+          <Typography variant="body2" key={booking.id}>
+            {booking.fromDateTime}-{booking.endDateTime}:{" "}
+            <strong>{booking.seatsBooked}</strong> seats
+          </Typography>
+        ))}
+        {overlappingBookings.length === 0 && "No overlapping bookings found."}
         <Typography variant="body2" mt={3} color="text.secondary">
           The system calculates the minimum available capacity across your
           selected duration.
@@ -283,7 +371,59 @@ function BookingDetailsStep({ formData, updateField }) {
   );
 }
 
-function ReviewStep({ formData }) {
+function ReviewStep({ formData, space }) {
+  const calculateEstimatedPrice = () => {
+    if (
+      !space?.pricing?.rate ||
+      !space?.capacity ||
+      !formData?.selectedSeats ||
+      !formData?.fromDate ||
+      !formData?.fromTime ||
+      !formData?.toDate ||
+      !formData?.toTime
+    ) {
+      return 0;
+    }
+
+    const start = new Date(`${formData.fromDate}T${formData.fromTime}`);
+
+    const end = new Date(`${formData.toDate}T${formData.toTime}`);
+
+    const diffMs = end - start;
+
+    if (diffMs <= 0) return 0;
+
+    // total duration in hours
+    const totalHours = diffMs / (1000 * 60 * 60);
+
+    // workspace rate per seat
+    const seatRate = space.pricing.rate / space.capacity;
+
+    let multiplier = 1;
+
+    switch (space.pricing.interval) {
+      case "hourly":
+        multiplier = Math.ceil(totalHours);
+        break;
+
+      case "daily":
+        multiplier = Math.ceil(totalHours / 24);
+        break;
+
+      case "weekly":
+        multiplier = Math.ceil(totalHours / (24 * 7));
+        break;
+
+      case "monthly":
+        multiplier = Math.ceil(totalHours / (24 * 30));
+        break;
+
+      default:
+        multiplier = 1;
+    }
+
+    return seatRate * formData.selectedSeats * multiplier;
+  };
   return (
     <Box>
       <Typography variant="h5" fontWeight="bold" mb={3}>
@@ -304,15 +444,16 @@ function ReviewStep({ formData }) {
         </Typography>
 
         <Typography>
-          <strong>Start:</strong> {formData.startDate} {formData.startTime}
+          <strong>Start:</strong> {formData.fromDate} {formData.fromTime}
         </Typography>
 
         <Typography>
-          <strong>End:</strong> {formData.endDate} {formData.endTime}
+          <strong>End:</strong> {formData.toDate} {formData.toTime}
         </Typography>
 
         <Typography>
-          <strong>Estimated Price:</strong> ₹{formData.estimatedPrice}
+          <strong>Estimated Price:</strong> ₹
+          {calculateEstimatedPrice().toFixed(2)}
         </Typography>
 
         <Alert severity="warning">Free cancellation before 48 hours.</Alert>
@@ -321,16 +462,44 @@ function ReviewStep({ formData }) {
   );
 }
 
-function ConfirmationStep() {
+function ConfirmationStep({ spaceId, data }) {
+  const { createBookingHandler } = useBooking();
+  const [booking, setBooking] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  async function createBooking() {
+    if (booking || loading) showToast("Booking already created", "info");
+    try {
+      setLoading(true);
+      const response = await createBookingHandler({ spaceId, ...data });
+      navigate("/bookings");
+      console.log("navigate");
+    } catch (error) {
+      console.log(error);
+    }
+  }
   return (
     <Box textAlign="center">
-      <Typography variant="h4" fontWeight="bold" gutterBottom>
-        Booking Submitted 🎉
-      </Typography>
+      {booking ? (
+        <>
+          <Typography variant="h4" fontWeight="bold" gutterBottom>
+            Booking Submitted 🎉
+          </Typography>
 
-      <Typography variant="body1" color="text.secondary">
-        Your booking request has been sent to the workspace owner.
-      </Typography>
+          <Typography variant="body1" color="text.secondary">
+            Your booking request has been sent to the workspace owner.
+          </Typography>
+        </>
+      ) : (
+        <div className="w-full h-full flex items-center justify-center">
+          <button
+            onClick={createBooking}
+            className="px-3 py-1 rounded  exo-2 text-xl font-bold    bg-brand-200 text-text-primary hover:bg-brand-500/90 active:bg-brand-200 transition-colors"
+          >
+            Confirm Booking
+          </button>
+        </div>
+      )}
     </Box>
   );
 }

@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {  useSpace } from "../hooks/useSpace";
+import { useSpace } from "../hooks/useSpace";
 import { useNavigate } from "react-router-dom";
 import LocationSelector from "../../commonComponents/LocationSelector";
-
-
 
 const SPACE_TYPES = [
   "Hot Desk", // Flexible shared seating
@@ -16,7 +14,6 @@ const SPACE_TYPES = [
 
 // ⏱️ Allowed billing intervals for commercial bookings
 const PRICING_INTERVALS = ["hourly", "daily", "weekly", "monthly"];
-
 
 // 🏷️ Human-readable labels for your Frontend UI UI rendering
 const AMENITY_LABELS = {
@@ -62,7 +59,7 @@ const CreateListing = () => {
     },
     amenities: [],
   });
-  
+
   const { createSpace } = useSpace();
   const [selectedImages, setSelectedImages] = useState([]);
   const [availableTypes, setAvailableTypes] = useState([]);
@@ -324,6 +321,14 @@ const CreateListing = () => {
                 }}
               />
             </div>
+            {formData.capacity > 0 && formData.pricing.rate > 0 && (
+              <p className="text-sm text-gray-500">
+                This price is for all {formData.capacity} seats.
+                <br />
+                Per seat price: ₹
+                {(formData.pricing.rate / formData.capacity).toFixed(2)}
+              </p>
+            )}
           </div>
 
           <div className="flex flex-col gap-1 max-h-48 overflow-y-auto border border-text-primary rounded-lg p-2">

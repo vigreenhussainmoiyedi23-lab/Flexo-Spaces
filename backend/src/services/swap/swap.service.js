@@ -110,7 +110,6 @@ async function getAvailabilityService({ spaceId, fromDate, fromTime, toDate, toT
          .findById(spaceId)
          .select("capacity")
          .lean();
-      console.log(space)
       const bookedSeats =
          overlappingBookings.reduce(
             (acc, booking) =>

@@ -10,10 +10,11 @@ import {
     createDisputeApi,
     getSwapAllDisputeApi,
     createRatingApi
-} from "../service/swap.api.js";
+} from "../service/booking.api.js";
 import { emitNotification } from "../../../utils/emitNotifications.js";
 
 import useAuth from "../../auth/hooks/useAuth.js";
+import { createBookingApi, getAvailaibilityApi } from "../service/booking.api.js";
 
 
 const useBooking = () => {
@@ -22,6 +23,10 @@ const useBooking = () => {
         loading,
         userAllSwaps,
         filters,
+        availableSeats,
+        overlappingBookings,
+        setAvailableSeats,
+        setOverlappingBookings,
         totalPages,
         swapAllDisputes,
         setLoading,
@@ -43,6 +48,38 @@ const useBooking = () => {
             setLoading(false);
         }
     };
+    const createBookingHandler = async (data) => {
+        const id = showLoadingToast("Creating Booking...");
+        try {
+            setLoading(true);
+            console.log(data)
+            const response = await createBookingApi(data);
+            showToast(response.message, "success");
+
+            const update = updateToast(id, "Make Sure You Negotiate Before Shipping or Completing", "info")
+        } catch (error) {
+            const update = updateToast(id, error.data.message || "error creating booking", "error")
+            console.error("Error creating booking:", error);
+            throw error;
+        } finally {
+            setLoading(false);
+        }
+    }
+    const getAvailableSeatsAndOverLappingBookings = async (spaceId, data) => {
+        try {
+            setLoading(true);
+            const response = await getAvailaibilityApi(spaceId, data);
+        
+            setAvailableSeats(response.availableSeats);
+            setOverlappingBookings(response.overlappingBookings);
+            return response;
+        } catch (error) {
+            console.error("Error creating booking:", error);
+            throw error;
+        } finally {
+            setLoading(false);
+        }
+    }
     const acceptSwapHandler = async (swapId) => {
         const id = showLoadingToast("accepting swap request...");
         try {
@@ -252,6 +289,9 @@ const useBooking = () => {
     }, []);
 
     return {
+        createBookingHandler,
+        getAvailableSeatsAndOverLappingBookings,
+
         getSwapRequests,
         acceptSwapHandler,
         rejectSwapHandler,
@@ -264,7 +304,9 @@ const useBooking = () => {
         filters,
         userAllSwaps,
         swapAllDisputes,
-        totalPages
+        totalPages,
+        availableSeats,
+        overlappingBookings
     };
 };
 

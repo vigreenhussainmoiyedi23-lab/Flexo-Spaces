@@ -1,5 +1,5 @@
 import axios from "axios";
-const API_URL = import.meta.env.VITE_API_URL + "/swaps" || 'http://localhost:5000/api/swaps';
+const API_URL = import.meta.env.VITE_API_URL + "/booking" || 'http://localhost:5000/api/booking';
 
 const apiClient = axios.create({
     baseURL: API_URL,
@@ -8,18 +8,30 @@ const apiClient = axios.create({
     },
     withCredentials: true, // Include cookies for authentication
 });
-const createSwapRequest = async ({ offeredListingId, requestedListingId, message }) => {
-    if (!offeredListingId || !requestedListingId) {
-        throw new Error("Both offeredListingId and requestedListingId are required");
+const createBookingApi = async (bookingDets) => {
+    if (!bookingDets.spaceId) {
+        throw new Error("   spaceId is required");
     }
     try {
-        const response = await apiClient.post(`/${requestedListingId}`, { requesterListingId: offeredListingId, message: message || "" });
+        const response = await apiClient.post(`/${bookingDets.spaceId}`, bookingDets);
         return response.data;
     } catch (error) {
         console.error('Error creating swap request:', error);
         throw error.response;
     }
 };
+const getAvailaibilityApi = async (spaceId,data) => {
+    try {
+        console.log("getting response",spaceId,data)
+        const response = await apiClient.post(`/${spaceId}/bookings`,data);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching availability:', error);
+        throw error.response;
+    }
+};
+
+
 const fetchSwapRequests = async ({ filters }) => {
     try {
         const response = await apiClient.post(`/`, { filters });
@@ -103,7 +115,8 @@ const createRatingApi = async (swapId, ratingDetails) => {
 }
 
 export {
-    createSwapRequest,
+    createBookingApi,
+    getAvailaibilityApi,
     fetchSwapRequests,
     acceptSwapRequest,
     rejectSwapRequest,

@@ -34,8 +34,6 @@ const Swaps = () => {
   const { userAllSwaps, loading, getSwapRequests, totalPages } = useBooking();
   const [shipment_type, setShipment_type] = useState("all");
   const [page, setPage] = useState(1);
-
-  shipment_type;
   useEffect(() => {
     const second = async () => {
       const filters = {
@@ -52,7 +50,7 @@ const Swaps = () => {
 
   return (
     <div className="w-full min-h-screen bg-brand-900 relative pt-[12vh]">
-      <BookingWizard />
+      all bookings will be loaded here  
     </div>
   );
 };

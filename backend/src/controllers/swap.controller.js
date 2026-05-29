@@ -34,6 +34,24 @@ async function createBookingHandler(req, res) {
                 message: "Not enough seats available"
             });
         }
+        const isBookingExist = await bookingModel.findOne({
+            space: spaceId,
+            status: { $in: ["pending", "accepted"] },
+
+            fromDateTime: {
+                $lt: new Date(`${toDate}T${toTime}:00.000Z`)
+            },
+
+            endDateTime: {
+                $gt: new Date(`${fromDate}T${fromTime}:00.000Z`)
+            }
+        });
+        if (isBookingExist) {
+            return res.status(400).json({
+                success: false,
+                message: "Booking already exists"
+            });
+        }
         const space = await spaceModel.findById(spaceId)
         if (!space) {
             return res.status(404).json({ message: "Space not found", success: false })
@@ -74,6 +92,7 @@ async function createBookingHandler(req, res) {
 }
 async function getSpaceBookingHandler(req, res) {
     try {
+        console.log("space bookings")
         const { spaceId } = req.params;
         const {
             fromDate,
@@ -88,6 +107,7 @@ async function getSpaceBookingHandler(req, res) {
             toTime,
             fromTime
         })
+        console.log(availableSeats, overlappingBookings)
         res.status(200).json({
             success: true,
             availableSeats,
