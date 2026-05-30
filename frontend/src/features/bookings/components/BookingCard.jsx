@@ -38,25 +38,25 @@ const BookingCard = ({ booking, cta, urgency = "normal" }) => {
     normal: {
       shadow: "",
       badge: "bg-accent-500",
-      progress: "bg-accent-500",
+      progress: "bg-brand-500",
     },
 
     warning: {
       shadow: "shadow-[0_0_25px_rgba(224,177,78,0.35)]",
       badge: "bg-brand-200",
-      progress: "bg-brand-200",
+      progress: "bg-orange-200",
     },
 
     critical: {
       shadow: "shadow-[0_0_35px_rgba(155,44,78,0.45)]",
       badge: "bg-error",
-      progress: "bg-error",
+      progress: "bg-orange-500",
     },
 
     danger: {
       shadow: "shadow-[0_0_45px_rgba(155,44,78,0.7)] animate-pulse",
       badge: "bg-error",
-      progress: "bg-error",
+      progress: "bg-red-500",
     },
   };
 
@@ -119,14 +119,18 @@ const BookingCard = ({ booking, cta, urgency = "normal" }) => {
           top-3
           px-3
           py-1
-          rounded-full
-          text-xs
+          rounded-sm
+          text-sm
           font-bold
           text-white
-          ${style.badge}
+          flex flex-col items-center
+          bg-text-primary
         `}
         >
-          {hours} : {minutes} : {seconds}
+          <span>
+            {hours} : {minutes} : {seconds}
+          </span>
+          <span className="text-[8px] self-start ">expires in</span>
         </span>
       </div>
 
@@ -299,9 +303,23 @@ const BookingCard = ({ booking, cta, urgency = "normal" }) => {
             <div
               className={`
               h-full
-              ${urgencyStyles[hours<5?"danger":hours<12?"critical":hours<16?"warning":"normal"].progress}`}
+              ${
+                urgencyStyles[
+                  hours <= 6
+                    ? "danger"
+                    : hours <= 12
+                      ? "critical"
+                      : hours <= 18
+                        ? "warning"
+                        : "normal"
+                ].progress
+              }`}
               style={{
-                width: ((hours * 60 + minutes) / (24 * 60)) * 100 +"%",
+                width:
+                  Math.max(
+                    0,
+                    Math.min(100, ((hours * 60 + minutes) / (24 * 60)) * 100),
+                  ) + "%",
               }}
             />
           </div>
