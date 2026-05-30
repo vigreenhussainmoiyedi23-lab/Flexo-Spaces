@@ -10,6 +10,7 @@ const { createBookingService, getAvailabilityService, generateAlternatives, gene
 const agenda = require("../config/agenda");
 const razorpay = require("../config/razorpay");
 const { verifyRazorpayPayment } = require("../utils/razorpay");
+
 async function createBookingHandler(req, res) {
     try {
         const { spaceId } = req.params

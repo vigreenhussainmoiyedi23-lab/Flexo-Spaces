@@ -42,6 +42,7 @@ async function createBookingService({ user, spaceId, fromDateTime, toDateTime, s
          fromDateTime,
          endDateTime: toDateTime,
          seatsBooked,
+         expiresAt: fromDateTime + (24 * 60 * 60 * 1000),
          fullName,
          notes,
          bookingType,
