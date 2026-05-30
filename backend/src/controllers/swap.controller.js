@@ -321,6 +321,7 @@ async function acceptBookingHandler(req, res) {
             receipt: `booking_${booking._id}`,
         })
         booking.paymentDetails.razorpayOrder = order
+        booking.lockExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000)
         await booking.save()
         const bookings = await bookingModel.updateMany(
             {
@@ -349,6 +350,7 @@ async function acceptBookingHandler(req, res) {
         })
     }
 }
+
 async function verifyPaymentHandler(req, res) {
     try {
 
@@ -374,15 +376,12 @@ async function verifyPaymentHandler(req, res) {
         if (booking.paymentStatus === "paid") {
             return res.status(200).json({
                 success: true,
-                message: "Already paid",
+                message: "Already paid ",
                 booking
             })
         }
-        // 2. Validate booking state
-
         if (
-            booking.status !== "accepted" ||
-            booking.paymentStatus !== "pending"
+            booking.status !== "accepted" || new Date() > new Date(booking.lockExpiresAt)
         ) {
             return res.status(400).json({
                 success: false,
@@ -391,7 +390,6 @@ async function verifyPaymentHandler(req, res) {
             })
         }
 
-        // 3. Verify signature
         const isAuthentic = verifyRazorpayPayment({
             orderId: razorpay_order_id,
             paymentId: razorpay_payment_id,
