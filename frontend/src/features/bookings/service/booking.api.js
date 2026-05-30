@@ -32,8 +32,9 @@ const getAvailaibilityApi = async (spaceId,data) => {
 };
 
 
-const fetchSwapRequests = async ({ filters }) => {
+const fetchBookingRequests = async ({ filters }) => {
     try {
+        console.log("getting response",filters)
         const response = await apiClient.post(`/`, { filters });
         return response.data;
     } catch (error) {
@@ -117,7 +118,7 @@ const createRatingApi = async (swapId, ratingDetails) => {
 export {
     createBookingApi,
     getAvailaibilityApi,
-    fetchSwapRequests,
+    fetchBookingRequests,
     acceptSwapRequest,
     rejectSwapRequest,
     cancelSwapRequest,

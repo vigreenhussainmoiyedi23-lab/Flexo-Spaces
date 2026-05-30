@@ -7,7 +7,7 @@ import React from "react";
 
 const BookingContextProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
-  const [userAllSwaps, setUserAllSwaps] = useState(null);
+  const [userAllBookings, setUserAllBookings] = useState(null);
   const [availableSeats, setAvailableSeats] = useState(null);
   const [overlappingBookings, setOverlappingBookings] = useState([]);
 
@@ -24,16 +24,16 @@ const BookingContextProvider = ({ children }) => {
     <BookingContext.Provider
       value={{
         loading,
-        userAllSwaps,
+        userAllBookings,
         filters,
         swapAllDisputes,
         totalPages,
         availableSeats,
         overlappingBookings,
         setAvailableSeats,
-        setOverlappingBookings, 
+        setOverlappingBookings,
         setLoading,
-        setUserAllSwaps,
+        setUserAllBookings,
         setFilters,
         setSwapAllDisputes,
         setTotalPages,

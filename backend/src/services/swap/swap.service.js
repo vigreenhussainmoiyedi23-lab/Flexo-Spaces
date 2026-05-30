@@ -14,7 +14,9 @@ async function createBookingService({ user, spaceId, fromDateTime, toDateTime, s
       if (fromDateTime < new Date()) {
          throw new Error("Cannot book for past date and time")
       }
-
+      if (fromDateTime > toDateTime) {
+         throw new Error("End date and time must be greater than start date and time")
+      }
 
       const bookingType = space.pricing.interval
       const bookedBy = user
@@ -42,7 +44,7 @@ async function createBookingService({ user, spaceId, fromDateTime, toDateTime, s
          fromDateTime,
          endDateTime: toDateTime,
          seatsBooked,
-         expiresAt: fromDateTime + (24 * 60 * 60 * 1000),
+         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
          fullName,
          notes,
          bookingType,

@@ -40,7 +40,7 @@ swapRouter.post("/:spaceId", isAuthenticated, createBookingHandler)
   @description - Get all swaps of logged-in user - Includes both sent & received swaps
   @body filter:{status,shippmentType} 
   @return  swaps: []*/
-swapRouter.get("/", isAuthenticated, getUserBookingsHandler)
+swapRouter.post("/", isAuthenticated, getUserBookingsHandler)
 
 
 /* @route GET - /api/swaps/:bookingId

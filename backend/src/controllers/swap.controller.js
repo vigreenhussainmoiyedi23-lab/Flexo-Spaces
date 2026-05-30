@@ -174,7 +174,6 @@ async function getUserBookingsHandler(req, res) {
         ]).skip((page - 1) * limit).limit(limit).lean()
         let totalBookings = await bookingModel.countDocuments(query)
         let totalPages = Math.ceil(totalBookings / limit)
-
         res.status(200).json({
             bookings: Bookings,
             totalBookings,

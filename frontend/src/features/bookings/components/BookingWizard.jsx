@@ -35,7 +35,9 @@ const BookingWizard = () => {
     if (!fromDate || !fromTime || !toTime || !toDate) {
       return false;
     }
-
+    if (new Date(`${fromDate}T${fromTime}`) > new Date(`${toDate}T${toTime}`))
+      return false;
+    if (new Date(`${fromDate}T${fromTime}`) < new Date()) return false;
     return true;
   };
   const [space, setSpace] = useState({});
@@ -284,7 +286,7 @@ function AvailabilityStep({ formData, setFormData }) {
     if (formData.fromDate && formData.toDate) {
       fetch();
     }
-  }, [formData.fromTime, formData.toTime, formData.fromDate, formData.toDate]);
+  }, []);
 
   return (
     <Box>

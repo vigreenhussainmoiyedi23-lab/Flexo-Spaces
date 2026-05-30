@@ -1,11 +1,38 @@
 import { MapPin, Calendar, Users, IndianRupee } from "lucide-react";
+import { useEffect, useState } from "react";
 
-const BookingCard = ({
-  booking,
-  cta,
-  urgency = "normal",
-}) => {
+const BookingCard = ({ booking, cta, urgency = "normal" }) => {
   const space = booking.space;
+  const [hours, setHours] = useState(
+    Math.floor((Date.parse(booking.expiresAt) - Date.now()) / (1000 * 60 * 60)),
+  );
+  const [minutes, setMinutes] = useState(
+    Math.floor((Date.parse(booking.expiresAt) - Date.now()) / (1000 * 60)) -
+      hours * 60,
+  );
+  const [seconds, setSeconds] = useState(
+    Math.floor((Date.parse(booking.expiresAt) - Date.now()) / 1000) -
+      hours * 60 * 60 -
+      minutes * 60,
+  );
+  let interval = null;
+  useEffect(() => {
+    if (interval) return;
+    interval = setInterval(() => {
+      setSeconds((prev) => {
+        if (prev == 0) {
+          if (minutes == 0) {
+            setHours((prev) => prev - 1);
+            setMinutes(59);
+          } else {
+            setMinutes((prev) => prev - 1);
+          }
+          return 59;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  }, []);
 
   const urgencyStyles = {
     normal: {
@@ -15,22 +42,19 @@ const BookingCard = ({
     },
 
     warning: {
-      shadow:
-        "shadow-[0_0_25px_rgba(224,177,78,0.35)]",
+      shadow: "shadow-[0_0_25px_rgba(224,177,78,0.35)]",
       badge: "bg-brand-200",
       progress: "bg-brand-200",
     },
 
     critical: {
-      shadow:
-        "shadow-[0_0_35px_rgba(155,44,78,0.45)]",
+      shadow: "shadow-[0_0_35px_rgba(155,44,78,0.45)]",
       badge: "bg-error",
       progress: "bg-error",
     },
 
     danger: {
-      shadow:
-        "shadow-[0_0_45px_rgba(155,44,78,0.7)] animate-pulse",
+      shadow: "shadow-[0_0_45px_rgba(155,44,78,0.7)] animate-pulse",
       badge: "bg-error",
       progress: "bg-error",
     },
@@ -102,7 +126,7 @@ const BookingCard = ({
           ${style.badge}
         `}
         >
-          3h 20m left
+          {hours} : {minutes} : {seconds}
         </span>
       </div>
 
@@ -145,9 +169,7 @@ const BookingCard = ({
         >
           <Calendar className="w-4 h-4" />
 
-          <span className="text-sm">
-            26 Jun → 27 Jun
-          </span>
+          <span className="text-sm">26 Jun → 27 Jun</span>
         </div>
 
         {/* BOOKING TYPE */}
@@ -172,13 +194,10 @@ const BookingCard = ({
             p-3
           "
           >
-            <p className="text-brand-100/50 text-xs">
-              Seats
-            </p>
+            <p className="text-brand-100/50 text-xs">Seats</p>
 
             <p className="text-brand-100 font-bold">
-              {booking.seatsBooked}/
-              {booking.totalCapacitySnapshot}
+              {booking.seatsBooked}/{booking.totalCapacitySnapshot}
             </p>
           </div>
 
@@ -189,9 +208,7 @@ const BookingCard = ({
             p-3
           "
           >
-            <p className="text-brand-100/50 text-xs">
-              Amount
-            </p>
+            <p className="text-brand-100/50 text-xs">Amount</p>
 
             <p className="text-brand-100 font-bold">
               ₹{booking.pricing.finalPrice}
@@ -201,12 +218,10 @@ const BookingCard = ({
 
         {/* AMENITIES */}
         <div className="flex flex-wrap gap-2 mt-4">
-          {space.amenities
-            .slice(0, 4)
-            .map((amenity) => (
-              <span
-                key={amenity}
-                className="
+          {space.amenities.slice(0, 4).map((amenity) => (
+            <span
+              key={amenity}
+              className="
                 px-2 py-1
                 rounded-full
                 bg-brand-100
@@ -214,10 +229,10 @@ const BookingCard = ({
                 text-[10px]
                 font-bold
               "
-              >
-                {amenity}
-              </span>
-            ))}
+            >
+              {amenity}
+            </span>
+          ))}
         </div>
 
         {/* OWNER */}
@@ -265,12 +280,10 @@ const BookingCard = ({
         {/* URGENCY */}
         <div className="mt-5">
           <div className="flex justify-between text-xs">
-            <span className="text-brand-100/60">
-              Booking Expiry
-            </span>
+            <span className="text-brand-100/60">Booking Expiry</span>
 
             <span className="text-brand-100">
-              3h 20m
+              {hours}h {minutes}m
             </span>
           </div>
 
@@ -286,10 +299,9 @@ const BookingCard = ({
             <div
               className={`
               h-full
-              ${style.progress}
-            `}
+              ${urgencyStyles[hours<5?"danger":hours<12?"critical":hours<16?"warning":"normal"].progress}`}
               style={{
-                width: "25%",
+                width: ((hours * 60 + minutes) / (24 * 60)) * 100 +"%",
               }}
             />
           </div>
