@@ -18,7 +18,7 @@ const {
   createBookingHandler,
   getBookingAlternativeHandler,
   getBookingConsequencesHandler
-} = require("../controllers/swap.controller")
+} = require("../controllers/booking.controller")
 const { createDisputeValidator } = require("../Validators/swap.validator")
 const { validate } = require("../Validators/validate")
 // @req.userId contains the current user ID

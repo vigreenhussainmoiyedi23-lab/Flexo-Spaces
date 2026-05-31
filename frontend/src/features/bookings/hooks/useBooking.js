@@ -2,13 +2,11 @@ import { BookingContext } from "../booking.context.jsx";
 import { useContext, useEffect } from "react";
 import showToast, { showLoadingToast, updateToast } from "../../../utils/Toastify.util.jsx";
 import {
-    cancelSwapRequest,
-    completeSwapRequest,
-    rejectSwapRequest,
-    acceptSwapRequest,
-    createDisputeApi,
-    getSwapAllDisputeApi,
-    createRatingApi,
+    cancelBookingRequest,
+    completeBookingRequest,
+    acceptBookingRequest,
+    rejectBookingRequest,
+
 } from "../service/booking.api.js";
 import { emitNotification } from "../../../utils/emitNotifications.js";
 
@@ -18,6 +16,8 @@ import { createBookingApi, getAvailaibilityApi, fetchBookingRequests } from "../
 
 const useBooking = () => {
     const { user } = useAuth();
+
+    // Booking Context
     const {
         loading,
         userAllBookings,
@@ -34,6 +34,8 @@ const useBooking = () => {
         setSwapAllDisputes,
         setTotalPages
     } = useContext(BookingContext)
+
+    // booking handler
     const getBookingRequests = async ({ filters }) => {
         try {
             setLoading(true);
@@ -48,6 +50,21 @@ const useBooking = () => {
             setLoading(false);
         }
     };
+    const getAvailableSeatsAndOverLappingBookings = async (spaceId, data) => {
+        try {
+            setLoading(true);
+            const response = await getAvailaibilityApi(spaceId, data);
+
+            setAvailableSeats(response.availableSeats);
+            setOverlappingBookings(response.overlappingBookings);
+            return response;
+        } catch (error) {
+            console.error("Error creating booking:", error);
+            throw error;
+        } finally {
+            setLoading(false);
+        }
+    }
     const createBookingHandler = async (data) => {
         const id = showLoadingToast("Creating Booking...");
         try {
@@ -65,37 +82,23 @@ const useBooking = () => {
             setLoading(false);
         }
     }
-    const getAvailableSeatsAndOverLappingBookings = async (spaceId, data) => {
-        try {
-            setLoading(true);
-            const response = await getAvailaibilityApi(spaceId, data);
 
-            setAvailableSeats(response.availableSeats);
-            setOverlappingBookings(response.overlappingBookings);
-            return response;
-        } catch (error) {
-            console.error("Error creating booking:", error);
-            throw error;
-        } finally {
-            setLoading(false);
-        }
-    }
-    const acceptSwapHandler = async (swapId) => {
+    const acceptBookingHandler = async (bookingId) => {
         const id = showLoadingToast("accepting swap request...");
         try {
             setLoading(true);
-            const response = await acceptSwapRequest(swapId);
+            const response = await acceptBookingRequest(bookingId);
             showToast(response.message, "success");
-            const swap = response?.swap;
+            const booking = response?.booking;
 
-            if (swap) {
+            if (booking) {
                 emitNotification({
-                    recipient: swap.requester,
-                    type: "SWAP_ACCEPTED",
-                    title: "Swap Accepted 🎉",
-                    message: "Your swap request has been accepted " + swapId.slice(-6),
-                    link: `/swaps`,
-                    meta: { swapId }
+                    recipient: booking.requester,
+                    type: "booking_ACCEPTED",
+                    title: "booking Accepted 🎉",
+                    message: "Your booking request has been accepted " + bookingId.slice(-6),
+                    link: `/bookings`,
+                    meta: { bookingId }
                 });
             }
             getBookingRequests({ filters });
@@ -108,11 +111,12 @@ const useBooking = () => {
             setLoading(false);
         }
     };
-    const rejectSwapHandler = async (swapId) => {
+
+    const rejectBookingHandler = async (swapId) => {
         const id = showLoadingToast("rejecting swap request...");
         try {
             setLoading(true);
-            const response = await rejectSwapRequest(swapId);
+            const response = await rejectBookingRequest(swapId);
             const swap = response?.swap;
 
             if (swap) {
@@ -135,12 +139,12 @@ const useBooking = () => {
             setLoading(false);
         }
     };
-    const cancelSwapHandler = async (swapId) => {
+    const cancelBookingHandler = async (swapId) => {
         const id = showLoadingToast("withdrawing swap request...");
         try {
 
             setLoading(true);
-            const response = await cancelSwapRequest(swapId);
+            const response = await cancelBookingRequest(swapId);
             const swap = response?.swap;
 
             if (swap) {
@@ -164,12 +168,12 @@ const useBooking = () => {
             setLoading(false);
         }
     };
-    const completeSwapHandler = async (swapId) => {
+    const completeBookingHandler = async (swapId) => {
         const id = showLoadingToast("completing swap request From your side...");
         try {
 
             setLoading(true);
-            const response = await completeSwapRequest(swapId);
+            const response = await completeBookingRequest(swapId);
             await getBookingRequests({ filters });
             const swap = response?.swap;
 
@@ -198,89 +202,59 @@ const useBooking = () => {
             setLoading(false);
         }
     };
-    const createDisputeHandler = async (swapId, disputeDetails) => {
-        const id = showLoadingToast("creating a dispute...");
-        try {
+    
+    // const createDisputeHandler = async (swapId, disputeDetails) => {
+    //     const id = showLoadingToast("creating a dispute...");
+    //     try {
 
-            setLoading(true);
-            const response = await createDisputeApi(swapId, disputeDetails);
-            const swap = response?.swap;
+    //         setLoading(true);
+    //         const response = await createDisputeApi(swapId, disputeDetails);
+    //         const swap = response?.swap;
 
-            if (swap) {
-                const otherUser =
-                    user._id.toString() === swap.requester.toString()
-                        ? swap.owner
-                        : swap.requester;
-                console.log(swap, otherUser)
+    //         if (swap) {
+    //             const otherUser =
+    //                 user._id.toString() === swap.requester.toString()
+    //                     ? swap.owner
+    //                     : swap.requester;
+    //             console.log(swap, otherUser)
 
-                emitNotification({
-                    recipient: otherUser,
-                    type: "DISPUTE_CREATED",
-                    title: "Dispute Raised ⚠️",
-                    message: "A dispute has been raised for this swap " + swapId.slice(-6),
-                    link: `/swaps`,
-                    meta: { swapId }
-                });
-                console.log("emitted notification to", otherUser);
-            }
-            const update = updateToast(id, response.message, "success")
+    //             emitNotification({
+    //                 recipient: otherUser,
+    //                 type: "DISPUTE_CREATED",
+    //                 title: "Dispute Raised ⚠️",
+    //                 message: "A dispute has been raised for this swap " + swapId.slice(-6),
+    //                 link: `/swaps`,
+    //                 meta: { swapId }
+    //             });
+    //             console.log("emitted notification to", otherUser);
+    //         }
+    //         const update = updateToast(id, response.message, "success")
 
-            getBookingRequests({ filters });
-        } catch (error) {
-            const update = updateToast(id, error?.data?.message, "error")
+    //         getBookingRequests({ filters });
+    //     } catch (error) {
+    //         const update = updateToast(id, error?.data?.message, "error")
 
-            throw error;
-        } finally {
-            setLoading(false);
-        }
-    };
-    const getSwapAllDisputesHandler = async (swapId) => {
-        const id = showLoadingToast("Loading All disputes...");
-        try {
-            setLoading(true);
-            const response = await getSwapAllDisputeApi(swapId);
-            await getBookingRequests({ filters });
-            await setSwapAllDisputes(response.disputes);
-            const update = updateToast(id, response.message, "success")
-        } catch (error) {
-            const update = updateToast(id, error?.data?.message, "error")
-            throw error;
-        } finally {
-            setLoading(false);
-        }
-    };
-    const createRatingHandler = async (swapId, ratingDetails) => {
-        const id = showLoadingToast("Creating Rating...");
+    //         throw error;
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+    // const getSwapAllDisputesHandler = async (swapId) => {
+    //     const id = showLoadingToast("Loading All disputes...");
+    //     try {
+    //         setLoading(true);
+    //         const response = await getBookingAllDisputeApi(swapId);
+    //         await getBookingRequests({ filters });
+    //         await setSwapAllDisputes(response.disputes);
+    //         const update = updateToast(id, response.message, "success")
+    //     } catch (error) {
+    //         const update = updateToast(id, error?.data?.message, "error")
+    //         throw error;
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
-        try {
-            setLoading(true);
-            const response = await createRatingApi(swapId, ratingDetails);
-            await getBookingRequests({ filters });
-            const swap = response?.swap;
-
-            if (swap) {
-                const otherUser =
-                    user._id.toString() === swap.requester.toString()
-                        ? swap.owner
-                        : swap.requester;
-
-                emitNotification({
-                    recipient: otherUser,
-                    type: "NEW_RATING",
-                    title: "New Rating ⭐",
-                    message: "You received a rating from your swap partner " + swapId.slice(-6),
-                    link: `/profile/${user._id}`,
-                    meta: { swapId }
-                });
-            }
-            const update = updateToast(id, response?.message, "success")
-        } catch (error) {
-            const update = updateToast(id, error.data.message, "error")
-            throw error;
-        } finally {
-            setLoading(false);
-        }
-    }
     useEffect(() => {
         const fetch = async () => {
             await getBookingRequests({ filters });
@@ -293,13 +267,13 @@ const useBooking = () => {
         getAvailableSeatsAndOverLappingBookings,
 
         getBookingRequests,
-        acceptSwapHandler,
-        rejectSwapHandler,
-        cancelSwapHandler,
-        completeSwapHandler,
-        createDisputeHandler,
-        getSwapAllDisputesHandler,
-        createRatingHandler,
+        acceptBookingHandler,
+        rejectBookingHandler,
+        cancelBookingHandler,
+        completeBookingHandler,
+        // createDisputeHandler,
+        // getSwapAllDisputesHandler,
+
         loading,
         filters,
         userAllBookings,

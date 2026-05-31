@@ -58,7 +58,9 @@ async function createBookingHandler(req, res) {
             return res.status(404).json({ message: "Space not found", success: false })
         }
         const user = req.userId
-
+        if (space.owner.toString() === user.toString()) {
+            return res.status(400).json({ message: "You cannot book your own space", success: false })
+        }
         const response = await createBookingService({
             fromDateTime: new Date(`${fromDate}T${fromTime}:00.000Z`),
             toDateTime: new Date(`${toDate}T${toTime}:00.000Z`),
@@ -193,6 +195,7 @@ async function getUserBookingsHandler(req, res) {
 async function getBookingAlternativeHandler(req, res) {
     try {
         const currentBooking = await bookingModel.findById(req.params.bookingId)
+        if (!currentBooking) return res.status(404).json({ message: "Booking not found", success: false })
         console.log("getting alternatives for booking ", req.params.bookingId)
         const Bookings = await bookingModel.find({
             status: "pending",

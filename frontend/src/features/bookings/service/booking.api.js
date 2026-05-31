@@ -20,10 +20,10 @@ const createBookingApi = async (bookingDets) => {
         throw error.response;
     }
 };
-const getAvailaibilityApi = async (spaceId,data) => {
+const getAvailaibilityApi = async (spaceId, data) => {
     try {
-        console.log("getting response",spaceId,data)
-        const response = await apiClient.post(`/${spaceId}/bookings`,data);
+        console.log("getting response", spaceId, data)
+        const response = await apiClient.post(`/${spaceId}/bookings`, data);
         return response.data;
     } catch (error) {
         console.error('Error fetching availability:', error);
@@ -34,7 +34,7 @@ const getAvailaibilityApi = async (spaceId,data) => {
 
 const fetchBookingRequests = async ({ filters }) => {
     try {
-        console.log("getting response",filters)
+        console.log("getting response", filters)
         const response = await apiClient.post(`/`, { filters });
         return response.data;
     } catch (error) {
@@ -42,76 +42,78 @@ const fetchBookingRequests = async ({ filters }) => {
         throw error.response;
     }
 }
-const acceptSwapRequest = async (swapId) => {
+const acceptBookingRequest = async (bookingId) => {
     try {
-        const response = await apiClient.patch(`/${swapId}/accept`);
+        const response = await apiClient.patch(`/${bookingId}/accept`);
         return response.data;
     } catch (error) {
-        console.error('Error accepting swap request:', error);
+        console.error('Error accepting booking request:', error);
         throw error.response;
     }
 };
-const rejectSwapRequest = async (swapId) => {
+const rejectBookingRequest = async (bookingId) => {
     try {
-        const response = await apiClient.patch(`/${swapId}/reject`);
+        const response = await apiClient.patch(`/${bookingId}/reject`);
         return response.data;
     } catch (error) {
-        console.error('Error rejecting swap request:', error);
+        console.error('Error rejecting booking request:', error);
         throw error.response;
     }
 };
-const cancelSwapRequest = async (swapId) => {
+const cancelBookingRequest = async (bookingId) => {
     try {
-        const response = await apiClient.patch(`/${swapId}/cancel`);
+        const response = await apiClient.patch(`/${bookingId}/cancel`);
         return response.data;
     } catch (error) {
-        console.error('Error canceling swap request:', error);
+        console.error('Error canceling Booking request:', error);
         throw error.response;
     }
 };
-const completeSwapRequest = async (swapId) => {
+const completeBookingRequest = async (bookingId) => {
     try {
-        const response = await apiClient.patch(`/${swapId}/complete`);
+        const response = await apiClient.patch(`/${bookingId}/complete`);
         return response.data;
     } catch (error) {
-        console.error('Error completeing swap request:', error);
+        console.error('Error completeing Booking request:', error);
         throw error.response;
     }
 };
-const createDisputeApi = async (swapId, disputeDetails) => {
+const createDisputeApi = async (bookingId, disputeDetails) => {
     try {
-        const response = await apiClient.post(`/${swapId}/dispute`, disputeDetails);
+        const response = await apiClient.post(`/${bookingId}/dispute`, disputeDetails);
         return response.data;
     } catch (error) {
-        console.error('Error creating dispute for swap request:', error);
+        console.error('Error creating dispute for Booking request:', error);
         throw error.response;
     }
 }
-const getSwapAllDisputeApi = async (swapId) => {
+
+const getBookingAllDisputeApi = async (bookingId) => {
     try {
-        const response = await apiClient.get(`/${swapId}/disputes`);
+        const response = await apiClient.get(`/${bookingId}/disputes`);
         return response.data;
     } catch (error) {
-        console.error('Error fetching disputes for swap request:', error);
+        console.error('Error fetching disputes for Booking request:', error);
         throw error.response.data;
     }
 }
+
 const getSpaceAllBookingsApi = async (spaceId) => {
     try {
-        const response = await apiClient.get(`/${swapId}/disputes`);
+        const response = await apiClient.get(`/${spaceId}/disputes`);
         return response.data;
     } catch (error) {
-        console.error('Error fetching disputes for swap request:', error);
+        console.error('Error fetching disputes for Booking request:', error);
         throw error.response.data;
     }
 }
-const createRatingApi = async (swapId, ratingDetails) => {
+async function getBookingAlternativeAndConsequences(bookingId) {
     try {
-        const response = await apiClient.post(`/${swapId}/rating`, ratingDetails);
-        return response.data;
+        const [alternatives, consequences] = await Promise.all([apiClient.get(`/${bookingId}/alternative`), apiClient.get(`/${bookingId}/consequences`)])
+        return [alternatives.data?.result, consequences.data?.consequences];
     } catch (error) {
-        console.error('Error creating rating for other user:', error);
-        throw error.response;
+        console.error('Error fetching alternatives for Booking request:', error);
+        throw error.response.data;
     }
 }
 
@@ -119,12 +121,12 @@ export {
     createBookingApi,
     getAvailaibilityApi,
     fetchBookingRequests,
-    acceptSwapRequest,
-    rejectSwapRequest,
-    cancelSwapRequest,
-    completeSwapRequest,
+    acceptBookingRequest,
+    rejectBookingRequest,
+    cancelBookingRequest,
+    completeBookingRequest,
     getSpaceAllBookingsApi,
     createDisputeApi,
-    createRatingApi,
-    getSwapAllDisputeApi
+    getBookingAllDisputeApi,
+    getBookingAlternativeAndConsequences
 };
