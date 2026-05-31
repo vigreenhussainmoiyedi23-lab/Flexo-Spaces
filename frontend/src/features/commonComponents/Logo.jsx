@@ -12,7 +12,7 @@ const Logo = ({className}) => {
         alt="Flex Spaces Logo"
         className="w-10 rounded-full object-center object-cover"
       />
-      <h3 className=" oleo-script text-4xl text-white">Flexo Spaces</h3>
+      <h3 className=" oleo-script text-4xl text-white whitespace-nowrap">Flexo Spaces</h3>
     </Link>
   );
 };

@@ -12,7 +12,7 @@ const Navbar = ({ user }) => {
   return (
     <nav className="bg-text-primary w-full fixed text-white border-b border-white/10 py-5  top-0 z-50">
       {/* Navbar */}
-      <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto sm:px-6 flex items-center justify-between">
         <div className="flex items-center gap-3 ">
           <Logo />
         </div>

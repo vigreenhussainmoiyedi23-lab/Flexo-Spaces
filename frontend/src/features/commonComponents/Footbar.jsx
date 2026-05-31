@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const Footbar = ({ user }) => {
   return (
-    <div className="w-full max-h-16 fixed lg:hidden text-white px-6  flex items-center justify-between   bottom-0  sm:h-20  bg-brand-900 border-t border-white/20 ">
+    <div className="w-full max-h-16 fixed lg:hidden text-white px-6  flex items-center justify-between   bottom-0  sm:h-20  bg-text-primary border-t border-white/20 ">
       <Link
         to="/listings"
         className="flex flex-col items-center justify-center"

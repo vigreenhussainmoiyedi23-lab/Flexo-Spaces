@@ -20,7 +20,7 @@ import Disputes from "./features/admin/pages/Disputes";
 import ListingsAdmin from "./features/admin/pages/Listings";
 import Notification from "./features/notifications/Pages/Notification";
 import EditProfile from "./features/Profile/Pages/EditpROFILE.JSX";
-import CreateBooking from "./features/bookings/Pages/createBooking";
+import CreateBooking from "./features/bookings/Pages/CreateBooking";
 
 const Approutes = () => {
   return (

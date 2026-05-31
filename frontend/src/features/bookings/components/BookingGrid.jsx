@@ -1,22 +1,19 @@
 import BookingCard from "./BookingCard";
 
-const urgencyLevels = [
-  "normal",
-  "warning",
-  "critical",
-  "danger",
-];
-
-export default function BookingGrid({
-  bookings,
-}) {
+const urgencyLevels = ["normal", "warning", "critical", "danger"];
+import useAuth from "../../auth/hooks/useAuth";
+import UserCTA from "./cta/UserCTA";
+import OwnerCTA from "./cta/OwnerCTA";
+export default function BookingGrid({ bookings }) {
+  const { user } = useAuth();
   return (
     <section
       className="
       grid
       grid-cols-1
-      md:grid-cols-2
-      xl:grid-cols-3
+      md:grid-cols-2  
+      lg:grid-cols-3
+      xl:grid-cols-4
       gap-6
     "
     >
@@ -24,24 +21,12 @@ export default function BookingGrid({
         <BookingCard
           key={booking._id}
           booking={booking}
-          urgency={
-            urgencyLevels[
-              index % urgencyLevels.length
-            ]
-          }
           cta={
-            <button
-              className="
-              w-full
-              py-3
-              rounded-2xl
-              bg-brand-500
-              text-white
-              font-bold
-            "
-            >
-              View Booking
-            </button>
+            user && user.role === "user" ? (
+              <UserCTA status={booking.status} />
+            ) : (
+              <OwnerCTA status={booking.status} />
+            )
           }
         />
       ))}

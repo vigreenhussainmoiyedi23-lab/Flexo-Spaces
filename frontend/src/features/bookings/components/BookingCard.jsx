@@ -15,23 +15,23 @@ const BookingCard = ({ booking, cta, urgency = "normal" }) => {
       hours * 60 * 60 -
       minutes * 60,
   );
-  let interval = null;
   useEffect(() => {
-    if (interval) return;
-    interval = setInterval(() => {
-      setSeconds((prev) => {
-        if (prev == 0) {
-          if (minutes == 0) {
-            setHours((prev) => prev - 1);
-            setMinutes(59);
-          } else {
-            setMinutes((prev) => prev - 1);
-          }
+    const id = setInterval(() => {
+      setSeconds((s) => {
+        if (s > 0) return s - 1;
+
+        setMinutes((m) => {
+          if (m > 0) return m - 1;
+
+          setHours((h) => Math.max(0, h - 1));
           return 59;
-        }
-        return prev - 1;
+        });
+
+        return 59;
       });
     }, 1000);
+
+    return () => clearInterval(id);
   }, []);
 
   const urgencyStyles = {
@@ -72,6 +72,7 @@ const BookingCard = ({ booking, cta, urgency = "normal" }) => {
       border border-white/5
       transition-all duration-300
       hover:-translate-y-1.5
+      
       ${style.shadow}
     `}
     >
@@ -176,19 +177,6 @@ const BookingCard = ({ booking, cta, urgency = "normal" }) => {
           <span className="text-sm">26 Jun → 27 Jun</span>
         </div>
 
-        {/* BOOKING TYPE */}
-        <p
-          className="
-          text-brand-100/60
-          text-xs
-          mt-2
-          uppercase
-          tracking-widest
-        "
-        >
-          {booking.bookingType}
-        </p>
-
         {/* STATS */}
         <div className="grid grid-cols-2 gap-3 mt-4">
           <div
@@ -220,67 +208,89 @@ const BookingCard = ({ booking, cta, urgency = "normal" }) => {
           </div>
         </div>
 
-        {/* AMENITIES */}
-        <div className="flex flex-wrap gap-2 mt-4">
-          {space.amenities.slice(0, 4).map((amenity) => (
-            <span
-              key={amenity}
-              className="
-                px-2 py-1
-                rounded-full
-                bg-brand-100
-                text-text-primary
-                text-[10px]
-                font-bold
-              "
-            >
-              {amenity}
-            </span>
-          ))}
-        </div>
-
-        {/* OWNER */}
-        <div
-          className="
+        <div className="flex items-center justify-around">
+          {/* OWNER */}
+          <div
+            className="
           mt-5
           flex
           items-center
           gap-3
-        "
-        >
-          <img
-            src={booking.owner.profilePicture}
-            alt={booking.owner.username}
-            className="
-              w-10
-              h-10
-              rounded-full
-              object-cover
-            "
-          />
-
-          <div>
-            <p
+          "
+          >
+            <img
+              src={booking.owner.profilePicture}
+              alt={booking.owner.username}
               className="
+            w-10
+            h-10
+            rounded-full
+            object-cover
+            "
+            />
+
+            <div>
+              <p
+                className="
               text-brand-100/50
               text-xs
-            "
-            >
-              Workspace Owner
-            </p>
+              "
+              >
+                Workspace Owner
+              </p>
 
-            <p
-              className="
+              <p
+                className="
               text-brand-100
               text-sm
               font-semibold
-            "
-            >
-              {booking.owner.username}
-            </p>
+              "
+              >
+                {booking.owner.username}
+              </p>
+            </div>
+          </div>
+          {/* {Booked By} */}
+          <div
+            className="
+          mt-5
+          flex
+          items-center
+          gap-3
+          "
+          >
+            <div>
+              <p
+                className="
+                text-brand-100/50
+                text-xs
+                "
+              >
+                booked By
+              </p>
+
+              <p
+                className="
+                text-brand-100
+                text-sm
+                font-semibold
+                "
+              >
+                {booking.bookedBy.username}
+              </p>
+            </div>
+            <img
+              src={booking.bookedBy.profilePicture}
+              alt={booking.bookedBy.username}
+              className="
+                w-10
+                h-10
+                rounded-full
+                object-cover
+                "
+            />
           </div>
         </div>
-
         {/* URGENCY */}
         <div className="mt-5">
           <div className="flex justify-between text-xs">

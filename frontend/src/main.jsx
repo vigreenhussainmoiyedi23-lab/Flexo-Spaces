@@ -21,9 +21,7 @@ createRoot(document.getElementById("root")).render(
             <ChatContextProvider>
               <AdminContextProvider>
                 <NotificationProvider>
-                  <StrictMode>
                     <App />
-                  </StrictMode>
                 </NotificationProvider>
               </AdminContextProvider>
             </ChatContextProvider>
