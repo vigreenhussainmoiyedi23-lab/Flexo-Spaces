@@ -516,6 +516,32 @@ async function rejectBookingHandler(req, res) {
         })
     }
 }
+async function withdrawBookingHandler(req, res) {
+    try {
+        const { bookingId } = req.params
+        const user = req.userId
+        const booking = await getBookingByIdService(bookingId)
+
+        validateBooking(booking, user)
+        validateBookingState(booking, "pending")
+        validateUserRole(booking, user, "bookedBy")
+
+        booking.status = "withdrawn"
+        await booking.save()
+
+        res.status(200).json({
+            booking,
+            message: "Booking withdrawed",
+            success: true
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message || "Error withdrawing booking",
+            success: false
+        })
+    }
+}
 async function cancelBookingHandler(req, res) {
     try {
         const { bookingId } = req.params
@@ -725,6 +751,7 @@ async function getSwapAllDisputesHandler(req, res) {
 
 module.exports = {
     createBookingHandler,
+    withdrawBookingHandler,
     getUserBookingsHandler,
     getSingleBookingHandler,
     acceptBookingHandler,

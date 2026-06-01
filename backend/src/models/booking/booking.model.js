@@ -139,19 +139,20 @@ const bookingSchema = new mongoose.Schema(
         // ======================================================
         // STATUS FLOW
         // ======================================================
-
+        // confirmed--refunded--cancelled
         status: {
             type: String,
-            enum: [
-                "pending",
-                "accepted",
+            enum: [ // just marking which status are done and which are pending
+                "pending", //✅
+                "accepted", //✅
                 "confirmed",
                 "checked_in",
                 "completed",
+                "cancelled", //✅
                 "refunded",
-                "cancelled",
-                "rejected",
-                "expired",
+                "rejected", //✅
+                "withdrawn", //✅
+                "expired" //✅
             ],
             default: "pending",
             index: true,
@@ -194,17 +195,7 @@ const bookingSchema = new mongoose.Schema(
             },
         },
 
-        // ======================================================
-        // BOOKING LOCKING
-        // ======================================================
 
-        // used when payment is in progress
-        // prevents double booking
-        lockExpiresAt: {
-            type: Date,
-            default: null,
-            index: true,
-        },
 
         // ======================================================
         // AUTO EXPIRY

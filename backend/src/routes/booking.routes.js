@@ -67,6 +67,7 @@ swapRouter.patch("/:bookingId/accept", isAuthenticated, acceptBookingHandler)
 @return  message: "Booking rejected"*/
 
 swapRouter.patch("/:bookingId/reject", isAuthenticated, rejectBookingHandler)
+swapRouter.patch("/:bookingId/withdraw", isAuthenticated, rejectBookingHandler)
 
 /* @route PATCH - /api/swaps/:bookingId/cancel
 @description - Cancel a swap request (only requester) - Only allowed if status is PENDING
