@@ -344,7 +344,7 @@ const BookingCard = ({ booking, cta, urgency = "normal" }) => {
               }}
             />
           </div>
-          {["pending","expired"].includes(booking.status) && (
+          {["pending", "expired"].includes(booking.status) && (
             <span className="text-xs whitespace-nowrap text-white/50">
               our system expires booking automatically after 24 hours of
               inacitivity

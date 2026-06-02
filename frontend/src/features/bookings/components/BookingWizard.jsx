@@ -45,11 +45,12 @@ const BookingWizard = () => {
   const { getSpaceById } = useSpace();
   const [activeStep, setActiveStep] = useState(0);
   useBooking();
+  const now = new Date();
   const [formData, setFormData] = useState({
-    fromDate: "",
-    fromTime: "",
-    toDate: "",
-    toTime: "",
+    fromDate: now.toISOString().split("T")[0], // YYYY-MM-DD
+    fromTime: now.toTimeString().slice(0, 5), // HH:mm
+    toDate: now.toISOString().split("T")[0], // YYYY-MM-DD
+    toTime: now.toTimeString().slice(0, 5), // HH:mm
 
     maxAvailableSeats: 0,
     overlappingBookings: [],
@@ -286,7 +287,7 @@ function AvailabilityStep({ formData, setFormData }) {
     if (formData.fromDate && formData.toDate) {
       fetch();
     }
-  }, []);
+  }, [spaceId]);
 
   return (
     <Box>
@@ -296,13 +297,13 @@ function AvailabilityStep({ formData, setFormData }) {
 
       <Alert severity="info" sx={{ mb: 3 }}>
         Maximum continuous seats available for selected duration:
-        <strong> {formData.maxAvailableSeats}</strong>
+        <strong> {availableSeats || "--"}</strong>
       </Alert>
 
       <Paper variant="outlined" sx={{ p: 3 }}>
         {overlappingBookings.map((booking) => (
           <Typography variant="body2" key={booking.id}>
-            {booking.fromDateTime}-{booking.endDateTime}:{" "}
+            {booking.fromDateTime.toISOString()}-{booking.endDateTime}:{" "}
             <strong>{booking.seatsBooked}</strong> seats
           </Typography>
         ))}

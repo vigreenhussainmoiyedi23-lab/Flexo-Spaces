@@ -17,7 +17,8 @@ const {
   getSpaceBookingHandler,
   createBookingHandler,
   getBookingAlternativeHandler,
-  getBookingConsequencesHandler
+  getBookingConsequencesHandler,
+  withdrawBookingHandler
 } = require("../controllers/booking.controller")
 const { createDisputeValidator } = require("../Validators/swap.validator")
 const { validate } = require("../Validators/validate")
@@ -67,7 +68,7 @@ swapRouter.patch("/:bookingId/accept", isAuthenticated, acceptBookingHandler)
 @return  message: "Booking rejected"*/
 
 swapRouter.patch("/:bookingId/reject", isAuthenticated, rejectBookingHandler)
-swapRouter.patch("/:bookingId/withdraw", isAuthenticated, rejectBookingHandler)
+swapRouter.patch("/:bookingId/withdraw", isAuthenticated, withdrawBookingHandler)
 
 /* @route PATCH - /api/swaps/:bookingId/cancel
 @description - Cancel a swap request (only requester) - Only allowed if status is PENDING

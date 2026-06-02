@@ -6,6 +6,7 @@ import {
     completeBookingRequest,
     acceptBookingRequest,
     rejectBookingRequest,
+    withdrawBookingRequest,
 
 } from "../service/booking.api.js";
 import { emitNotification } from "../../../utils/emitNotifications.js";
@@ -112,11 +113,11 @@ const useBooking = () => {
         }
     };
 
-    const rejectBookingHandler = async (swapId) => {
+    const rejectBookingHandler = async (bookingId) => {
         const id = showLoadingToast("rejecting swap request...");
         try {
             setLoading(true);
-            const response = await rejectBookingRequest(swapId);
+            const response = await rejectBookingRequest(bookingId);
             const swap = response?.swap;
 
             if (swap) {
@@ -124,9 +125,9 @@ const useBooking = () => {
                     recipient: swap.requester,
                     type: "SWAP_REJECTED",
                     title: "Swap Rejected",
-                    message: "Your swap request was rejected " + swapId.slice(-6),
+                    message: "Your swap request was rejected " + bookingId.slice(-6),
                     link: `/swaps`,
-                    meta: { swapId }
+                    meta: { bookingId }
                 });
             }
             getBookingRequests({ filters });
@@ -139,70 +140,64 @@ const useBooking = () => {
             setLoading(false);
         }
     };
-    const cancelBookingHandler = async (swapId) => {
+    const withdrawBookingHandler = async (bookingId) => {
         const id = showLoadingToast("withdrawing swap request...");
         try {
-
             setLoading(true);
-            const response = await cancelBookingRequest(swapId);
-            const swap = response?.swap;
+            const response = await withdrawBookingRequest(bookingId);
+            const swap = response?.booking;
 
             if (swap) {
                 emitNotification({
-                    recipient: swap.owner,
-                    type: "SWAP_CANCELLED",
-                    title: "Swap Cancelled",
-                    message: "The swap request has been withdrawn " + swapId.slice(-6),
+                    recipient: swap.requester,
+                    type: "SWAP_REJECTED",
+                    title: "Swap Rejected",
+                    message: "Your swap request was rejected " + bookingId.slice(-6),
                     link: `/swaps`,
-                    meta: { swapId }
+                    meta: { bookingId }
                 });
             }
             getBookingRequests({ filters });
             const update = updateToast(id, response.message, "success")
         } catch (error) {
             const update = updateToast(id, error.data.message, "error")
-
-            console.error("Error canceling swap request:", error);
+            console.error("Error rejecting swap request:", error);
             throw error;
         } finally {
             setLoading(false);
         }
     };
-    const completeBookingHandler = async (swapId) => {
-        const id = showLoadingToast("completing swap request From your side...");
+    const completeBookingHandler = async (bookingId) => {
+        const id = showLoadingToast("confirming booking request...");
         try {
-
             setLoading(true);
-            const response = await completeBookingRequest(swapId);
-            await getBookingRequests({ filters });
-            const swap = response?.swap;
+            const response = await confirmBookingRequest(bookingId);
+            const booking = response?.booking;
 
-            if (swap) {
-                const otherUser =
-                    user._id.toString() === swap.requester.toString()
-                        ? swap.owner
-                        : swap.requester;
-
+            if (booking) {
                 emitNotification({
-                    recipient: otherUser,
-                    type: "SWAP_COMPLETED",
-                    title: "Swap Progress Updated",
-                    message: "The other user marked swap as completed " + swapId.slice(-6),
+                    recipient: booking.requester,
+                    type: "BOOKING_CONFIRMED",
+                    title: "Booking Confirmed",
+                    message: "Your booking request has been confirmed  " + bookingId.slice(-6),
                     link: `/swaps`,
-                    meta: { swapId }
+                    meta: { bookingId }
                 });
             }
+            getBookingRequests({ filters });
             const update = updateToast(id, response.message, "success")
-            showToast("The Swap Will Be Completed As Soon As The Other User completes it", "info");
         } catch (error) {
             const update = updateToast(id, error.data.message, "error")
-            console.error("Error completing swap request:", error);
+            console.error("Error rejecting swap request:", error);
             throw error;
         } finally {
             setLoading(false);
         }
     };
-    
+
+
+
+
     // const createDisputeHandler = async (swapId, disputeDetails) => {
     //     const id = showLoadingToast("creating a dispute...");
     //     try {
@@ -269,8 +264,9 @@ const useBooking = () => {
         getBookingRequests,
         acceptBookingHandler,
         rejectBookingHandler,
-        cancelBookingHandler,
+        // cancelBookingHandler,
         completeBookingHandler,
+        withdrawBookingHandler,
         // createDisputeHandler,
         // getSwapAllDisputesHandler,
 

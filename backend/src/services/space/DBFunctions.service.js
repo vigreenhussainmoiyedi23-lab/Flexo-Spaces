@@ -1,7 +1,5 @@
 
 const spaceModel = require("../../models/space.model");
-const listingModel = require("../../models/space.model");
-const swapModel = require("../../models/swap/swap.model");
 
 
 

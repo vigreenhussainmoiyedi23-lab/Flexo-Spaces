@@ -23,9 +23,9 @@ export default function BookingGrid({ bookings }) {
           booking={booking}
           cta={
             user && user.role === "user" ? (
-              <UserCTA status={booking.status} />
+              <UserCTA status={booking.status} bookingId={booking._id} />
             ) : (
-              <OwnerCTA status={booking.status} />
+              <OwnerCTA status={booking.status} bookingId={booking._id} />
             )
           }
         />

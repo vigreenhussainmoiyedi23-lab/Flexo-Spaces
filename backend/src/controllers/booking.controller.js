@@ -1,7 +1,5 @@
-const swapModel = require("../models/swap/swap.model");
 const { getSwapByIdService, validateStateAndUser, validateSwapState, validateUserRole, ValidateSwap, updateBothListingFromSwapId, checkBothListingAreElligibleToSwap, updateOneBooking, validateBooking, validateBookingState, getBookingByIdService } = require("../services/swap/swap.utiliy");
 const axios = require('axios');
-const disputeModel = require("../models/swap/dispute.model");
 const ratingModel = require("../models/user/rating.model");
 const userModel = require("../models/user/user.model");
 const bookingModel = require("../models/booking/booking.model");
@@ -53,6 +51,7 @@ async function createBookingHandler(req, res) {
                 message: "Booking already exists"
             });
         }
+
         const space = await spaceModel.findById(spaceId)
         if (!space) {
             return res.status(404).json({ message: "Space not found", success: false })
@@ -176,6 +175,7 @@ async function getUserBookingsHandler(req, res) {
         ]).skip((page - 1) * limit).limit(limit).lean()
         let totalBookings = await bookingModel.countDocuments(query)
         let totalPages = Math.ceil(totalBookings / limit)
+
         res.status(200).json({
             bookings: Bookings,
             totalBookings,
@@ -317,14 +317,11 @@ async function acceptBookingHandler(req, res) {
             fromDateTime: booking.fromDateTime,
             endDateTime: booking.endDateTime
         })
-        const order = await razorpay.orders.create({
-            amount: booking.pricing.finalPrice * 100, // amount in paise
-            currency: "INR",
-            receipt: `booking_${booking._id}`,
-        })
-        booking.paymentDetails.razorpayOrder = order
-        booking.lockExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000)
-        await booking.save()
+        // const order = await razorpay.orders.create({
+        //     amount: booking.pricing.finalPrice * 100, // amount in paise
+        //     currency: "INR",
+        //     receipt: `booking_${booking._id}`,
+        // })
         const bookings = await bookingModel.updateMany(
             {
                 _id: { $ne: bookingId },
@@ -448,44 +445,41 @@ async function verifyPaymentHandler(req, res) {
 }
 async function completeBookingHandler(req, res) {
     try {
-        const { swapId } = req.params
+        const { bookingId } = req.params
         const user = req.userId
 
-        const swap = await getSwapByIdService(swapId)
+        const booking = await getBookingByIdService(bookingId)
 
-        ValidateSwap(swap, user)
-        validateSwapState(swap, "shipping")
+        validateBooking(booking, user)
+        validateBookingState(booking, "accepted")
 
-        let hasShipped = swap.shipments.find(s => s.from.toString() === user)
-        if (!hasShipped && swap.shipment_type === "shipping") {
-            return res.status(400).json({ message: "First you should ship", success: false })
+
+        const role = booking.owner.toString() === user ? "owner" : "bookedBy"
+
+        booking.isCompletedBy[role] = true
+        if (booking.isCompletedBy.owner && booking.isCompletedBy.requester) {
+            booking.status = "completed"
         }
-        const role = swap.owner.toString() === user ? "owner" : "requester"
-
-        swap.completedBy[role] = true
-        await swap.save()
-        if (swap.completedBy.owner && swap.completedBy.requester) {
-            swap.status = "completed"
-            await swap.save()
-            await updateBothListingFromSwapId(swapId, { isAvailable: false })
-        }
-        const { owner, requester } = swap
-        const ownerUser = await userModel.findById(owner)
-        const requesterUser = await userModel.findById(requester)
-        ownerUser.totalSwaps += 1;
-        requesterUser.totalSwaps += 1;
-        await ownerUser.save();
-        await requesterUser.save();
+        await booking.save()
+        const { owner, bookedBy } = booking
+        await Promise.all([
+            userModel.findByIdAndUpdate(owner, {
+                $inc: { totalCompleted: 1 }
+            }),
+            userModel.findByIdAndUpdate(bookedBy, {
+                $inc: { totalCompleted: 1 }
+            })
+        ])
         res.status(200).json({
-            swap,
-            message: "Swap completed",
+            booking,
+            message: "Booking completed",
             success: true
         })
 
     } catch (error) {
         if (error?.status) return res.status(error.status).json({ message: error.message, success: false })
         res.status(500).json({
-            message: error.message || "Error completing swap",
+            message: error.message || "Error completing booking",
             success: false
         })
     }

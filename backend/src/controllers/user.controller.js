@@ -1,4 +1,4 @@
-const swapModel = require("../models/swap/swap.model");
+// const swapModel = require("../models/swap/swap.model");
 const userModel = require("../models/user/user.model");
 const { uploadImage } = require("../services/space/UploadImage.service");
 const { getUserAllListingsService, getUserAllDataService, getNotificationService, getUserAllRatingsService } = require("../services/user/user.service");
@@ -45,21 +45,7 @@ const GetNotificationsHandler = async (req, res) => {
         res.status(error.status || 500).json({ message: error.message || "Error fetching notifications", success: false });
     }
 }
-const GetRecentSwapsHandler = async (req, res) => {
-    const { owner } = req.params
-    try {
-        const recentswaps = await swapModel.find({ owner: owner, status: { $nin: ["pending"] } }).sort({ createdAt: -1 }).limit(5)
-            .select("status createdAt ownerListing requesterListing owner requester")
-            .populate("requesterListing", "title images estimatedValue")
-            .populate("ownerListing", "title images estimatedValue")
-            .populate("owner", "username profilePicture email ")
-            .populate("requester", "username profilePicture email ")
-            .lean();
-        res.status(200).json({ recentswaps, message: "Notifications fetched successfully", success: true })
-    } catch (error) {
-        res.status(error.status || 500).json({ message: error.message || "Error fetching notifications", success: false });
-    }
-}
+
 const updateProfile = async (req, res) => {
     try {
         const userId = req.userId;
@@ -93,4 +79,4 @@ const updateProfile = async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 };
-module.exports = { updateProfile, GetUserRatingHandler, GetRecentSwapsHandler, GetUserListingsHandler, GetUserDataHandler, GetNotificationsHandler }
+module.exports = { updateProfile, GetUserRatingHandler, GetUserListingsHandler, GetUserDataHandler, GetNotificationsHandler }

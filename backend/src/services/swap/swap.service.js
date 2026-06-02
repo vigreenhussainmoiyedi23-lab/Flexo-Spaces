@@ -23,8 +23,7 @@ async function createBookingService({ user, spaceId, fromDateTime, toDateTime, s
       const owner = space.owner
       const resource = space.spaceType
       const totalCapacitySnapshot = Number(space.capacity)
-      const remainingCapacitySnapshot = availability.availableSeats - seatsBooked
-      const basePrice = calculateBookingPrice({
+      const finalPrice = calculateBookingPrice({
          rate: space.pricing.rate,
          interval: space.pricing.interval,
          seatsBooked,
@@ -52,10 +51,9 @@ async function createBookingService({ user, spaceId, fromDateTime, toDateTime, s
          owner,
          resource,
          totalCapacitySnapshot,
-         remainingCapacitySnapshot,
          space: spaceId,
          workspaceSnapshot,
-         pricing: { basePrice, platformFee: Number((basePrice * 0.1).toFixed(2)), finalPrice: Number((basePrice * 1.1).toFixed(2)) }
+         pricing: { finalPrice }
       })
 
       return {

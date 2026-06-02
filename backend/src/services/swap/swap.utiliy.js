@@ -14,8 +14,6 @@
 */
 
 const bookingModel = require("../../models/booking/booking.model");
-const listingModel = require("../../models/space.model");
-const swapModel = require("../../models/swap/swap.model");
 
 async function getBookingByIdService(bookingId) {
    // validates that the bookingId is real and the user asked for 
@@ -43,6 +41,7 @@ function validateBookingState(booking, expectedState) {
 function validateUserRole(booking, userId, role) {
    const isOwner = booking.owner.toString() === userId;
    const isBooker = booking.bookedBy.toString() === userId;
+   console.log("Validating user role:", { isOwner, isBooker, role });
    if (role === "bookedBy" && !isBooker) {
       throw new Error("Only bookedBy can perform this action", 403);
    }
@@ -58,7 +57,7 @@ async function updateOneBooking(from, to, bookingId, userId) {
    }, {
       status: to
    }, { new: true }
-)
+   )
    if (!booking) {
       throw new Error("Booking not found or user not authorized or invalid booking state")
    }

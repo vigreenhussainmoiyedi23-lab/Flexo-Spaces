@@ -60,6 +60,15 @@ const rejectBookingRequest = async (bookingId) => {
         throw error.response;
     }
 };
+const withdrawBookingRequest = async (bookingId) => {
+    try {
+        const response = await apiClient.patch(`/${bookingId}/withdraw`);
+        return response.data;
+    } catch (error) {
+        console.error('Error withdrawing booking request:', error);
+        throw error.response;
+    }
+};
 const cancelBookingRequest = async (bookingId) => {
     try {
         const response = await apiClient.patch(`/${bookingId}/cancel`);
@@ -128,5 +137,6 @@ export {
     getSpaceAllBookingsApi,
     createDisputeApi,
     getBookingAllDisputeApi,
-    getBookingAlternativeAndConsequences
+    getBookingAlternativeAndConsequences,
+    withdrawBookingRequest
 };

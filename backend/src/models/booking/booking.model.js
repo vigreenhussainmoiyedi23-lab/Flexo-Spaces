@@ -2,9 +2,6 @@ const mongoose = require("mongoose");
 
 const bookingSchema = new mongoose.Schema(
     {
-        // ======================================================
-        // RELATIONS
-        // ======================================================
 
         space: {
             type: mongoose.Schema.Types.ObjectId,
@@ -13,11 +10,7 @@ const bookingSchema = new mongoose.Schema(
             index: true,
         },
 
-        // optional bookable unit inside workspace
-        // example:
-        // Hot Desk
-        // Meeting Room
-        // Cabin A
+
         resource: {
             type: String,
             default: null,
@@ -71,12 +64,6 @@ const bookingSchema = new mongoose.Schema(
             required: true,
         },
 
-        // remaining seats after this booking
-        remainingCapacitySnapshot: {
-            type: Number,
-            required: true,
-        },
-
         // ======================================================
         // BOOKING TYPE
         // ======================================================
@@ -98,14 +85,6 @@ const bookingSchema = new mongoose.Schema(
         // ======================================================
 
         pricing: {
-            basePrice: {
-                type: Number,
-                required: true,
-            },
-            platformFee: {
-                type: Number,
-                default: 0,
-            },
             finalPrice: {
                 type: Number,
                 required: true,
@@ -116,25 +95,7 @@ const bookingSchema = new mongoose.Schema(
             },
         },
 
-        // ======================================================
-        // NEGOTIATION
-        // ======================================================
 
-        negotiation: {
-            isNegotiable: {
-                type: Boolean,
-                default: false,
-            },
-            requestedPrice: {
-                type: Number,
-            },
-            counterOffer: {
-                type: Number,
-            },
-            finalAgreedPrice: {
-                type: Number,
-            },
-        },
 
         // ======================================================
         // STATUS FLOW
@@ -145,11 +106,8 @@ const bookingSchema = new mongoose.Schema(
             enum: [ // just marking which status are done and which are pending
                 "pending", //✅
                 "accepted", //✅
-                "confirmed",
-                "checked_in",
                 "completed",
                 "cancelled", //✅
-                "refunded",
                 "rejected", //✅
                 "withdrawn", //✅
                 "expired" //✅
@@ -158,43 +116,16 @@ const bookingSchema = new mongoose.Schema(
             index: true,
         },
 
-        // ======================================================
-        // PAYMENT
-        // ======================================================
-
-        paymentStatus: {
-            type: String,
-            enum: [
-                "pending",
-                "paid",
-                "failed",
-                "refunded",
-            ],
-            default: "pending",
+        isCompletedBy: {
+            owner: {
+                type: Boolean,
+                default: false,
+            },
+            bookedBy: {
+                type: Boolean,
+                default: false,
+            }
         },
-
-        paymentDetails: {
-            transactionId: {
-                type: String,
-            },
-
-            paymentMethod: {
-                type: String,
-                enum: [
-                    "razorpay",
-                    "cash"
-                ],
-            },
-            razorpayOrder: {
-                id: String,
-                currency: String,
-                amount: Number
-            },
-            paidAt: {
-                type: Date,
-            },
-        },
-
 
 
         // ======================================================
@@ -206,18 +137,6 @@ const bookingSchema = new mongoose.Schema(
             type: Date,
             default: null,
             index: true,
-        },
-
-        // ======================================================
-        // CHECK IN / CHECK OUT
-        // ======================================================
-
-        checkedInAt: {
-            type: Date,
-        },
-
-        checkedOutAt: {
-            type: Date,
         },
 
         // ======================================================
@@ -242,41 +161,9 @@ const bookingSchema = new mongoose.Schema(
         },
 
         // ======================================================
-        // CANCELLATION POLICY SNAPSHOT
-        // ======================================================
-
-        cancellationPolicy: {
-            // free cancellation before X hours
-            freeCancellationBeforeHours: {
-                type: Number,
-                default: 48,
-            },
-
-            // partial refund before X hours
-            partialRefundBeforeHours: {
-                type: Number,
-                default: 24,
-            },
-
-            // refund percentage
-            partialRefundPercentage: {
-                type: Number,
-                default: 50,
-            },
-
-            // fixed cancellation fee
-            cancellationFee: {
-                type: Number,
-                default: 0,
-            },
-        },
-
-        // ======================================================
         // WORKSPACE SNAPSHOT
         // ======================================================
 
-        // preserves historical data
-        // even if workspace changes later
         workspaceSnapshot: {
             title: String,
 
@@ -301,15 +188,6 @@ const bookingSchema = new mongoose.Schema(
             maxlength: 1000,
         },
 
-        // ======================================================
-        // METADATA
-        // ======================================================
-
-        source: {
-            type: String,
-            enum: ["web", "mobile", "admin"],
-            default: "web",
-        },
 
         isActive: {
             type: Boolean,
