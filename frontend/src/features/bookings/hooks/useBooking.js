@@ -171,7 +171,7 @@ const useBooking = () => {
         const id = showLoadingToast("confirming booking request...");
         try {
             setLoading(true);
-            const response = await confirmBookingRequest(bookingId);
+            const response = await completeBookingRequest(bookingId);
             const booking = response?.booking;
 
             if (booking) {

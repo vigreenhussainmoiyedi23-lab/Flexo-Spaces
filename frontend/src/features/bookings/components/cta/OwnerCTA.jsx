@@ -1,6 +1,6 @@
 import useBooking from "../../hooks/useBooking";
 function OwnerCTA({ status, bookingId }) {
-  const { acceptBookingHandler, rejectBookingHandler } = useBooking();
+  const { acceptBookingHandler, rejectBookingHandler,completeBookingHandler } = useBooking();
   return (
     <div className="flex gap-3">
       {status === "pending" && (
@@ -35,7 +35,17 @@ function OwnerCTA({ status, bookingId }) {
         </>
       )}
       {status === "accepted" && (
-        <button className="flex-1 rounded-lg bg-brand-500 px-4 py-2 font-medium text-white transition hover:bg-brand-600">
+        <button
+          onClick={() => {
+            const confirmed = window.confirm(
+              "Are you sure you want to complete this booking?",
+            );
+
+            if (!confirmed) return;
+            completeBookingHandler(bookingId);
+          }}
+          className="flex-1 rounded-lg bg-brand-500 px-4 py-2 font-medium text-white transition hover:bg-brand-600"
+        >
           Complete
         </button>
       )}

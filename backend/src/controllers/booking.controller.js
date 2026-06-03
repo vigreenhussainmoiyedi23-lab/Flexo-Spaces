@@ -452,21 +452,17 @@ async function completeBookingHandler(req, res) {
 
         validateBooking(booking, user)
         validateBookingState(booking, "accepted")
+        validateUserRole(booking, user, "owner")
 
 
-        const role = booking.owner.toString() === user ? "owner" : "bookedBy"
-
-        booking.isCompletedBy[role] = true
-        if (booking.isCompletedBy.owner && booking.isCompletedBy.requester) {
-            booking.status = "completed"
-        }
+        booking.status = "completed"
         await booking.save()
-        const { owner, bookedBy } = booking
+
         await Promise.all([
-            userModel.findByIdAndUpdate(owner, {
+            userModel.findByIdAndUpdate(booking.owner, {
                 $inc: { totalCompleted: 1 }
             }),
-            userModel.findByIdAndUpdate(bookedBy, {
+            userModel.findByIdAndUpdate(booking.bookedBy, {
                 $inc: { totalCompleted: 1 }
             })
         ])

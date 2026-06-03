@@ -113,8 +113,9 @@ const BookingCard = ({ booking, cta, urgency = "normal" }) => {
         </span>
 
         {/* COUNTDOWN */}
-        <span
-          className={`
+        {booking.status === "pending" && (
+          <span
+            className={`
           absolute
           right-3
           top-3
@@ -127,17 +128,18 @@ const BookingCard = ({ booking, cta, urgency = "normal" }) => {
           flex flex-col items-center
           bg-text-primary
         `}
-        >
-          <span>
-            {hours * 60 * 60 + minutes * 60 + seconds > 0 &&
-              hours + ":" + minutes + ":" + seconds}
+          >
+            <span>
+              {hours * 60 * 60 + minutes * 60 + seconds > 0 &&
+                hours + ":" + minutes + ":" + seconds}
+            </span>
+            <span className="text-[8px] self-start ">
+              {hours * 60 * 60 + minutes * 60 + seconds <= 0
+                ? "expired"
+                : "expires in "}
+            </span>
           </span>
-          <span className="text-[8px] self-start ">
-            {hours * 60 * 60 + minutes * 60 + seconds <= 0
-              ? "expired"
-              : "expires in "}
-          </span>
-        </span>
+        )}
       </div>
 
       {/* BODY */}
@@ -179,7 +181,11 @@ const BookingCard = ({ booking, cta, urgency = "normal" }) => {
         >
           <Calendar className="w-4 h-4" />
 
-          <span className="text-sm">26 Jun → 27 Jun</span>
+          <span className="text-sm">
+            {new Date(booking.fromDateTime).toLocaleDateString()}
+            <span className="mx-1">→</span>
+            {new Date(booking.endDateTime).toLocaleDateString()}
+          </span>
         </div>
 
         {/* STATS */}
@@ -296,33 +302,35 @@ const BookingCard = ({ booking, cta, urgency = "normal" }) => {
             />
           </div>
         </div>
-        {/* URGENCY */}
-        <div className="mt-5">
-          <div className="flex justify-between text-xs">
-            {booking.status !== "expired" && (
-              <>
-                <span className="text-brand-100/60">Booking Expiry</span>
 
-                <span className="text-brand-100">
-                  {hours}h {minutes}m
-                </span>
-              </>
-            )}
-            {booking.status === "expired" && (
-              <span className="text-brand-100/60">Booking Expired</span>
-            )}
-          </div>
-          <div
-            className="
+        {/* URGENCY */}
+        {["pending", "expired"].includes(booking.status) && (
+          <div className="mt-5">
+            <div className="flex justify-between text-xs">
+              {booking.status !== "expired" && (
+                <>
+                  <span className="text-brand-100/60">Booking Expiry</span>
+
+                  <span className="text-brand-100">
+                    {hours}h {minutes}m
+                  </span>
+                </>
+              )}
+              {booking.status === "expired" && (
+                <span className="text-brand-100/60">Booking Expired</span>
+              )}
+            </div>
+            <div
+              className="
             h-2
             rounded-full
             bg-white/10
             overflow-hidden
             mt-2
             "
-          >
-            <div
-              className={`
+            >
+              <div
+                className={`
                 h-full
                 ${
                   urgencyStyles[
@@ -335,22 +343,23 @@ const BookingCard = ({ booking, cta, urgency = "normal" }) => {
                           : "normal"
                   ].progress
                 }`}
-              style={{
-                width:
-                  Math.max(
-                    0,
-                    Math.min(100, ((hours * 60 + minutes) / (24 * 60)) * 100),
-                  ) + "%",
-              }}
-            />
+                style={{
+                  width:
+                    Math.max(
+                      0,
+                      Math.min(100, ((hours * 60 + minutes) / (24 * 60)) * 100),
+                    ) + "%",
+                }}
+              />
+            </div>
+            {["pending", "expired"].includes(booking.status) && (
+              <span className="text-xs whitespace-nowrap text-white/50">
+                our system expires booking automatically after 24 hours of
+                inacitivity
+              </span>
+            )}
           </div>
-          {["pending", "expired"].includes(booking.status) && (
-            <span className="text-xs whitespace-nowrap text-white/50">
-              our system expires booking automatically after 24 hours of
-              inacitivity
-            </span>
-          )}
-        </div>
+        )}
 
         {/* CTA */}
         <div
