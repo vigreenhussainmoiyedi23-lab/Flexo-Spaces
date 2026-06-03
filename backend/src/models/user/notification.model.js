@@ -21,6 +21,7 @@ const notificationSchema = new mongoose.Schema(
                 "BOOKING_REQUEST",
                 "BOOKING_ACCEPTED",
                 "BOOKING_REJECTED",
+                "BOOKING_WITHDRAWN",
                 "BOOKING_COMPLETED",
                 "BOOKING_CANCELLED",
                 "ADMIN_ALERT",
@@ -48,16 +49,7 @@ const notificationSchema = new mongoose.Schema(
             index: true,
         },
 
-        // Optional: group notifications (future scalability)
-        groupKey: {
-            type: String, // e.g. "swap_123"
-        },
 
-        // Optional: store extra metadata
-        meta: {
-            type: mongoose.Schema.Types.Mixed,
-            default: {},
-        },
     },
     {
         timestamps: true, // gives createdAt, updatedAt

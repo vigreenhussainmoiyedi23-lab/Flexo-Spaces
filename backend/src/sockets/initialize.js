@@ -47,6 +47,7 @@ const initSocket = (server) => {
         }
     });
     io.on("connection", (socket) => {
+        console.log("New client connected:", socket.id, "User ID:", socket.userId);
 
         const userId = socket.userId
         if (!userId) {

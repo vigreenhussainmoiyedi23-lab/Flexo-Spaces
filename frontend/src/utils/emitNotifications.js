@@ -8,14 +8,17 @@ export const emitNotification = ({
     title,
     message,
     link,
-    meta = {},
 }) => {
+    console.log("Emitting notification:", {
+        recipient,
+        type,
+        title,
+    })
     socketManager.emitMessage("create_notification", {
         recipient,
         type,
         title,
         message,
         link,
-        meta,
     });
 };

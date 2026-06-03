@@ -28,7 +28,6 @@ const Swaps = () => {
     getBookingRequests();
   },[]);
   if (loading) <Loader />;
-  console.log("userAllBookings", userAllBookings);
   return (
     <div className="w-full min-h-screen bg-brand-100 relative pt-[12vh]">
       <BookingGrid bookings={userAllBookings  || []}/>

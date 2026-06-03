@@ -11,6 +11,7 @@ const notificationSockets = (io, socket, socketUserMap) => {
     // 🔥 Create notification (GLOBAL ENTRY POINT)
     socket.on("create_notification", async (data) => {
         try {
+            console.log("Creating notification with data:", data);
             if (!data?.recipient || !data?.type || !data?.title) {
                 return;
             }
@@ -21,7 +22,6 @@ const notificationSockets = (io, socket, socketUserMap) => {
                 title: data.title,
                 message: data.message,
                 link: data.link,
-                meta: data.meta || {},
             });
 
             // 🔥 Emit to that user only

@@ -34,7 +34,6 @@ const getAvailaibilityApi = async (spaceId, data) => {
 
 const fetchBookingRequests = async ({ filters }) => {
     try {
-        console.log("getting response", filters)
         const response = await apiClient.post(`/`, { filters });
         return response.data;
     } catch (error) {

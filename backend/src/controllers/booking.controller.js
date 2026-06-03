@@ -443,6 +443,7 @@ async function verifyPaymentHandler(req, res) {
 
     }
 }
+
 async function completeBookingHandler(req, res) {
     try {
         const { bookingId } = req.params

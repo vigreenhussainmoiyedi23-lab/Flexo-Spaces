@@ -318,6 +318,7 @@ function AvailabilityStep({ formData, setFormData }) {
 }
 
 function SeatSelectionStep({ formData, updateField }) {
+  const {availableSeats}=useBooking()
   return (
     <Box>
       <Typography variant="h5" fontWeight="bold" mb={3}>
@@ -332,7 +333,7 @@ function SeatSelectionStep({ formData, updateField }) {
         onChange={(e) => updateField("selectedSeats", e.target.value)}
       >
         {Array.from({
-          length: formData.maxAvailableSeats,
+          length: formData.maxAvailableSeats ||availableSeats ,
         }).map((_, index) => (
           <MenuItem key={index + 1} value={index + 1}>
             {index + 1} Seats
