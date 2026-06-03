@@ -28,8 +28,8 @@ const Notification = () => {
     <div className="h-full flex flex-col pt-[12vh] min-h-screen bg-brand-900 text-brand-100">
       
       {/* Header */}
-      <div className="p-4 border-b border-brand-800 flex justify-between items-center">
-        <h2 className="text-xl playfair">Notifications</h2>
+      <div className="p-4 border-b border-accent-300 flex justify-between items-center">
+        <h2 className="text-xl playfair text-text-primary">Notifications</h2>
 
         <div className="flex items-center gap-3">
           {unreadCount > 0 && (
@@ -40,7 +40,7 @@ const Notification = () => {
 
           <button
             onClick={markAllAsReadHandler}
-            className="text-sm bg-brand-700 px-3 py-1 rounded hover:bg-brand-500"
+            className="text-sm bg-text-primary px-3 py-1 rounded hover:bg-brand-500"
           >
             Mark all as read
           </button>
@@ -69,8 +69,8 @@ const Notification = () => {
               className={`p-3 rounded cursor-pointer transition-all border 
                 ${
                   n.isRead
-                    ? "bg-brand-800 border-brand-800"
-                    : "bg-brand-700 border-brand-500"
+                    ? "bg-text-secondary border-brand-200"
+                    : "bg-text-primary border-brand-500"
                 }`}
               onClick={() => {
                 if (n.link) window.location.href = n.link;

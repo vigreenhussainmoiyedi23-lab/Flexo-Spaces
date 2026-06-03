@@ -282,7 +282,6 @@ function AvailabilityStep({ formData, setFormData }) {
         maxAvailableSeats: availableSeats,
         overlappingBookings,
       }));
-      console.log("setting available seats", availableSeats);
     }
     if (formData.fromDate && formData.toDate) {
       fetch();
@@ -477,7 +476,6 @@ function ConfirmationStep({ spaceId, data }) {
       setLoading(true);
       const response = await createBookingHandler({ spaceId, ...data });
       navigate("/bookings");
-      console.log("navigate");
     } catch (error) {
       console.log(error);
     }

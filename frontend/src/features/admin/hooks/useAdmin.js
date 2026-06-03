@@ -76,7 +76,7 @@ export default function useAdmin() {
         setLoading(true);
         try {
             const { data } = await GetPlatformAnalytics();
-            console.log("platform analytics", data);
+      
             setAnalyticsTotal(data.totals);
             setAnalyticsDaily(data.daily);
             setInsights(data.insights?.value);
@@ -148,7 +148,6 @@ export default function useAdmin() {
                 const users = [dispute.raisedBy, dispute.against];
 
                 users.forEach((userId) => {
-                    console.log("emitting notification", userId);
                     if (userId) {
                         emitNotification({
                             recipient: userId,

@@ -110,8 +110,7 @@ export const useSpace = () => {
                     link: `/swaps`,
                     meta: { bookingId: booking._id }
                 });
-                console.log("emitted a notification to", booking.owner);
-            }
+                  }
             const update = updateToast(id, data.message, "success")
         } catch (error) {
             const update = updateToast(id, error.data.message || error?.message, "error")

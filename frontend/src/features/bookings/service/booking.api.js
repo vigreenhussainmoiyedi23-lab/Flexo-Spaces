@@ -22,7 +22,6 @@ const createBookingApi = async (bookingDets) => {
 };
 const getAvailaibilityApi = async (spaceId, data) => {
     try {
-        console.log("getting response", spaceId, data)
         const response = await apiClient.post(`/${spaceId}/bookings`, data);
         return response.data;
     } catch (error) {

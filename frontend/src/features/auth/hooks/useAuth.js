@@ -53,7 +53,6 @@ const useAuth = () => {
     const logoutHandler = async () => {
         setLoading(true);
         try {
-            console.log("logging out")
             const { data } = await logout();
             setUser(null);
             showToast("Logged out successfully!", "success");

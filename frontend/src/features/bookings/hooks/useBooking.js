@@ -71,7 +71,7 @@ const useBooking = () => {
             setLoading(true);
             const response = await createBookingApi(data);
             showToast(response.message, "success");
-            console.log(response);
+          
 
             emitNotification({
                 recipient: response.booking.owner,
@@ -99,7 +99,6 @@ const useBooking = () => {
             showToast(response.message, "success");
             const booking = response?.booking;
 
-            console.log(booking.bookedBy);
             emitNotification({
                 recipient: booking.bookedBy,
                 type: "BOOKING_ACCEPTED",
@@ -125,7 +124,7 @@ const useBooking = () => {
             setLoading(true);
             const response = await rejectBookingRequest(bookingId);
             const booking = response?.booking;
-            console.log(response);
+         
 
             if (booking) {
                 emitNotification({
@@ -152,8 +151,7 @@ const useBooking = () => {
             setLoading(true);
             const response = await withdrawBookingRequest(bookingId);
             const booking = response?.booking;
-            console.log(response);
-
+          
             if (booking) {
                 emitNotification({
                     recipient: booking.owner,
@@ -179,7 +177,6 @@ const useBooking = () => {
             setLoading(true);
             const response = await completeBookingRequest(bookingId);
             const booking = response?.booking;
-            console.log("response complete", response);
 
             if (booking) {
                 emitNotification({

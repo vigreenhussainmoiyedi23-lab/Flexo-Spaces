@@ -100,7 +100,6 @@ export const useChatSocket = () => {
         socketManager.emitMessage("createMessage", payload);
     };
     const EditMessage = (payload) => {
-        console.log("editMessage payload", payload);
         socketManager.emitMessage("updateMessage", payload);
     };
     const deleteMessage = (payload) => {
