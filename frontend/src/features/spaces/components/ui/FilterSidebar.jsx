@@ -1,10 +1,41 @@
-// FiltersSidebar.jsx
-import { MapPin } from "lucide-react";
 import React from "react";
+import { MapPin } from "lucide-react";
 import { useSpace } from "../../hooks/useSpace";
+const SPACE_TYPES = [
+  "Hot Desk", // Flexible shared seating
+  "Dedicated Desk", // Assigned personal desk in a shared room
+  "Private Office", // Private, lockable room for individuals or teams
+  "Meeting Room", // Hourly conference/board rooms
+  "Virtual Office", // Business address and mail handling only
+  "Event Space", // Large open halls for workshops or networking
+];
+const AMENITY_LABELS = {
+  enterpriseWifi: "Enterprise Wi-Fi",
+  videoConferencing: "4K Video Conferencing",
+  podcastStudio: "Soundproof Podcast Studio",
+  smartBoard: "Smart Board / Projector",
+  printerAccess: "Printing & Scanning Station",
 
-const FiltersSidebar = ({}) => {
+  gym: "On-site Gym & Fitness Center",
+  ergonomicFurniture: "Ergonomic Standing Desks",
+  outdoorSpace: "Rooftop / Terrace Garden",
+  meditationRoom: "Quiet Meditation Room",
+  nursingRoom: "Mother's Nursing Room",
+
+  baristaCoffee: "Barista-Crafted Coffee",
+  stockedKitchen: "Fully Stocked Pantry",
+  cateringService: "On-site Catering",
+  kombuchaOnTap: "Kombucha & Cold Brew on Tap",
+
+  access247: "24/7 Keycard Access",
+  petFriendly: "Pet Friendly Workspace",
+  evCharging: "EV Charging Stations",
+  showers: "End-of-Trip Showers & Lockers",
+  secureParking: "Secure Covered Parking",
+};
+const FiltersSidebar = () => {
   const { filters, clearFilters, updateFilters, updatePricing } = useSpace();
+
   const handleUseLocation = () => {
     if (!navigator.geolocation) {
       alert("Geolocation not supported");
@@ -13,158 +44,179 @@ const FiltersSidebar = ({}) => {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-
-        updateFilters("lat", lat);
-        updateFilters("lng", lng);
+        updateFilters("lat", position.coords.latitude);
+        updateFilters("lng", position.coords.longitude);
       },
-      (error) => {
-        console.error(error);
+      () => {
         alert("Location permission denied");
       },
     );
   };
-  
+
+  const toggleAmenity = (amenity) => {
+    const exists = filters.amenities.includes(amenity);
+
+    updateFilters(
+      "amenities",
+      exists
+        ? filters.amenities.filter((a) => a !== amenity)
+        : [...filters.amenities, amenity],
+    );
+  };
+
   return (
-    <div className=" flex   bg-brand-900 overflow-y-auto border-r border-brand-700 p-6 flex-col">
-      <h2 className="text-2xl font-semibold mb-8 text-brand-100">Filters</h2>
+    <aside className="bg-brand-900 border-r border-brand-700 p-6 flex flex-col overflow-y-auto">
+      <h2 className="text-2xl font-semibold mb-6 text-brand-100">Filters</h2>
+
+      {/* Nearby */}
       <button
-        className="bg-accent-500 mb-3 active:scale-96 text-brand-900 px-3 py-2 rounded-lg source-code-pro font-bold text-lg flex items-center justify-center gap-1 whitespace-nowrap"
         onClick={handleUseLocation}
+        className="bg-accent-500 mb-6 active:scale-95 text-brand-900 px-4 py-3 rounded-xl font-semibold flex items-center justify-center gap-2"
       >
-        <MapPin size={20} />
+        <MapPin size={18} />
         Find Nearby Listings
       </button>
-      {/* Category */}
-      <div className="mb-8">
-        <h3 className="font-medium mb-3">Category</h3>
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => setSelectedCategory("All")}
-            className={`px-5 py-2 rounded-full text-sm transition-all ${
-              selectedCategory === "All"
-                ? "bg-accent-400 text-brand-900 font-medium"
-                : "bg-brand-800 hover:bg-brand-700"
-            }`}
-          >
-            All
-          </button>
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`px-5 py-2 rounded-full text-sm transition-all ${
-                selectedCategory === cat
-                  ? "bg-accent-400 text-brand-900 font-medium"
-                  : "bg-brand-800 hover:bg-brand-700"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-      </div>
 
-      {/* Types (only when category selected) */}
-      {selectedCategory !== "All" && CLOTHING_TYPES[selectedCategory] && (
-        <div className="mb-8">
-          <h3 className="font-medium mb-3">Type</h3>
-          <div className="space-y-2">
-            {CLOTHING_TYPES[selectedCategory].map((type) => (
-              <label
-                key={type}
-                className="flex items-center gap-2 cursor-pointer text-sm"
-              >
-                <input
-                  type="checkbox"
-                  checked={selectedTypes.includes(type)}
-                  onChange={() =>
-                    toggleArray(selectedTypes, setSelectedTypes, type)
-                  }
-                  className="accent-accent-400"
-                />
-                {type}
-              </label>
-            ))}
-          </div>
-        </div>
-      )}
-      {/* sortBy */}
-      <div className="flex lg:hidden items-center gap-4">
+      {/* Space Type */}
+      <div className="mb-6">
+        <h3 className="font-medium mb-3">Space Type</h3>
+
         <select
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value)}
-          className="bg-brand-800 border border-brand-700 rounded-2xl px-6 py-3 text-sm focus:outline-none cursor-pointer"
+          value={filters.spaceType}
+          onChange={(e) => updateFilters("spaceType", e.target.value)}
+          className="w-full text-text-primary bg-brand-100 border border-brand-700 rounded-xl p-3"
         >
-          <option value="newest" className=" bg-brand-900 text-accent-300">
-            Newest First
-          </option>
-          <option value="oldest" className=" bg-brand-900 text-accent-300">
-            Oldest First
-          </option>
-          <option value="price-low" className=" bg-brand-900 text-accent-300">
-            Price: Low to High
-          </option>
-          <option value="price-high" className=" bg-brand-900 text-accent-300">
-            Price: High to Low
-          </option>
-        </select>
-
-        <div className="text-sm text-brand-400 whitespace-nowrap">
-          {itemCount} items
-        </div>
-      </div>
-      {/* Sizes */}
-      <div className="mb-8">
-        <h3 className="font-medium mb-3">Size</h3>
-        <div className="flex flex-wrap gap-2">
-          {SIZES.map((size) => (
-            <button
-              key={size}
-              onClick={() => toggleArray(selectedSizes, setSelectedSizes, size)}
-              className={`px-4 py-2 text-sm rounded-xl transition-all border ${
-                selectedSizes.includes(size)
-                  ? "bg-accent-400 text-brand-900 border-accent-400"
-                  : "bg-brand-800 border-brand-700 hover:border-accent-400"
-              }`}
-            >
-              {size}
-            </button>
+          <option value="all">All Spaces</option>
+          {SPACE_TYPES.map((type) => (
+            <option key={type} value={type}>
+              {type}
+            </option>
           ))}
+        </select>
+      </div>
+
+      {/* Capacity */}
+      <div className="mb-6">
+        <h3 className="font-medium mb-3">Minimum Capacity</h3>
+
+        <input
+          type="number"
+          min="0"
+          value={filters.capacity[0]}
+          onChange={(e) =>
+            updateFilters("capacity", [
+              Number(e.target.value),
+              filters.capacity[1],
+            ])
+          }
+          className="w-full text-text-primary bg-brand-100 border border-brand-700 rounded-xl p-3"
+          placeholder="Seats"
+        />
+      </div>
+
+      {/* Price Range */}
+      <div className="mb-6">
+        <h3 className="font-medium mb-3">Price Range</h3>
+
+        <div className="space-y-3 text-text-primary">
+          <input
+            type="number"
+            min="0"
+            value={filters.pricing.rate[0]}
+            onChange={(e) =>
+              updatePricing({
+                rate: [Number(e.target.value), filters.pricing.rate[1]],
+              })
+            }
+            className="w-full bg-brand-100 border border-brand-700 rounded-xl p-3"
+            placeholder="Minimum Price"
+          />
+
+          <input
+            type="number"
+            min="0"
+            value={filters.pricing.rate[1] ?? ""}
+            onChange={(e) =>
+              updatePricing({
+                rate: [
+                  filters.pricing.rate[0],
+                  e.target.value ? Number(e.target.value) : null,
+                ],
+              })
+            }
+            className="w-full bg-brand-100 border text-text-primary border-brand-300 rounded-xl p-3"
+            placeholder="Maximum Price"
+          />
         </div>
       </div>
 
-      {/* Condition */}
-      <div className="mb-8">
-        <h3 className="font-medium mb-3">Condition</h3>
+      {/* Billing Interval */}
+      <div className="mb-6">
+        <h3 className="font-medium mb-3">Billing Interval</h3>
+
+        <select
+          value={filters.pricing.interval}
+          onChange={(e) =>
+            updatePricing({
+              interval: e.target.value,
+            })
+          }
+          className="w-full text-text-primary bg-brand-100 border border-brand-700 rounded-xl p-3"
+        >
+          <option value="all">All</option>
+          <option value="hourly">Hourly</option>
+          <option value="daily">Daily</option>
+          <option value="weekly">Weekly</option>
+          <option value="monthly">Monthly</option>
+        </select>
+      </div>
+
+      {/* Amenities */}
+      <div className="mb-6">
+        <h3 className="font-medium mb-3">Amenities</h3>
+
         <div className="space-y-2">
-          {CONDITIONS.map((cond) => (
+          {Object.keys(AMENITY_LABELS).map((amenity) => (
             <label
-              key={cond}
-              className="flex items-center gap-2 cursor-pointer capitalize text-sm"
+              key={amenity}
+              className="flex items-center gap-2 text-sm cursor-pointer"
             >
               <input
                 type="checkbox"
-                checked={selectedConditions.includes(cond)}
-                onChange={() =>
-                  toggleArray(selectedConditions, setSelectedConditions, cond)
-                }
+                checked={filters.amenities.includes(amenity)}
+                onChange={() => toggleAmenity(amenity)}
                 className="accent-accent-400"
               />
-              {cond.replace("_", " ")}
+              {AMENITY_LABELS[amenity]}
             </label>
           ))}
         </div>
       </div>
 
+      {/* Sort */}
+      <div className="mb-6">
+        <h3 className="font-medium mb-3">Sort By</h3>
+
+        <select
+          value={filters.sortBy}
+          onChange={(e) => updateFilters("sortBy", e.target.value)}
+          className="w-full text-text-primary bg-brand-100 border border-brand-700 rounded-xl p-3"
+        >
+          <option value="newest">Newest First</option>
+          <option value="oldest">Oldest First</option>
+          <option value="price-low">Price: Low to High</option>
+          <option value="price-high">Price: High to Low</option>
+          <option value="capacity-high">Highest Capacity</option>
+        </select>
+      </div>
+
       <button
-        onClick={clearAllFilters}
-        className="mt-auto text-sm text-red-400 hover:text-red-300 transition-colors"
+        onClick={clearFilters}
+        className="mt-auto bg-brand-500 rounded-full py-2 block font-bold text-red-500 hover:text-red-400 transition-colors"
       >
         Clear All Filters
       </button>
-    </div>
+    </aside>
   );
 };
 

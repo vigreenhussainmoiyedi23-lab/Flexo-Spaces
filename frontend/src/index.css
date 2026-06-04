@@ -76,7 +76,7 @@ html,
 #root {
   width: 100%;
   overflow-x: hidden;
-  scrollbar-color: var(--color-brand-300) var(--color-bg-main);
+  scrollbar-color: var(--color-brand-100) var(--color-text-primary  );
   scrollbar-width: thin;
   background-color: var(--color-bg-main);
   color: var(--color-text-secondary);

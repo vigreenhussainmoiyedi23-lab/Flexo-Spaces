@@ -24,7 +24,9 @@ const Listings = () => {
 
   return (
     <section className="w-full flex mt-[10vh] h-[90dvh]  text-white">
-      <div className=" h-full border-r-accent-300 border-r w-80 hidden lg:block  "></div>
+      <div className=" h-full border-r-accent-300 bg-text-secondary overflow-auto border-r w-80 hidden lg:block  ">
+        <FiltersSidebar />
+      </div>
       <div className=" max-h-full overflow-auto w-full lg:w-[calc(100%-(80*4px))] ">
         {allSpaces.length > 0 && <ListingGrid spaces={allSpaces} />}
         {loading && <Loader />}
