@@ -24,6 +24,8 @@ const { uploadImage } = require("../services/space/UploadImage.service");
 async function GetAllSpacesHandler(req, res) {
     try {
         const filters = req.body;
+        console.log(filters);
+        
         const { spaces, totalPages } = await getAllSpacesService(filters);
         res.status(200).json({ spaces, totalPages, message: "spaces fetched successfully", success: true });
     } catch (error) {

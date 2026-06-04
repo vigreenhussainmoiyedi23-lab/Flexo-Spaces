@@ -90,9 +90,14 @@ async function getAllSpacesService(filters, isAdmin = false) {
             }
         }
         let skip = 0;
-        // Capacity filter
-        if (capacity && capacity !== "") {
-            query.capacity = { $gte: capacity };
+        if (capacity && capacity.length === 2) {
+            query.capacity = {};
+            if (capacity[0] || capacity[0] === 0) {
+                query.capacity.$gte = Number(capacity[0]);
+            }
+            if (capacity[1]) {
+                query.capacity.$lte = Number(capacity[1]);
+            }
         }
         if (lat && lng) {
             query["location.geo"] = {
@@ -110,18 +115,20 @@ async function getAllSpacesService(filters, isAdmin = false) {
         }
 
         // spaceType filter
-        if (spaceType && spaceType !== "") {
+        if (spaceType && spaceType !== "all") {
             query.spaceType = spaceType;
         }
 
         // Price filter
         if (pricing && pricing.rate) {
-            query = {
-                ...query,
-                "pricing.rate": { $lte: pricing.rate }
-            };
+            if (pricing.rate[0] || pricing.rate[0] === 0) {
+                query["pricing.rate"] = { ...query["pricing.rate"], $gte: Number(pricing.rate[0]) };
+            }
+            if (pricing.rate[1]) {
+                query["pricing.rate"] = { ...query["pricing.rate"], $lte: Number(pricing.rate[1]) };
+            }
         }
-        if (pricing && pricing.interval) {
+        if (pricing && pricing.interval !== "all") {
             query = {
                 ...query,
                 "pricing.interval": pricing.interval
@@ -131,24 +138,26 @@ async function getAllSpacesService(filters, isAdmin = false) {
             const limit = 10;
             const skip = (parseInt(page || 1) - 1) * limit;
         }
+
         // Sorting
         let sortOption = {};
-        if (sortBy === "newest") {
-            sortOption.createdAt = -1;
-        } else if (sortBy === "oldest") {
-            sortOption.createdAt = 1;
-        }
-        else if (sortBy === "price-high") {
-            sortOption.pricing.rate = -1;
-        } else if (sortBy === "price-low") {
-            sortOption.pricing.rate = 1;
-        }
-        if (search && search != "") {
-            query.title = {
-                $regex: search,
-                $options: "i"
-            }
-        }
+        // if (sortBy === "newest") {
+        //     sortOption.createdAt = -1;
+        // } else if (sortBy === "oldest") {
+        //     sortOption.createdAt = 1;
+        // }
+        // else if (sortBy === "price-high") {
+        //     sortOption.pricing.rate = -1;
+        // } else if (sortBy === "price-low") {
+        //     sortOption.pricing.rate = 1;
+        // }
+        // if (search && search != "") {
+        //     query.title = {
+        //         $regex: search,
+        //         $options: "i"
+        //     }
+        // }
+        console.log(query)
         const spaces = await spaceModel.find(query).sort(sortOption).skip(skip).limit(10).populate({ path: "owner", select: "username profilePicture rating" }).lean();
         const totalPages = Math.ceil((await spaceModel.countDocuments(query)) / 10);
         return { spaces, totalPages };

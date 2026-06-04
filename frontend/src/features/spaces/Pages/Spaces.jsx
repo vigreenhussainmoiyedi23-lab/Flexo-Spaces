@@ -23,10 +23,10 @@ const Listings = () => {
   }, [filters, coordinates]);
 
   return (
-    <section className="w-full pt-[10vh] min-h-screen bg-brand-900 text-white">
-      {/* Main Content Area */}
-      {allSpaces.length > 0 && <ListingGrid spaces={allSpaces} />}
-      <div className="relative lg:ml-80 min-h-[90dvh] bg-brand-900">
+    <section className="w-full flex mt-[10vh] h-[90dvh]  text-white">
+      <div className=" h-full border-r-accent-300 border-r w-80 hidden lg:block  "></div>
+      <div className=" max-h-full overflow-auto w-full lg:w-[calc(100%-(80*4px))] ">
+        {allSpaces.length > 0 && <ListingGrid spaces={allSpaces} />}
         {loading && <Loader />}
         {allSpaces.length === 0 && (
           <div className="text-center py-20 text-brand-500">
@@ -34,6 +34,8 @@ const Listings = () => {
           </div>
         )}
       </div>
+      {/* <div className="relative lg:ml-80 min-h-[90dvh] bg-brand-900">
+      </div> */}
     </section>
   );
 };

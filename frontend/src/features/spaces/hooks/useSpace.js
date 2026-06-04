@@ -20,6 +20,7 @@ export const useSpace = () => {
         setLoading,
         filters,
         setFilters,
+        defaultFilters
     } = useContext(SpaceContext);
     const navigate = useNavigate();
 
@@ -110,7 +111,7 @@ export const useSpace = () => {
                     link: `/swaps`,
                     meta: { bookingId: booking._id }
                 });
-                  }
+            }
             const update = updateToast(id, data.message, "success")
         } catch (error) {
             const update = updateToast(id, error.data.message || error?.message, "error")
@@ -122,6 +123,18 @@ export const useSpace = () => {
     const updateFilters = (name, value) => {
         setFilters(prev => ({ ...prev, [name]: value }));
     }
+    const updatePricing = (updates) => {
+        setFilters(prev => ({
+            ...prev,
+            pricing: {
+                ...prev.pricing,
+                ...updates,
+            },
+        }));
+    };
+    const clearFilters = () => {
+        setFilters(defaultFilters);
+    };
     return {
         // Handlers
         fetchSpaces,
@@ -131,12 +144,13 @@ export const useSpace = () => {
         deleteSpace,
         createBooking,
         updateFilters,
-
+        updatePricing,
+        clearFilters,
         //States
         allSpaces,
         loading,
         totalPages,
-        filters, 
+        filters,
     };
 };
 

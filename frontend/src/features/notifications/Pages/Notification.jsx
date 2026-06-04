@@ -40,7 +40,7 @@ const Notification = () => {
 
           <button
             onClick={markAllAsReadHandler}
-            className="text-sm bg-text-primary px-3 py-1 rounded hover:bg-brand-500"
+            className="text-sm bg-text-primary px-3 py-1 rounded hover:bg-text-secondary transition-all active:scale-95  duration-175 ease-in-out"
           >
             Mark all as read
           </button>

@@ -11,8 +11,8 @@ const NormalLayout = ({ children }) => {
     <section className="w-full relative">
       <Navbar user={user}/>
       {children}
+      {user && <Footbar user={user}/>}  
       <Footer />
-      {user && <Footbar user={user}/>}
     </section>
   );
 };

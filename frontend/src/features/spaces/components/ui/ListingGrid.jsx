@@ -10,8 +10,6 @@ const ListingGrid = ({ spaces ,noneMessage}) => {
           <ProductCard key={item.id} item={item} />
         ))}
       </div>
-
-    
     </div>
   );
 };

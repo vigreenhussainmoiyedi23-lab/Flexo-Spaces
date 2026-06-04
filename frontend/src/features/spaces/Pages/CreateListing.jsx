@@ -364,7 +364,7 @@ const CreateListing = () => {
             type="submit"
             className="w-full py-3 sm:py-4 text-sm sm:text-base bg-[#32674e] text-[#fdfab7] font-bold rounded-lg hover:bg-[#274135] transition-all shadow-lg active:scale-[0.98]"
           >
-            Create Listing
+            Create SPACE
           </button>
         </form>
       </div>

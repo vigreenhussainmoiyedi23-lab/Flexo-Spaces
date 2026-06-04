@@ -1,28 +1,10 @@
 // FiltersSidebar.jsx
 import { MapPin } from "lucide-react";
 import React from "react";
+import { useSpace } from "../../hooks/useSpace";
 
-const FiltersSidebar = ({
-  selectedCategory,
-  setSelectedCategory,
-  selectedTypes,
-  setSelectedTypes,
-  selectedSizes,
-  setSelectedSizes,
-  selectedConditions,
-  setSelectedConditions,
-  clearAllFilters,
-  CATEGORIES,
-  CLOTHING_TYPES,
-  SIZES,
-  CONDITIONS,
-  toggleArray,
-  coordinates, // {lat,lng}
-  setCoordinates,
-    sortBy,
-  setSortBy,
-  itemCount
-}) => {
+const FiltersSidebar = ({}) => {
+  const { filters, clearFilters, updateFilters, updatePricing } = useSpace();
   const handleUseLocation = () => {
     if (!navigator.geolocation) {
       alert("Geolocation not supported");
@@ -34,7 +16,8 @@ const FiltersSidebar = ({
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
 
-        setCoordinates({ lat, lng }); // ✅ THIS is what you need
+        updateFilters("lat", lat);
+        updateFilters("lng", lng);
       },
       (error) => {
         console.error(error);
@@ -42,6 +25,7 @@ const FiltersSidebar = ({
       },
     );
   };
+  
   return (
     <div className=" flex   bg-brand-900 overflow-y-auto border-r border-brand-700 p-6 flex-col">
       <h2 className="text-2xl font-semibold mb-8 text-brand-100">Filters</h2>
