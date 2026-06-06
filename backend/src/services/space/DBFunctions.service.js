@@ -111,7 +111,7 @@ async function getAllSpacesService(filters, isAdmin = false) {
         }
         // Types filter (match any)
         if (amenities && amenities.length > 0) {
-            query.amenities = { $in: amenities };
+            query.amenities = { $all: amenities };
         }
 
         // spaceType filter

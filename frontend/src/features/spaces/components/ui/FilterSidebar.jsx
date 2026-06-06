@@ -71,7 +71,7 @@ const FiltersSidebar = () => {
       {/* Nearby */}
       <button
         onClick={handleUseLocation}
-        className="bg-accent-500 mb-6 active:scale-95 text-brand-900 px-4 py-3 rounded-xl font-semibold flex items-center justify-center gap-2"
+        className="bg-brand-200 mb-6 active:scale-95 text-brand-900 px-4 py-3 rounded-xl font-semibold flex items-center justify-center gap-2"
       >
         <MapPin size={18} />
         Find Nearby Listings
@@ -84,7 +84,7 @@ const FiltersSidebar = () => {
         <select
           value={filters.spaceType}
           onChange={(e) => updateFilters("spaceType", e.target.value)}
-          className="w-full text-text-primary bg-brand-100 border border-brand-700 rounded-xl p-3"
+          className="w-full outline-0 bg-text-primary text-brand-100 border border-brand-700 rounded-xl p-3"
         >
           <option value="all">All Spaces</option>
           {SPACE_TYPES.map((type) => (
@@ -97,8 +97,8 @@ const FiltersSidebar = () => {
 
       {/* Capacity */}
       <div className="mb-6">
-        <h3 className="font-medium mb-3">Minimum Capacity</h3>
-
+        <h2 className=" font-medium mb-3">Capacity</h2>
+        <h3 className="text-xs">Minimum Capacity</h3>
         <input
           type="number"
           min="0"
@@ -109,7 +109,21 @@ const FiltersSidebar = () => {
               filters.capacity[1],
             ])
           }
-          className="w-full text-text-primary bg-brand-100 border border-brand-700 rounded-xl p-3"
+          className="w-full outline-0 bg-text-primary text-brand-100 border border-brand-700 rounded-xl p-3"
+          placeholder="Seats"
+        />
+        <h3 className="text-xs mt-3">Maximum Capacity</h3>
+        <input
+          type="number"
+          min="0"
+          value={filters.capacity[1]}
+          onChange={(e) =>
+            updateFilters("capacity", [
+              filters.capacity[0],
+              Number(e.target.value),
+            ])
+          }
+          className="w-full outline-0 bg-text-primary text-brand-100 border border-brand-700 rounded-xl p-3"
           placeholder="Seats"
         />
       </div>
@@ -128,7 +142,7 @@ const FiltersSidebar = () => {
                 rate: [Number(e.target.value), filters.pricing.rate[1]],
               })
             }
-            className="w-full bg-brand-100 border border-brand-700 rounded-xl p-3"
+            className="w-full outline-0 bg-text-primary text-brand-100 border border-brand-700 rounded-xl p-3"
             placeholder="Minimum Price"
           />
 
@@ -144,7 +158,7 @@ const FiltersSidebar = () => {
                 ],
               })
             }
-            className="w-full bg-brand-100 border text-text-primary border-brand-300 rounded-xl p-3"
+            className="w-full outline-0 bg-text-primary text-brand-100 border placeholder:text-brand-100 border-brand-300 rounded-xl p-3"
             placeholder="Maximum Price"
           />
         </div>
@@ -161,7 +175,7 @@ const FiltersSidebar = () => {
               interval: e.target.value,
             })
           }
-          className="w-full text-text-primary bg-brand-100 border border-brand-700 rounded-xl p-3"
+          className="w-full outline-0 bg-text-primary text-brand-100 border border-brand-700 rounded-xl p-3"
         >
           <option value="all">All</option>
           <option value="hourly">Hourly</option>
@@ -200,7 +214,7 @@ const FiltersSidebar = () => {
         <select
           value={filters.sortBy}
           onChange={(e) => updateFilters("sortBy", e.target.value)}
-          className="w-full text-text-primary bg-brand-100 border border-brand-700 rounded-xl p-3"
+          className="w-full outline-0 bg-text-primary text-brand-100 border border-brand-700 rounded-xl p-3"
         >
           <option value="newest">Newest First</option>
           <option value="oldest">Oldest First</option>
