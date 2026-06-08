@@ -31,12 +31,12 @@ const Navbar = ({ user }) => {
             >
               Bookings
             </Link>
-            <Link
+            {/* <Link
               to="/chats"
               className="hover:text-emerald-400 transition-colors"
             >
               Chats
-            </Link>
+            </Link> */}
           </div>
         )}
 
