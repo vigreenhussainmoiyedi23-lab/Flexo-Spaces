@@ -10,12 +10,13 @@ const apiClient = axios.create({
 });
 
 
-const getUserAllListings = async (userId) => {
+const getUserAllSpaces = async (userId) => {
     try {
-        const response = await apiClient.get(`/listings/${userId}`);
+        const response = await apiClient.get(`/spaces/${userId}`);
+        console.log("User spaces response:", response.data);
         return response.data;
     } catch (error) {
-        console.error('Error fetching user listings:', error);
+        console.error('Error fetching user spaces:', error);
         throw error;
     }
 };
@@ -60,4 +61,4 @@ const updateProfile = async (data) => {
     }
 };
 
-export { getUserAllListings,getUserAllRatings, getUserData, getRecentSwaps, updateProfile };
+export { getUserAllSpaces, getUserAllRatings, getUserData, getRecentSwaps, updateProfile };

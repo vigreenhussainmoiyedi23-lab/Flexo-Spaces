@@ -82,6 +82,7 @@ async function getAllSpacesService(filters, isAdmin = false) {
     try {
         const { capacity, spaceType, pricing, amenities, sortBy, page, search, lat, lng } = filters
         let query = {};
+        console.log(sortBy)
         if (!isAdmin) {
             query = {
                 isAvailable: true,
@@ -141,23 +142,23 @@ async function getAllSpacesService(filters, isAdmin = false) {
 
         // Sorting
         let sortOption = {};
-        // if (sortBy === "newest") {
-        //     sortOption.createdAt = -1;
-        // } else if (sortBy === "oldest") {
-        //     sortOption.createdAt = 1;
-        // }
-        // else if (sortBy === "price-high") {
-        //     sortOption.pricing.rate = -1;
-        // } else if (sortBy === "price-low") {
-        //     sortOption.pricing.rate = 1;
-        // }
-        // if (search && search != "") {
-        //     query.title = {
-        //         $regex: search,
-        //         $options: "i"
-        //     }
-        // }
-        console.log(query)
+        if (sortBy === "newest") {
+            sortOption.createdAt = -1;
+        } else if (sortBy === "oldest") {
+            sortOption.createdAt = 1;
+        } else if (sortBy === "capacity-high") {
+            sortOption.capacity = -1;
+        } else if (sortBy === "price-high") {
+            sortOption["pricing.rate"] = -1;
+        } else if (sortBy === "price-low") {
+            sortOption["pricing.rate"] = 1;
+        }
+        if (search && search != "") {
+            query.title = {
+                $regex: search,
+                $options: "i"
+            }
+        }
         const spaces = await spaceModel.find(query).sort(sortOption).skip(skip).limit(10).populate({ path: "owner", select: "username profilePicture rating" }).lean();
         const totalPages = Math.ceil((await spaceModel.countDocuments(query)) / 10);
         return { spaces, totalPages };

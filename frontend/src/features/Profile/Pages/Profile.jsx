@@ -6,6 +6,7 @@ import { useProfile } from "../Hooks/useProfile";
 import { useEffect } from "react";
 import ProfileHeader from "../components/dashboard/ProfileHeader";
 import Loader from "../../commonComponents/Loading";
+import UserAllListings from "../components/dashboard/UserAllListings";
 const Profile = () => {
   const { user } = useContext(AuthContext);
   const { id } = useParams();
@@ -49,12 +50,17 @@ const Profile = () => {
         </button>
       </div>
     );
-
   const isOwner = user?._id.toString() == id;
   return (
     <section className="min-h-screen pt-[12dvh] md:px-5 bg-brand-100 text-text-primary">
       <ProfileHeader user={profileUser} isOwner={isOwner} />
-      
+      {userAllListings  && (
+        <UserAllListings
+          listings={userAllListings}
+          isOwner={isOwner}
+          user={user}
+        />
+      )}
     </section>
   );
 };

@@ -2,6 +2,7 @@ const listingModel = require("../../models/space.model");
 const notificationModel = require("../../models/user/notification.model");
 const userModel = require("../../models/user/user.model");
 const ratingModel = require("../../models/user/rating.model");
+const spaceModel = require("../../models/space.model");
 
 async function findUserByEmail(email) {
     const user = await userModel.findOne({ email });
@@ -23,7 +24,7 @@ async function createUser(userData) {
  */
 async function getUserAllListingsService(userId) {
     try {
-        const listings = await listingModel.find({ owner: userId });
+        const listings = await spaceModel.find({ owner: userId }).populate({ path: "owner", select: "username profilePicture rating" }).lean();
         return listings;
     } catch (error) {
         console.log("Error fetching user listings:", error);

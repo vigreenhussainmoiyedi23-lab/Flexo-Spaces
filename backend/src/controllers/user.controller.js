@@ -7,6 +7,8 @@ const { getUserAllListingsService, getUserAllDataService, getNotificationService
 async function GetUserListingsHandler(req, res) {
     const { userId } = req.params;
     try {
+        const user = await userModel.findById(userId)
+        if (user.role === "user") return res.status(403).json({ message: "User must be a space owner", success: false });
         const listings = await getUserAllListingsService(userId);
         res.status(200).json({ listings, message: "Listings fetched successfully", success: true });
     } catch (error) {

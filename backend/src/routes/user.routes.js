@@ -5,7 +5,7 @@ const upload = require("../config/multer.js")
 const router = Router()
 
 router.get("/data/:userId", GetUserDataHandler)
-router.get("/listings/:userId", GetUserListingsHandler)
+router.get("/spaces/:userId", GetUserListingsHandler)
 router.get("/ratings/:userId", GetUserRatingHandler)
 router.get("/notifications", isAuthenticated, GetNotificationsHandler)
 // router.get("/recentSwaps/:owner", GetRecentSwapsHandler)

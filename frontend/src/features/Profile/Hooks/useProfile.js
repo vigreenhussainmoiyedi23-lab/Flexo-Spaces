@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { getRecentSwaps, getUserAllListings, getUserAllRatings, getUserData, updateProfile } from "../services/profile.api"
+import { getRecentSwaps, getUserAllRatings, getUserAllSpaces, getUserData, updateProfile } from "../services/profile.api"
 import { ProfileContext } from "../profile.context";
 import { useEffect } from "react";
 import { showLoadingToast, updateToast } from "../../../utils/Toastify.util";
@@ -20,11 +20,12 @@ export const useProfile = () => {
     const fetchUserAllListings = async (userId) => {
         setLoading(true)
         try {
-            const response = await getUserAllListings(userId);
+            const response = await getUserAllSpaces(userId);
+            console.log(response , "response from user spaces")
             setUserAllListings(response?.listings)
             return response
         } catch (error) {
-            console.error('Error fetching user listings:', error);
+            console.error('Error fetching user spaces:', error);
             throw error;
         } finally {
             setLoading(false)

@@ -33,6 +33,7 @@ async function GetAllSpacesHandler(req, res) {
     }
 }
 
+
 async function GetSpaceByIdHandler(req, res) {
     const { id } = req.params;
     try {
@@ -133,5 +134,5 @@ module.exports = {
     GetAllSpacesHandler,
     GetSpaceByIdHandler,
     UpdateListingByIdHandler,
-    DeleteSpaceByIdHandler
+    DeleteSpaceByIdHandler,
 }
