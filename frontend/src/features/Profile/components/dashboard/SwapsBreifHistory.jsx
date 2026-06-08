@@ -5,25 +5,26 @@ const SwapsBreifHistory = ({ user }) => {
     return null;
   }
   const succesRate =
-    ((user.totalSwaps - user.totalCanceled) / user.totalSwaps) * 100 || 100;
+    ((user.totalBookings - user.totalCanceled) / user.totalBookings) * 100 ||
+    100;
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid rounded-2xl border my-3 border-black/50 grid-cols-2 lg:grid-cols-4 gap-6 bg-white px-3 py-2">
       {/* Stats */}
       {[
-        { label: "Total Swaps Completed", value: user.totalSwaps },
-        { label: "Cancelled", value: user.totalCanceled },
+        { label: "Total Bookings", value: user.totalBookings || 0 },
+        { label: "Cancelled", value: user.totalCanceled || 0 },
         {
-          label: "Success Rate",
-          value: succesRate.toFixed(2) + "%",
+          label: "Total Completed",
+          value: user.toatalCompleted || 0,
         },
         { label: "Rating", value: user.rating },
       ].map((item) => (
         <div
           key={item.label}
-          className="bg-white/5 border border-white/10 rounded-xl p-5"
+          className="bg-gray-50 border border-black/50 rounded-xl p-5"
         >
-          <p className="text-gray-400 text-sm">{item.label}</p>
-          <h3 className="text-xl mt-2">{item.value}</h3>
+          <p className="text-text-secondary text-sm">{item.label}</p>
+          <h3 className="text-xl text-text-primary mt-2">{item.value}</h3>
         </div>
       ))}
     </div>

@@ -70,9 +70,9 @@ const EditProfile = () => {
     }));
   }, [user]);
   return (
-    <div className="min-h-screen bg-brand-900 flex items-center justify-center px-4">
-      <div className="w-full max-w-xl bg-brand-800 rounded-2xl shadow-lg p-6">
-        <h2 className="text-2xl font-semibold text-white mb-6">Edit Profile</h2>
+    <div className="min-h-screen pt-[10vh]  flex items-center justify-center px-4">
+      <div className="w-full max-w-xl bg-white rounded-2xl shadow-lg p-6">
+        <h2 className="text-2xl font-semibold text-text-primary mb-6">Edit Profile</h2>
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* PROFILE IMAGE */}
@@ -100,10 +100,10 @@ const EditProfile = () => {
             {/* File Input (single file only) */}
             <label
               htmlFor="profilePicture"
-              className="bg-accent-500 w-20 h-20 items-center flex flex-col rounded-lg text-center"
+              className="bg-brand-100 w-20 h-20 items-center flex flex-col rounded-lg text-center"
             >
               <UploadIcon className="w-full h-full px-3" />
-              <p className="text-xs source-code-pro w-full text-white ">
+              <p className="text-xs exo-2 w-full text-text-secondary ">
                 Upload An Image
               </p>
             </label>
@@ -119,33 +119,33 @@ const EditProfile = () => {
 
           {/* Username */}
           <div>
-            <label className="text-sm text-brand-300">Username</label>
+            <label className="text-sm text-text-primary bg-white">Username</label>
             <input
               type="text"
               name="username"
               value={form.username}
               required
               onChange={handleChange}
-              className="w-full mt-1 px-3 py-2 rounded-lg bg-brand-700 text-white outline-none"
+              className="w-full mt-1 px-3 py-2 rounded-lg bg-brand-700 text-text-primary border-brand-200 border outline-none"
             />
           </div>
 
           {/* Bio */}
           <div>
-            <label className="text-sm text-brand-300">Bio</label>
+            <label className="text-sm text-text-primary">Bio</label>
             <textarea
               name="bio"
               value={form.bio}
               required
               onChange={handleChange}
               rows={3}
-              className="w-full mt-1 px-3 py-2 rounded-lg bg-brand-700 text-white outline-none resize-none"
+              className="w-full mt-1 px-3 py-2 rounded-lg bg-brand-700 text-text-primary border-brand-200 border outline-none resize-none"
             />
           </div>
 
           {/* Phone */}
           <div>
-            <label className="text-sm text-brand-300">Phone Number</label>
+            <label className="text-sm text-text-primary">Phone Number</label>
             <input
               type="number"
               min={1000000000}
@@ -154,16 +154,16 @@ const EditProfile = () => {
               name="phoneNumber"
               value={form.phoneNumber}
               onChange={handleChange}
-              className="w-full mt-1 px-3 py-2 rounded-lg bg-brand-700 text-white outline-none"
+              className="w-full mt-1 px-3 py-2 rounded-lg bg-brand-700 text-text-primary border-brand-200 border outline-none"
             />
           </div>
 
           {/* Submit */}
           <button
             type="submit"
-            className="w-full py-2 rounded-lg bg-brand-500 hover:bg-brand-600 text-white font-medium transition"
+            className="w-full py-2 rounded-lg bg-brand-500 hover:bg-brand-600 text-text-primary border-brand-200 border font-medium transition"
           >
-            Save Changes
+            Save Changes  
           </button>
         </form>
       </div>

@@ -55,7 +55,7 @@ async function createBookingService({ user, spaceId, fromDateTime, toDateTime, s
          workspaceSnapshot,
          pricing: { finalPrice }
       })
-
+    
       return {
          success: true,
          booking,

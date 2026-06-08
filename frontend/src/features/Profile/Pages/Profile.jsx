@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import ProfileHeader from "../components/dashboard/ProfileHeader";
 import Loader from "../../commonComponents/Loading";
 import UserAllListings from "../components/dashboard/UserAllListings";
+import SwapsBreifHistory from "../components/dashboard/SwapsBreifHistory";
 const Profile = () => {
   const { user } = useContext(AuthContext);
   const { id } = useParams();
@@ -54,7 +55,8 @@ const Profile = () => {
   return (
     <section className="min-h-screen pt-[12dvh] md:px-5 bg-brand-100 text-text-primary">
       <ProfileHeader user={profileUser} isOwner={isOwner} />
-      {userAllListings  && (
+      <SwapsBreifHistory user={profileUser} />
+      {userAllListings && (
         <UserAllListings
           listings={userAllListings}
           isOwner={isOwner}

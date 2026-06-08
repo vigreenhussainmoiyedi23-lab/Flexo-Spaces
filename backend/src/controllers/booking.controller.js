@@ -76,7 +76,11 @@ async function createBookingHandler(req, res) {
             totalCapacitySnapshot: space.capacity,
             remainingCapacitySnapshot: availability.availableSeats - selectedSeats
         })
-
+        user.totalBookings += 1;
+        await user.save();
+        await userModel.findByIdAndUpdate(space.owner, {
+            $inc: { totalBookings: 1 }
+        });
 
         await agenda.schedule("in 24 hours", "expire booking", { bookingId: response.booking._id })
         res.status(201).json({
@@ -552,7 +556,7 @@ async function cancelBookingHandler(req, res) {
         booking.cancellation = {
             cancelledBy: user,
             cancelledAt: new Date(),
-            reason: req.body.reason,
+            reason: req.body.reason || "No reason provided",
         }
         await booking.save()
         await userModel.findByIdAndUpdate(user, {

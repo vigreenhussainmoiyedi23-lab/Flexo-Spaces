@@ -55,7 +55,11 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    totalSwaps: {
+    totalBookings: {
+        type: Number,
+        default: 0
+    },
+    totalCompleted: {
         type: Number,
         default: 0
     },
