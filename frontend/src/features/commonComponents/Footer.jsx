@@ -2,69 +2,95 @@ import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <footer className="bg-[#0a140f] border-t border-white/10 ">
-      <div className="max-w-6xl mx-auto px-6 py-12">
+    <footer className="bg-text-primary text-white border-t border-brand-100/10">
+      <div className="max-w-7xl mx-auto px-6 py-12">
         {/* TOP SECTION */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand */}
-          <div>
-            <h2 className="text-xl font-semibold text-white">SwapStyle</h2>
-            <p className="text-gray-400 text-sm mt-3 leading-relaxed">
-              A sustainable fashion marketplace where users swap clothes, save
-              money, and reduce waste.
+          <div className="md:col-span-2">
+            <h2 className="text-2xl font-bold text-brand-100">
+              Flexo Spaces
+            </h2>
+
+            <p className="text-brand-100/70 text-sm mt-4 leading-relaxed max-w-md">
+              Discover, compare, and book modern coworking spaces, private
+              offices, meeting rooms, and flexible workspaces tailored to your
+              team's needs.
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-white font-medium mb-3">Quick Links</h3>
-            <div className="flex flex-col gap-2 text-sm text-gray-400">
-              <Link to="/listings" className="hover:text-white transition">
-                Browse Listings
+            <h3 className="font-semibold text-brand-100 mb-4">
+              Quick Links
+            </h3>
+
+            <div className="flex flex-col gap-2 text-sm text-brand-100/70">
+              <Link
+                to="/spaces"
+                className="hover:text-white transition-colors"
+              >
+                Browse Spaces
               </Link>
-              <Link to="/createListing" className="hover:text-white transition">
-                Create Listing
+
+              <Link
+                to="/createSpace"
+                className="hover:text-white transition-colors"
+              >
+                List Your Space
               </Link>
-              <Link to="/swaps" className="hover:text-white transition">
-                My Swaps
+
+              <Link
+                to="/bookings"
+                className="hover:text-white transition-colors"
+              >
+                My Bookings
               </Link>
-              <Link to="/chats" className="hover:text-white transition">
-                Messages
+
+              <Link
+                to="/dashboard"
+                className="hover:text-white transition-colors"
+              >
+                Dashboard
               </Link>
             </div>
           </div>
 
-          {/* Auth / CTA */}
+          {/* CTA */}
           <div>
-            <h3 className="text-white font-medium mb-3">Get Started</h3>
+            <h3 className="font-semibold text-brand-100 mb-4">
+              Get Started
+            </h3>
 
             <div className="flex flex-col gap-3">
               <Link
-                to="/register"
-                className="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white text-sm rounded-lg text-center transition"
+                to="/spaces"
+                className="px-4 py-2 bg-brand-100 text-text-primary font-medium rounded-lg text-center hover:opacity-90 transition"
               >
-                Join Now
+                Find a Workspace
               </Link>
 
               <Link
-                to="/listings"
-                className="px-4 py-2 border border-white/20 text-white text-sm rounded-lg text-center hover:bg-white/10 transition"
+                to="/register"
+                className="px-4 py-2 border border-brand-100/20 rounded-lg text-center hover:bg-brand-100/10 transition"
               >
-                Explore Listings
+                Join Flexo
               </Link>
             </div>
           </div>
         </div>
 
         {/* DIVIDER */}
-        <div className="border-t border-white/10 my-8"></div>
+        <div className="border-t border-brand-100/10 my-8"></div>
 
-        {/* BOTTOM SECTION */}
-        <div className="flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 gap-3">
-          <p>© {new Date().getFullYear()} SwapStyle. All rights reserved.</p>
+        {/* BOTTOM */}
+        <div className="flex flex-col md:flex-row justify-between items-center gap-3 text-sm text-brand-100/60">
+          <p>
+            © {new Date().getFullYear()} Flexo Spaces. All rights reserved.
+          </p>
 
           <p className="text-center md:text-right">
-            Swap clothes • Save money • Save the planet 🌿
+            Work smarter • Discover better spaces • Grow together 🚀
           </p>
         </div>
       </div>
