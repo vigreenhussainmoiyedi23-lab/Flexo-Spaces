@@ -11,6 +11,7 @@ import ChatContextProvider from "./features/chats/chat.context.jsx";
 import AdminContextProvider from "./features/admin/admin.context.jsx";
 import NotificationProvider from "./features/notifications/notification.context.jsx";
 import BookingContextProvider from "./features/bookings/booking.context.jsx";
+import { OwnerDashboardContextProvider } from "./features/ownerDashboard/ownerDashboard.context.jsx";
 
 createRoot(document.getElementById("root")).render(
   <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
@@ -21,7 +22,9 @@ createRoot(document.getElementById("root")).render(
             <ChatContextProvider>
               <AdminContextProvider>
                 <NotificationProvider>
+                  <OwnerDashboardContextProvider>
                     <App />
+                  </OwnerDashboardContextProvider>
                 </NotificationProvider>
               </AdminContextProvider>
             </ChatContextProvider>

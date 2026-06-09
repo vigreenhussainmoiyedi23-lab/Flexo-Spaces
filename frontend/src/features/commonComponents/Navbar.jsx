@@ -31,12 +31,14 @@ const Navbar = ({ user }) => {
             >
               Bookings
             </Link>
-            {/* <Link
-              to="/chats"
-              className="hover:text-emerald-400 transition-colors"
-            >
-              Chats
-            </Link> */}
+            {user.role == "workspace_owner" && (
+              <Link
+                to="/dashboard"
+                className="hover:text-emerald-400 transition-colors"
+              >
+                Dashboard
+              </Link>
+            )}
           </div>
         )}
 

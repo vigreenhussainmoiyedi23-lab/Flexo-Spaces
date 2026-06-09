@@ -9,6 +9,7 @@ const swapRouter = require("./routes/booking.routes")
 const userRouter = require("./routes/user.routes")
 const chatRouter = require("./routes/chat.routes")
 const AdminRouter = require("./routes/admin.routes")
+const ownerRouter = require("./routes/ownerDashboard.routes")
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
@@ -22,6 +23,7 @@ app.use("/api/booking", swapRouter)
 app.use("/api/user", userRouter)
 app.use("/api/chat", chatRouter)
 app.use("/api/admin", AdminRouter)
+app.use("/api/owner-dashboard", ownerRouter)
 
 // ✅ serve frontend
 const distPath = path.join(__dirname, "../public")

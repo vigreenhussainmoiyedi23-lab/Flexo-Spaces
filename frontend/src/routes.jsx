@@ -21,6 +21,7 @@ import ListingsAdmin from "./features/admin/pages/Listings";
 import Notification from "./features/notifications/Pages/Notification";
 import EditProfile from "./features/Profile/Pages/EditpROFILE.JSX";
 import CreateBooking from "./features/bookings/Pages/CreateBooking";
+import OwnerDashboard from "./features/ownerDashboard/pages/OwnerDashboard";
 
 const Approutes = () => {
   return (
@@ -96,6 +97,14 @@ const Approutes = () => {
             <NormalLayout>
               <Profile />
             </NormalLayout>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedLayout>
+              <OwnerDashboard />
+            </ProtectedLayout>
           }
         />
         <Route
