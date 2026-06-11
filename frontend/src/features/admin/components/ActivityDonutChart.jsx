@@ -9,10 +9,8 @@ import {
 } from "recharts";
 
 const COLORS = [
-  "var(--color-accent-500)",
-  "var(--color-brand-500)",
-  "var(--color-brand-400)",
-  "var(--color-brand-300)",
+  "var(--color-brand-200)",
+  "var(--color-brand-100)",
 ];
 
 const CustomTooltip = ({ active, payload }) => {
@@ -34,15 +32,13 @@ export default function ActivityDonutChart({ totals }) {
     return [
       { name: "User Logins", value: safe(totals?.users) },
       { name: "Listing Uploads", value: safe(totals?.listings) },
-      { name: "Swap Requests", value: safe(totals?.swaps) },
-      { name: "Disputes", value: safe(totals?.disputes) },
     ];
   }, [totals]);
 
   const totalValue = data.reduce((acc, cur) => acc + (cur.value || 0), 0);
 
   return (
-    <div className="bg-brand-800 p-6 rounded-xl border border-white/10 shadow-lg shadow-black/30">
+    <div className="bg-text-primary p-6 rounded-xl border border-white/10 shadow-lg shadow-black/30">
       <div className="flex items-center justify-between gap-4 mb-4">
         <div>
           <h2 className="playfair text-xl text-white">Activity Distribution</h2>
@@ -52,7 +48,7 @@ export default function ActivityDonutChart({ totals }) {
         </div>
 
         <div className="px-3 py-2 rounded-xl bg-accent-500/15 border border-accent-500/25">
-          <p className="text-accent-500 text-sm font-semibold">Total</p>
+          <p className="text-brand-100 text-sm font-semibold">Total</p>
           <p className="text-white font-semibold">{totalValue}</p>
         </div>
       </div>

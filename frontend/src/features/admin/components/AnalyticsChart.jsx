@@ -12,7 +12,7 @@ import {
 
 export default function AnalyticsChart({ data, dataKey, title }) {
   return (
-    <div className="bg-brand-800 lg:p-5 p-0 rounded text-brand-500">
+    <div className="bg-text-primary  lg:p-5 p-0 rounded-xl   text-brand-500">
       <h2 className="playfair text-xl mb-4 text-white">{title}</h2>
 
       <ResponsiveContainer width="100%" height={250}>
@@ -22,21 +22,23 @@ export default function AnalyticsChart({ data, dataKey, title }) {
         >
           <CartesianGrid
             strokeDasharray="4 4"
-            stroke="var(--color-accent-500)"
+            stroke="white"
           />
 
-          <XAxis dataKey="date" stroke="var(--color-accent-500)" />
-          <YAxis dataKey="count" stroke="var(--color-accent-500)" />
+          <XAxis dataKey="date" stroke="white" />
+          <YAxis dataKey="count" stroke="white" />
 
-          <Tooltip />
+          <Tooltip 
+          
+          />
 
           <Line
             type="monotone"
             dataKey="count"
-            stroke="var(--color-accent-500)"
+            stroke="white"
             strokeWidth={3}
             dot={{ r: 4, stroke: "#fff" }}
-            activeDot={{ stroke: "var(--color-accent-500)" }}
+            activeDot={{ stroke: "var(--color-brand-100)" }}
           />
         </LineChart>
       </ResponsiveContainer>

@@ -2,71 +2,75 @@ import { Link } from "react-router-dom";
 
 const FooterCTA = () => {
   return (
-    <div className="w-full bg-brand-900 px-4 py-16">
-
-      {/* Card */}
-      <div className="max-w-5xl mx-auto relative overflow-hidden rounded-xl border border-white/10 bg-white/5 p-10 md:p-14 shadow-lg shadow-black/30">
-
-        {/* subtle glow background */}
-        <div className="absolute -top-20 -right-20 w-72 h-72 bg-accent-500/10 blur-3xl rounded-full" />
-        <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-brand-500/20 blur-3xl rounded-full" />
-
-        {/* Content */}
-        <div className="relative text-center">
-
+    <div className="w-full  px-4 py-16">
+      <div className="max-w-5xl bg-text-primary mx-auto overflow-hidden rounded-xl border border-white/10  p-10 md:p-14 shadow-lg shadow-black/30">
+        <div className="text-center ">
           {/* Trust badge */}
           <p className="text-xs uppercase tracking-widest text-brand-300 mb-3">
-            Sustainable Fashion Marketplace
+            Smart Workspace Discovery Platform
           </p>
 
           {/* Heading */}
           <h2 className="text-2xl md:text-4xl font-semibold text-white leading-snug">
-            Don’t let unused clothes sit idle —
+            Find the workspace that
             <br />
-            turn them into swaps, value, and new styles
+            powers your next big idea
           </h2>
 
           {/* Subtext */}
-          <p className="text-brand-200 mt-4 text-sm md:text-base max-w-2xl mx-auto">
-            Every listing on SwapStyle helps reduce waste and gives your wardrobe a second life.
-            Join users already swapping instead of buying new.
+          <p className="text-brand-100 mt-4 text-sm md:text-base max-w-2xl mx-auto">
+            Discover flexible workspaces, private offices, and collaborative
+            environments designed for productivity. Whether you're a freelancer,
+            startup, or growing team, Flexo Spaces helps you find the perfect
+            place to work.
           </p>
 
           {/* Stats row */}
-          <div className="flex justify-center gap-8 mt-8 text-sm text-brand-200">
+          <div className="flex flex-col md:flex-row justify-center gap-8 mt-8 text-sm">
             <div>
-              <p className="text-white text-lg font-semibold">Secure swaps</p>
-              <p className="text-brand-300">End-to-end workflow</p>
+              <p className="text-white text-lg font-semibold">
+                Smart Matching
+              </p>
+              <p className="text-brand-300">
+                Personalized recommendations
+              </p>
             </div>
+
             <div>
-              <p className="text-white text-lg font-semibold">Real-time chat</p>
-              <p className="text-brand-300">Negotiate instantly</p>
+              <p className="text-white text-lg font-semibold">
+                Verified Spaces
+              </p>
+              <p className="text-brand-300">
+                Detailed workspace listings
+              </p>
             </div>
+
             <div>
-              <p className="text-white text-lg font-semibold">Smarter listings</p>
-              <p className="text-brand-300">AI valuation support</p>
+              <p className="text-white text-lg font-semibold">
+                Easy Booking
+              </p>
+              <p className="text-brand-300">
+                Reserve in just a few clicks
+              </p>
             </div>
           </div>
 
           {/* Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mt-10">
-
             <Link
-              to="/listings"
-              className="px-6 py-3 rounded-xl bg-accent-500 hover:bg-accent-400 active:bg-accent-300 text-brand-900 font-semibold transition-colors shadow-lg shadow-black/30"
+              to="/spaces"
+              className="px-6 py-3 rounded-xl bg-brand-200 hover:bg-brand-200/90 active:scale-98 text-brand-900 font-semibold transition-colors shadow-lg shadow-black/30"
             >
-              Start Swapping
+              Explore Spaces
             </Link>
 
             <Link
-              to="/register"
+              to="/register/workspace_owner"
               className="px-6 py-3 rounded-xl border border-white/15 text-white font-medium hover:bg-white/10 transition"
             >
-              Create Account
+              List Your Space
             </Link>
-
           </div>
-
         </div>
       </div>
     </div>

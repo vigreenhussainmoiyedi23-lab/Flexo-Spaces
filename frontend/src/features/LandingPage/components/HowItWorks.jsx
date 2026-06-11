@@ -1,8 +1,12 @@
 import {
+  Briefcase,
+  Building2,
+  CalendarCheck,
   Handshake,
   MessageSquare,
   Search,
   Shield,
+  Sparkles,
   Tag,
   UserPlus,
 } from "lucide-react";
@@ -14,41 +18,38 @@ const HowItWorks = () => {
   const steps = [
     {
       title: "Create Your Account",
-      desc: "Sign up or log in to get started.",
+      desc: "Sign up and set up your profile in minutes.",
       icon: <UserPlus className="w-6 h-6" />,
     },
     {
-      title: "Add Your Listing",
-      desc: "List what you want to offer from your profile.",
-      icon: <Tag className="w-6 h-6" />,
-    },
-    {
-      title: "Discover Matches",
-      desc: "Browse listings and find items you like.",
+      title: "Search Workspaces",
+      desc: "Browse co-working spaces based on location, budget, and amenities.",
       icon: <Search className="w-6 h-6" />,
     },
     {
-      title: "Send a Swap Request",
-      desc: "Connect and request a swap with another user.",
-      icon: <Handshake className="w-6 h-6" />,
+      title: "Find Your Perfect Match",
+      desc: "Use smart recommendations to discover spaces that fit your needs.",
+      icon: <Sparkles className="w-6 h-6" />,
     },
     {
-      title: "Negotiate & Finalize",
-      desc: "Agree on terms and complete the exchange.",
-      icon: <MessageSquare className="w-6 h-6" />,
+      title: "View Space Details",
+      desc: "Explore photos, facilities, pricing, and workspace information.",
+      icon: <Building2 className="w-6 h-6" />,
     },
     {
-      title: "Resolve Issues (If Needed)",
-      desc: "Raise a dispute and get fair support anytime.",
-      icon: <Shield className="w-6 h-6" />,
+      title: "Book Your Workspace",
+      desc: "Reserve your preferred space quickly and securely.",
+      icon: <CalendarCheck className="w-6 h-6" />,
+    },
+    {
+      title: "Start Working",
+      desc: "Check in and enjoy a productive work environment.",
+      icon: <Briefcase className="w-6 h-6" />,
     },
   ];
 
   return (
-    <section
-      id="how"
-      className="py-24 bg-brand-900 relative"
-    >
+    <section id="how" className="py-24 bg-brand-100 relative">
       <div className="max-w-6xl mx-auto px-6">
         {/* Heading */}
         <div className="text-center mb-20">
@@ -65,7 +66,7 @@ const HowItWorks = () => {
         {/* Timeline line (progress) */}
         <motion.div
           style={{ scaleY: lineScale, transformOrigin: "top" }}
-          className="absolute lg:left-1/2 left-2 top-44 bottom-20 w-0.5 bg-accent-500/60 lg:block"
+          className="absolute lg:left-1/2 left-2 top-44 bottom-20 w-0.5 bg-text-primary lg:block"
         />
 
         {/* Steps */}
@@ -85,14 +86,14 @@ const HowItWorks = () => {
               <motion.div
                 whileHover={{ y: -4 }}
                 transition={{ type: "spring", stiffness: 260, damping: 22 }}
-                className="flex-1 w-full max-w-xl bg-brand-800 border border-white/10 hover:border-accent-500/40 rounded-xl p-8 shadow-sm shadow-black/20"
+                className="flex-1 w-full max-w-xl bg-text-primary border border-white/10 hover:border-accent-500/40 rounded-xl p-8 shadow-sm shadow-black/20"
               >
                 <div className="flex items-center source-code-pro gap-4 mb-4">
-                  <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-accent-500/15 text-accent-500">
+                  <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-accent-500/15 text-white">
                     {step.icon}
                   </div>
 
-                  <span className="text-sm text-accent-500 font-semibold">
+                  <span className="text-sm text-brand-500 font-semibold">
                     STEP {i + 1}
                   </span>
                 </div>

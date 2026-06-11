@@ -13,7 +13,7 @@ export default function Navbar() {
   ];
   
   return (
-    <div className="bg-brand-900 border-b border-accent-500 p-4 lg:hidden flex justify-between items-center">
+    <div className="bg-text-primary border-b border-accent-500 p-4 lg:hidden flex justify-between items-center">
       <h2 className="playfair text-xl">Admin Dashboard</h2>
 
       <button
@@ -31,7 +31,7 @@ export default function Navbar() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }} // 👈 exit animation
             transition={{ duration: 0.3 }}
-            className="bg-brand-900 flex flex-col items-center justify-center gap-4 absolute z-20 top-0 left-0 right-0 bottom-0"
+            className="bg-text-secondary flex flex-col items-center justify-center gap-4 absolute z-20 top-0 left-0 right-0 bottom-0"
           >
             <button
               onClick={() => setIsOpen(false)}

@@ -1,7 +1,7 @@
 const redis = require("../config/cache")
 const userModel = require("../models/user/user.model")
-const listingModel = require("../models/space.model.js")
 const { GeneratePlatformInsight } = require("../services/ai/PlatformSummary.service.js")
+const spaceModel = require("../models/space.model.js")
 
 
 /**
@@ -48,13 +48,13 @@ async function GetAllListingsHandler(req, res) {
         if (category) query.category = category
         if (status) query.status = status
 
-        const listings = await listingModel
+        const listings = await spaceModel
             .find(query)
             .skip((page - 1) * limit)
             .limit(Number(limit))
             .sort({ createdAt: -1 })
 
-        const total = await listingModel.countDocuments(query)
+        const total = await spaceModel.countDocuments(query)
 
         res.json({ success: true, listings, total })
     } catch (err) {
@@ -65,7 +65,7 @@ async function GetAllListingsHandler(req, res) {
 
 async function GetPlatformOverviewHandler(req, res) {
     try {
-        const cacheKey = "SWAPSTYLE:analytics:overview"
+        const cacheKey = "FLEXOSPACES:analytics:overview"
 
         const cached = await redis.get(cacheKey)
         if (cached) {
@@ -121,26 +121,26 @@ async function GetPlatformOverviewHandler(req, res) {
         // 🔥 run all in parallel
         const [
             totalUsers,
-            totalListings,
+            totalSpaces,
 
             usersDaily,
-            listingsDaily,
+            spacesDaily,
         ] = await Promise.all([
             userModel.countDocuments(),
-            listingModel.countDocuments(),
+            spaceModel.countDocuments(),
 
             getDailyData(userModel),
-            getDailyData(listingModel),
+            getDailyData(spaceModel),
         ])
 
         const data = {
             totals: {
                 users: totalUsers,
-                listings: totalListings,
+                spaces: totalSpaces,
             },
             daily: {
                 users: usersDaily,
-                listings: listingsDaily,
+                spaces: spacesDaily,
             }
         }
         const insight = await GeneratePlatformInsight(data)
@@ -187,7 +187,7 @@ async function RemoveOrRestoreListingHandler(req, res) {
     try {
         const { listingId } = req.params
 
-        const listing = await listingModel.findById(listingId)
+        const listing = await spaceModel.findById(listingId)
         if (!listing) return res.status(404).json({ message: "Listing not found" })
 
         listing.isRemoved = !listing.isRemoved

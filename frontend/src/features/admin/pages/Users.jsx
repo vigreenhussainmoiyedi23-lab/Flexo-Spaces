@@ -18,14 +18,14 @@ export default function Users() {
     <div>
       <h1 className="playfair text-3xl mb-6">Users</h1>
 
-      <div className="p-4 rounded flex bg-brand-800 flex-col gap-3 text-black">
+      <div className="p-4 rounded flex bg-text-secondary flex-col gap-3 text-black">
         {users.map((user) => (
           <div
             key={user.id}
-            className="flex bg-accent-500 rounded-lg  justify-between p-3 border-b"
+            className="flex bg-text-primary rounded-lg  justify-between p-3 border-b"
           >
             <div>
-              <p className="montserrat">{user.username}</p>
+              <p className="shanti text-white">{user.username}</p>
               <p className="text-sm text-gray-500">{user.email}</p>
             </div>
 

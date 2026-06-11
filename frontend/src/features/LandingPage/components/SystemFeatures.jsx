@@ -1,38 +1,38 @@
-import { Shield, MessageCircle, Search, Zap, Lock, Brain } from "lucide-react";
+import { Shield, Search, BarChart3, CalendarCheck, Building2, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 
 const SystemFeatures = () => {
   const features = [
     {
-      icon: <Shield className="w-6 h-6" />,
-      title: "Secure Authentication",
-      desc: "JWT + Google OAuth + Redis session management"
-    },
-    {
-      icon: <MessageCircle className="w-6 h-6" />,
-      title: "Real-time Chat",
-      desc: "Socket.IO messaging with room-based architecture"
-    },
-    {
       icon: <Search className="w-6 h-6" />,
-      title: "Smart Search",
-      desc: "Geographic filtering + advanced search options"
+      title: "Smart Workspace Discovery",
+      desc: "Find spaces based on location, budget, capacity, and amenities.",
     },
     {
-      icon: <Brain className="w-6 h-6" />,
-      title: "AI Valuation",
-      desc: "Google Gemini integration for fair pricing"
+      icon: <Sparkles className="w-6 h-6" />,
+      title: "Personalized Recommendations",
+      desc: "Get workspace suggestions tailored to your requirements.",
     },
     {
-      icon: <Zap className="w-6 h-6" />,
-      title: "Complete Swap System",
-      desc: "Full lifecycle: request → accept → complete"
+      icon: <Building2 className="w-6 h-6" />,
+      title: "Verified Workspaces",
+      desc: "Explore detailed listings with photos and facility information.",
     },
     {
-      icon: <Lock className="w-6 h-6" />,
-      title: "Enterprise Security",
-      desc: "Input validation + rate limiting + helmet.js"
-    }
+      icon: <CalendarCheck className="w-6 h-6" />,
+      title: "Seamless Booking",
+      desc: "Reserve workspaces quickly with a smooth booking experience.",
+    },
+    {
+      icon: <BarChart3 className="w-6 h-6" />,
+      title: "Owner Dashboard",
+      desc: "Track bookings, manage listings, and monitor workspace performance.",
+    },
+    {
+      icon: <Shield className="w-6 h-6" />,
+      title: "Secure Platform",
+      desc: "Protected accounts, reliable bookings, and trusted interactions.",
+    },
   ];
 
   return (
@@ -57,13 +57,11 @@ const SystemFeatures = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.25 }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="bg-brand-800 border border-white/10 hover:border-accent-500/40 rounded-xl p-6 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-black/30 w-full"
+              className="bg-text-secondary border border-white/10 hover:border-accent-500/40 rounded-xl p-6 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-black/30 w-full"
             >
               {/* Icon */}
               <div className="w-12 h-12 mx-auto mb-4 bg-accent-500/15 rounded-xl flex items-center justify-center">
-                <div className="text-accent-500">
-                  {feature.icon}
-                </div>
+                <div className="text-white">{feature.icon}</div>
               </div>
 
               {/* Content */}

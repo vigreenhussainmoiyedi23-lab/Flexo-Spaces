@@ -5,11 +5,10 @@ export default function Sidebar() {
     { name: "Dashboard", path: "/admin" },
     { name: "Users", path: "/admin/users" },
     { name: "Listings", path: "/admin/listings" },
-    { name: "Disputes", path: "/admin/disputes" },
   ];
 
   return (
-    <div className="w-64 bg-brand-900 border-accent-500 border-r p-5 hidden lg:block">
+    <div className="w-64 bg-text-secondary border-accent-500 border-r p-5 hidden lg:block">
       <h1 className="playfair text-2xl mb-6 ">
         Admin Panel
       </h1>
