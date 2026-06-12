@@ -78,7 +78,7 @@ const useBooking = () => {
                 type: "BOOKING_REQUEST",
                 title: "New Booking Request 🎉",
                 message: "You Have received a new booking request.",
-                link: `/bookings/${response.booking.id}`,
+                link: `/bookings`,
             });
             getBookingRequests({ filters });
             const update = updateToast(id, "Make Sure You Negotiate Before Shipping or Completing", "info")

@@ -146,8 +146,7 @@ const ProductCard = ({ item }) => {
       </Link>
 
       {/* ── Book CTA ──────────────────────────────────── */}
-      {user?._id.toString() !== item?.owner?._id.toString() &&
-        user.role == "user" && (
+      {user?._id.toString() !== item?.owner?._id.toString()  && (
           <div className="px-4 pb-4 w-full">
             <Link
               to={`/createBooking/${item._id}`}

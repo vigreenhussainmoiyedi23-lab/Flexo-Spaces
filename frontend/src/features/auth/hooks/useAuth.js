@@ -28,7 +28,7 @@ const useAuth = () => {
             const response = await Google({ credential,role });
             setUser(response.user);
             showToast("Logged in successfully with Google!", "success");
-            showToast("Create A Listing To Start Swapping!", "info");
+            showToast("Browse spaces!", "info");
             return response.user;
         } catch (error) {
             throw error;

@@ -76,8 +76,6 @@ async function createBookingHandler(req, res) {
             totalCapacitySnapshot: space.capacity,
             remainingCapacitySnapshot: availability.availableSeats - selectedSeats
         })
-        user.totalBookings += 1;
-        await user.save();
         await userModel.findByIdAndUpdate(space.owner, {
             $inc: { totalBookings: 1 }
         });
@@ -176,7 +174,7 @@ async function getUserBookingsHandler(req, res) {
             {
                 path: "space"
             },
-        ]).skip((page - 1) * limit).limit(limit).lean()
+        ]).skip((page - 1) * limit).limit(limit).sort({ createdAt: -1 }).lean()
         let totalBookings = await bookingModel.countDocuments(query)
         let totalPages = Math.ceil(totalBookings / limit)
 

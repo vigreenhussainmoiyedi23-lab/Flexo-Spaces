@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import useNotification from "../hook/useNotification";
+import Loader from "../../commonComponents/Loading";
 
 const Notification = () => {
   const {
@@ -18,9 +19,7 @@ const Notification = () => {
 
   if (loading) {
     return (
-      <div className="p-4 text-brand-100">
-        Loading notifications...
-      </div>
+     <Loader/>
     );
   }
 

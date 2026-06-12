@@ -6,6 +6,8 @@ import UserCTA from "./cta/UserCTA";
 import OwnerCTA from "./cta/OwnerCTA";
 import { Link } from "react-router-dom";
 export default function BookingGrid({ bookings }) {
+  console.log(bookings);
+
   const { user } = useAuth();
   return (
     <section
@@ -21,8 +23,11 @@ export default function BookingGrid({ bookings }) {
       {bookings.length === 0 && (
         <div className="col-span-4 w-full h-[90vh] flex flex-col items-center justify-center text-center text-gray-400">
           No bookings found
-          <Link to={"/spaces"} className="bg-brand-500 exo-2 text-text-primary p-2 rounded-full">
-          Browse Spaces To create Bookings
+          <Link
+            to={"/spaces"}
+            className="bg-brand-500 exo-2 text-text-primary p-2 rounded-full"
+          >
+            Browse Spaces To create Bookings
           </Link>
         </div>
       )}
@@ -31,7 +36,7 @@ export default function BookingGrid({ bookings }) {
           key={booking._id}
           booking={booking}
           cta={
-            user && user.role === "user" ? (
+            user && user._id.toString() === booking.bookedBy._id.toString() ? (
               <UserCTA status={booking.status} bookingId={booking._id} />
             ) : (
               <OwnerCTA status={booking.status} bookingId={booking._id} />
