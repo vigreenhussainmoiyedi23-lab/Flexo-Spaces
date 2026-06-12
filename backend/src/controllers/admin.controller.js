@@ -2,7 +2,7 @@ const redis = require("../config/cache")
 const userModel = require("../models/user/user.model")
 const { GeneratePlatformInsight } = require("../services/ai/PlatformSummary.service.js")
 const spaceModel = require("../models/space.model.js")
-
+const bookingModel = require("../models/booking/booking.model.js")
 
 /**
  * @query page, limit, search
@@ -122,31 +122,37 @@ async function GetPlatformOverviewHandler(req, res) {
         const [
             totalUsers,
             totalSpaces,
-
+            totalBookings,
             usersDaily,
             spacesDaily,
+            bookingsDaily
         ] = await Promise.all([
             userModel.countDocuments(),
             spaceModel.countDocuments(),
-
+            bookingModel.countDocuments(),
             getDailyData(userModel),
             getDailyData(spaceModel),
+            getDailyData(bookingModel),
         ])
 
         const data = {
             totals: {
                 users: totalUsers,
                 spaces: totalSpaces,
+                bookings: totalBookings,
             },
             daily: {
                 users: usersDaily,
                 spaces: spacesDaily,
+                bookings: bookingsDaily,
             }
         }
+        console.log(data);
         const insight = await GeneratePlatformInsight(data)
         data.insights = insight
         await redis.set(cacheKey, JSON.stringify(data), "EX", 100)
-
+        
+        console.log(data);
         res.status(200).json({
             success: true,
             source: "db",

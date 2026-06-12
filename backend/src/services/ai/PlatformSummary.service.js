@@ -4,78 +4,101 @@ const { generateTextContent } = require("../../utils/geminiAi.util");
 const generateFallbackInsight = ({ totals, daily }) => {
     const getTrend = (arr) => {
         if (!arr || arr.length < 2) return "stable";
-        const diff = arr[arr.length - 1] - arr[0];
-        if (diff > 0) return "growing";
-        if (diff < 0) return "declining";
+
+        const first = arr[0]?.count ?? arr[0];
+        const last = arr[arr.length - 1]?.count ?? arr[arr.length - 1];
+
+        if (last > first) return "growing";
+        if (last < first) return "declining";
         return "stable";
     };
 
     const userTrend = getTrend(daily.users);
-    const listingTrend = getTrend(daily.listings);
-    const swapTrend = getTrend(daily.swaps);
-    const disputeTrend = getTrend(daily.disputes);
+    const spaceTrend = getTrend(daily.spaces);
+    const bookingTrend = getTrend(daily.bookings);
 
-    const disputeRate = totals.swaps > 0
-        ? (totals.disputes / totals.swaps) * 100
-        : 0;
-
-    return `The platform shows ${userTrend} user activity with ${listingTrend} listings and ${swapTrend} swaps, indicating overall ${swapTrend === "growing" ? "positive momentum" : "moderate engagement"}. However, dispute levels are ${disputeTrend} with a dispute rate of ${disputeRate.toFixed(1)}%, suggesting ${disputeRate > 10 ? "potential trust or transaction issues" : "manageable operational risk"}. To improve platform performance, focus on increasing successful swaps through better matching, clearer listing quality, and improved user trust mechanisms such as ratings and verification.`;
+    return `Flexo Spaces currently has ${totals.users} users, ${totals.spaces} spaces, and ${totals.bookings} bookings. User growth is ${userTrend}, space growth is ${spaceTrend}, and booking activity is ${bookingTrend}. The platform appears ${
+        bookingTrend === "growing"
+            ? "healthy with increasing demand"
+            : "stable but still building traction"
+    }. The biggest opportunity is improving booking conversion by helping users discover relevant spaces faster and encouraging repeat bookings through a better user experience.`;
 };
 
 const GeneratePlatformInsight = async ({ totals, daily }) => {
     try {
         const prompt = `
-You are a senior SaaS analytics expert.
+You are a senior SaaS product analyst and startup growth consultant.
 
-You are analyzing a clothing exchange marketplace platform called SWAPSTYLE.
+You are analyzing FLEXO SPACES, a workspace booking marketplace where users discover and book coworking spaces, meeting rooms, private offices, and event venues.
 
-Your job is to generate a HIGH LEVEL BUSINESS INSIGHT based on platform metrics.
+Your goal is to generate a concise executive-level platform insight for the founder.
 
------------------------------------
-DATA
------------------------------------
+---
 
-TOTAL METRICS:
-- Users: ${totals.users}
-- Listings: ${totals.listings}
-- Swaps: ${totals.swaps}
-- Disputes: ${totals.disputes}
+## PLATFORM METRICS
 
-DAILY TREND SUMMARY (last 28 days):
+OVERVIEW:
+
+* Total Users: ${totals.users}
+* Total Spaces: ${totals.spaces}
+* Total Bookings: ${totals.bookings}
+
+LAST 28 DAYS TRENDS:
 Users: ${JSON.stringify(daily.users)}
-Listings: ${JSON.stringify(daily.listings)}
-Swaps: ${JSON.stringify(daily.swaps)}
-Disputes: ${JSON.stringify(daily.disputes)}
+Spaces: ${JSON.stringify(daily.spaces)}
+Bookings: ${JSON.stringify(daily.bookings)}
 
------------------------------------
-YOUR TASK
------------------------------------
 
-Analyze this platform and return:
 
-1. Overall platform health (1–2 lines)
-2. Growth insight (users/listings/swaps trend)
-3. Risk insight (disputes, drop-offs, or anomalies)
-4. One actionable recommendation for improvement
+## ANALYSIS REQUIREMENTS
 
------------------------------------
-RULES
------------------------------------
+Analyze:
 
-- Be concise (max 120–160 words)
-- No markdown
-- No bullet points
-- No JSON
-- No formatting
-- Only plain text
-- Think like a startup CTO or product analyst
+1. Overall platform health
 
------------------------------------
-OUTPUT
------------------------------------
+   * Is the marketplace growing, stable, or stagnating?
 
-Return ONLY the insight text.
+2. Supply vs Demand
+
+   * Compare growth of spaces and owners against bookings and users.
+   * Identify imbalance if supply is growing faster than demand or vice versa.
+
+3. Growth Signals
+
+   * Highlight positive momentum, adoption trends, or engagement patterns.
+
+4. Risks & Concerns
+
+   * Detect low booking activity, slow user growth, inactive supply, demand shortages, or unusual trends.
+
+5. Founder Recommendation
+
+   * Give ONE specific high-impact action the founder should prioritize next.
+
+---
+
+## WRITING STYLE
+
+* Sound like a Head of Product, Growth Lead, or Startup Advisor
+* Be data-driven
+* Avoid generic statements
+* Mention actual metrics when relevant
+* Focus on business impact
+* Maximum 180 words
+
+---
+
+## OUTPUT RULES
+
+Return ONLY plain text.
+No markdown.
+No bullet points.
+No numbering.
+No JSON.
+No headings.
+No formatting.
 `;
+
 
         const response = await generateTextContent(prompt);
 
