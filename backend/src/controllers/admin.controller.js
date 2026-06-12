@@ -40,6 +40,7 @@ async function GetAllUsersHandler(req, res) {
  * @query page, limit, category, status
  * @returns { listings, total }
  */
+
 async function GetAllListingsHandler(req, res) {
     try {
         const { page = 1, limit = 10, category, status } = req.query
@@ -147,12 +148,10 @@ async function GetPlatformOverviewHandler(req, res) {
                 bookings: bookingsDaily,
             }
         }
-        console.log(data);
         const insight = await GeneratePlatformInsight(data)
         data.insights = insight
         await redis.set(cacheKey, JSON.stringify(data), "EX", 100)
         
-        console.log(data);
         res.status(200).json({
             success: true,
             source: "db",

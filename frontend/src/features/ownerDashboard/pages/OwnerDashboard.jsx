@@ -60,6 +60,7 @@ const OwnerDashboard = () => {
 
       {/* Top Performer */}
       <div className="mt-8  rounded-2xl">
+        <h1>Top Performer</h1>
         {topPerformer ? (
           <div className="rounded-3xl w-full lg:w-1/2 overflow-hidden bg-text-primary">
             <div className="grid grid-cols-1 lg:grid-cols-2 bg-white">
@@ -126,10 +127,17 @@ const OwnerDashboard = () => {
           </div>
         ) : (
           <div className="border rounded-xl p-5 bg-white">
-            <Skeleton height={30} width={220} />
-            <Skeleton height={25} className="mt-4" />
-            <Skeleton height={20} width={150} className="mt-2" />
-            <Skeleton height={20} width={180} className="mt-2" />
+            {topPerformer !== null ? (
+              <>
+                <Skeleton height={30} width={220} />
+                <Skeleton height={25} className="mt-4" />
+                <Skeleton height={20} width={150} className="mt-2" />
+                <Skeleton height={20} width={180} className="mt-2" />
+              </>
+            ):<>
+            NO TOP PERFORMER
+            </>}
+
           </div>
         )}
       </div>
@@ -164,7 +172,6 @@ const OwnerDashboard = () => {
           </div>
         )}
       </div>
-
     </div>
   );
 };
